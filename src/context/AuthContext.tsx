@@ -17,7 +17,6 @@ export type InitialAuthContextVal = {
 const initialAuthContextVal = {
   isAuth: false,
   setIsAuth: () => { },
-  checkAuth: () => { },
   user: { id: undefined, name: '', email: '' },
   setUser: () => { },
 }
@@ -36,8 +35,6 @@ const AuthContextProvidor: React.FC<AuthContextProvidorProps> = ({ children }) =
   useLayoutEffect(() => {
     const checkAuth = async () => {
       await axios.get('/api/user').then(res => {
-        console.log(res);
-
         const user: User = res.data;
 
         setUser(user);
@@ -45,9 +42,10 @@ const AuthContextProvidor: React.FC<AuthContextProvidorProps> = ({ children }) =
         setIsAuth(true);
       }).catch(e => {
         if (e.response.status == 401) {
-          console.log('401エラー確認');
           setIsAuth(false);
+
           setUser({ id: undefined, name: '', email: '' });
+          
           return;
         }
 
