@@ -1,24 +1,28 @@
 import { NextPage } from "next";
-import Link from "next/link";
 import Cookies from "js-cookie";
 
 import useSWR from 'swr';
 import axios from "@/lib/axios";
-import { useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { useRouter } from "next/router";
+import { AuthContext } from "@/context/AuthContext";
+import type { User } from "@/context/AuthContext";
 
 const UserLogin: NextPage = () => {
+  const router = useRouter();
+
   const [email, setEmail] = useState<string>('')
+
   const [password, setPassword] = useState<string>('')
 
   type Errors = {
     email: string[],
     password: string[]
   }
-  const [errors, setErrors] = useState<Errors>({ email: [], password: [] });
-  console.log(errors);
 
-  const router = useRouter();
+  const [errors, setErrors] = useState<Errors>({ email: [], password: [] });
+
+  const { setIsAuth, setUser } = useContext(AuthContext);
 
   const csrf = async () => await axios.get('/sanctum/csrf-cookie');
 
@@ -37,30 +41,21 @@ const UserLogin: NextPage = () => {
         'X-Xsrf-Token': Cookies.get('XSRF-TOKEN'),
       }
     }).then(async (res) => {
-      const userRes = await axios.get('/api/user');
+      await axios.get('/api/user').then(res => {
 
-      router.push(`/users/${userRes.data.id}/profile`);
+        const user: User = res.data;
+
+        setUser(user);
+
+        setIsAuth(true);
+
+        router.push(`/users/${user.id}/profile`);
+      })
     }).catch((e) => {
       const newErrors = { email: [], password: [], ...e.response.data.errors };
       setErrors(newErrors);
 
       console.log('ログインに失敗しました。');
-    })
-  }
-
-  const logout = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    await csrf();
-
-    await axios.post('/users/logout', {}, {
-      headers: {
-        'X-Xsrf-Token': Cookies.get('XSRF-TOKEN'),
-      },
-    }).then((res) => {
-      router.push('/user/login')
-    }).catch(error => {
-      console.log('ログアウトに失敗しました。', error);
     })
   }
 
