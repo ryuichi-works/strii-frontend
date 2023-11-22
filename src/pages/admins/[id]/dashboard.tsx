@@ -8,7 +8,6 @@ import AuthAdminCheck from "@/components/AuthAdminCheck";
 
 const UserProfile: NextPage = () => {
   const router = useRouter();
-  console.log(router.pathname);
 
   const { isAuthAdmin, setIsAuthAdmin, setAdmin } = useContext(AuthContext);
 
