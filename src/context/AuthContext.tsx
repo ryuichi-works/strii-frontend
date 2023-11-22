@@ -1,4 +1,5 @@
 import axios from "@/lib/axios";
+import { useRouter } from "next/router";
 import { useState, createContext, ReactNode, FC, useEffect, useLayoutEffect } from "react";
 
 export type User = {
@@ -11,7 +12,11 @@ export type InitialAuthContextVal = {
   isAuth: boolean,
   setIsAuth: React.Dispatch<React.SetStateAction<boolean>>,
   user: User,
-  setUser: React.Dispatch<React.SetStateAction<User>>
+  setUser: React.Dispatch<React.SetStateAction<User>>,
+  isAuthAdmin: boolean,
+  setIsAuthAdmin: React.Dispatch<React.SetStateAction<boolean>>,
+  admin: User,
+  setAdmin: React.Dispatch<React.SetStateAction<User>>
 }
 
 const initialAuthContextVal = {
@@ -19,6 +24,10 @@ const initialAuthContextVal = {
   setIsAuth: () => { },
   user: { id: undefined, name: '', email: '' },
   setUser: () => { },
+  isAuthAdmin: false,
+  setIsAuthAdmin: () => { },
+  admin: { id: undefined, name: '', email: '' },
+  setAdmin: () => { },
 }
 
 const AuthContext = createContext<InitialAuthContextVal>(initialAuthContextVal);
@@ -28,39 +37,57 @@ type AuthContextProvidorProps = {
 }
 
 const AuthContextProvidor: React.FC<AuthContextProvidorProps> = ({ children }) => {
+  const router = useRouter();
+
   const [isAuth, setIsAuth] = useState<boolean>(false);
+  const [isAuthAdmin, setIsAuthAdmin] = useState<boolean>(false);
 
   const [user, setUser] = useState<User>({ id: undefined, name: '', email: '' });
+  const [admin, setAdmin] = useState<User>({ id: undefined, name: '', email: '' });
+
+  //初期アクセスもしくはurl直接変更によるアクセス時のチェック
+  const checkAuth = async (
+    authType: 'user' | 'admin',
+    setAuthFunc: React.Dispatch<React.SetStateAction<User>>,
+    setIsAuthFunc: React.Dispatch<React.SetStateAction<boolean>>
+  ) => {
+    try {
+      const res = await axios.get(`/api/${authType}`);
+
+      const userData: User = res.data;
+
+      setAuthFunc(userData);
+      setIsAuthFunc(true);
+    } catch (e: any) {
+      if (e.response.status == 401) {
+        setIsAuthFunc(false);
+        setAuthFunc({ id: undefined, name: '', email: '' });
+
+        return;
+      }
+
+      throw e;
+    }
+  }
 
   useLayoutEffect(() => {
-    const checkAuth = async () => {
-      await axios.get('/api/user').then(res => {
-        const user: User = res.data;
-
-        setUser(user);
-
-        setIsAuth(true);
-      }).catch(e => {
-        if (e.response.status == 401) {
-          setIsAuth(false);
-
-          setUser({ id: undefined, name: '', email: '' });
-          
-          return;
-        }
-
-        throw e;
-      })
+    if(router.pathname.startsWith('/users')) {
+      checkAuth('user', setUser, setIsAuth);
+    } else if (router.pathname.startsWith('/admins')) {
+      checkAuth('admin', setAdmin, setIsAuthAdmin);
     }
-
-    checkAuth();
   }, []);
 
   const providorVal = {
-    isAuth,
-    setIsAuth,
     user,
     setUser,
+    isAuth,
+    setIsAuth,
+
+    admin,
+    setAdmin,
+    isAuthAdmin,
+    setIsAuthAdmin,
   }
 
   return (
