@@ -7,7 +7,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 const Header: React.FC = () => {
-
   const router = useRouter();
 
   const [hamburgerToggle, setHamburgerToggle] = useState<string>('close');
@@ -25,17 +24,13 @@ const Header: React.FC = () => {
 
   const hamburgerClickHandler = () => {
     if (hamburgerToggle === 'close') {
-
       setRightPositon('right-0');
 
       setHamburgerToggle('open');
-
     } else if ((hamburgerToggle === 'open')) {
-
       setRightPositon('right-[-150%]');
 
       setHamburgerToggle('close');
-
     }
   }
 
@@ -47,7 +42,6 @@ const Header: React.FC = () => {
     setAuthFunc: React.Dispatch<React.SetStateAction<User>>,
     setIsAuthFunc: React.Dispatch<React.SetStateAction<boolean>>
   ) => {
-
     e.preventDefault();
 
     await csrf();
@@ -57,17 +51,14 @@ const Header: React.FC = () => {
         'X-Xsrf-Token': Cookies.get('XSRF-TOKEN'),
       },
     }).then((res) => {
-
       setAuthFunc({ id: undefined, name: '', email: '' });
 
       setIsAuthFunc(false);
 
       router.push(`/${authType}/login`);
-
     }).catch(error => {
       console.log('ログアウトに失敗しました。', error);
     })
-
   }
 
   return (
@@ -108,7 +99,7 @@ const Header: React.FC = () => {
               {admin.id && (
                 <>
                   <li><Link href={`admins/${admin.id}/dashboard`} className="mr-4">dashboard</Link></li>
-                  
+
                   <li>
                     <form onSubmit={(e) => logout(e, 'admins', setAdmin, setIsAuthAdmin)} className="inline-block">
                       <button type='submit' className="inline-block">ログアウト</button>
