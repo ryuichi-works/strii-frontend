@@ -1,4 +1,4 @@
-import type { User } from "@/context/AuthContext";
+import type { Admin } from "@/context/AuthContext";
 import type { NextPage } from "next";
 import Cookies from "js-cookie";
 import axios from "@/lib/axios";
@@ -41,7 +41,8 @@ const UserLogin: NextPage = () => {
     }).then(async (res) => {
       await axios.get('/api/admin').then(res => {
 
-        const admin: User = res.data;
+        const admin: Admin = res.data;
+        console.log(admin);
 
         setAdmin(admin);
 
