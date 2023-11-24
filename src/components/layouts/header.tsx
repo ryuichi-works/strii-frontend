@@ -63,7 +63,7 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <header className="relative text-[16px] bg-main-green">
+      <header className="relative text-[16px] bg-main-green mb-10">
         <div className="container mx-auto flex flex-row justify-center md:justify-between items-center bg-main-green h-[64px]">
 
           <div>
