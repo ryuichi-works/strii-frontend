@@ -1,14 +1,27 @@
+import type { User } from "@/context/AuthContext";
+import axios from "@/lib/axios";
+import Cookies from "js-cookie";
 import React, { useContext, useState } from "react";
 import { AuthContext } from "@/context/AuthContext";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const Header: React.FC = () => {
-  
+
+  const router = useRouter();
+
   const [hamburgerToggle, setHamburgerToggle] = useState<string>('close');
 
   const [rightPosition, setRightPositon] = useState<string>('right-[-150%]');
 
-  const { user, admin } = useContext(AuthContext);
+  const {
+    user,
+    setUser,
+    setIsAuth,
+    admin,
+    setAdmin,
+    setIsAuthAdmin,
+  } = useContext(AuthContext);
 
   const hamburgerClickHandler = () => {
     if (hamburgerToggle === 'close') {
@@ -24,6 +37,37 @@ const Header: React.FC = () => {
       setHamburgerToggle('close');
 
     }
+  }
+
+  const csrf = async () => await axios.get('/sanctum/csrf-cookie');
+
+  const logout = async (
+    e: React.FormEvent<HTMLFormElement>,
+    authType: 'users' | 'admins',
+    setAuthFunc: React.Dispatch<React.SetStateAction<User>>,
+    setIsAuthFunc: React.Dispatch<React.SetStateAction<boolean>>
+  ) => {
+
+    e.preventDefault();
+
+    await csrf();
+
+    await axios.post(`/${authType}/logout`, {}, {
+      headers: {
+        'X-Xsrf-Token': Cookies.get('XSRF-TOKEN'),
+      },
+    }).then((res) => {
+
+      setAuthFunc({ id: undefined, name: '', email: '' });
+
+      setIsAuthFunc(false);
+
+      router.push(`/${authType}/login`);
+
+    }).catch(error => {
+      console.log('ログアウトに失敗しました。', error);
+    })
+
   }
 
   return (
@@ -50,11 +94,27 @@ const Header: React.FC = () => {
               )}
 
               {user.id && (
-                <li><Link href={`/users/${user.id}/profile`}>マイページ</Link></li>
+                <>
+                  <li><Link href={`/users/${user.id}/profile`} className="mr-4">マイページ</Link></li>
+                  
+                  <li>
+                    <form onSubmit={(e) => logout(e, 'users', setUser, setIsAuth)} className="inline-block">
+                      <button type='submit' className="inline-block">ログアウト</button>
+                    </form>
+                  </li>
+                </>
               )}
 
               {admin.id && (
-                <li><Link href={`admins/${admin.id}/dashboard`}>dashboard</Link></li>
+                <>
+                  <li><Link href={`admins/${admin.id}/dashboard`} className="mr-4">dashboard</Link></li>
+                  
+                  <li>
+                    <form onSubmit={(e) => logout(e, 'admins', setAdmin, setIsAuthAdmin)} className="inline-block">
+                      <button type='submit' className="inline-block">ログアウト</button>
+                    </form>
+                  </li>
+                </>
               )}
 
             </ul>
@@ -83,6 +143,7 @@ const Header: React.FC = () => {
               {(!user.id && !admin.id) && (
                 <>
                   <li><Link href="/users/login" className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green w-full">ログイン</Link></li>
+
                   <li><Link href="/users/register" className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green w-full">会員登録</Link></li>
                 </>
               )}
@@ -90,14 +151,24 @@ const Header: React.FC = () => {
               {user.id && (
                 <>
                   <li><Link href={`/users/${user.id}/profile`} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">マイページ</Link></li>
-                  <li><span className="inline-block text-center h-12 leading-[48px]  w-full">ログアウト</span></li>
+
+                  <li>
+                    <form onSubmit={(e) => logout(e, 'users', setUser, setIsAuth)} className="inline-block w-full">
+                      <button type='submit' className="inline-block text-center h-12 leading-[48px]  w-full">ログアウト</button>
+                    </form>
+                  </li>
                 </>
               )}
 
               {admin.id && (
                 <>
-                  <li><Link href={`admins/${admin.id}/dashboard`} className="inline-block text-center h-12 leading-[48px]  w-full">dashboard</Link></li>
-                  <li><span className="inline-block text-center h-12 leading-[48px]  w-full">ログアウト</span></li>
+                  <li><Link href={`admins/${admin.id}/dashboard`} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green w-full">dashboard</Link></li>
+
+                  <li>
+                    <form onSubmit={(e) => logout(e, 'admins', setAdmin, setIsAuthAdmin)} className="inline-block w-full">
+                      <button type='submit' className="inline-block text-center h-12 leading-[48px]  w-full">ログアウト</button>
+                    </form>
+                  </li>
                 </>
               )}
 
