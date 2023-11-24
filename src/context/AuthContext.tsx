@@ -61,7 +61,7 @@ const AuthContextProvidor: React.FC<AuthContextProvidorProps> = ({ children }) =
     try {
       const res = await axios.get(`/api/${authType}`);
 
-      const userData: User = res.data;
+      const userData = res.data;
 
       setAuthFunc(userData);
       setIsAuthFunc(true);
