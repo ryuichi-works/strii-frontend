@@ -1,4 +1,3 @@
-import type { User } from "@/context/AuthContext";
 import axios from "@/lib/axios";
 import Cookies from "js-cookie";
 import React, { useContext, useState } from "react";
@@ -39,8 +38,6 @@ const Header: React.FC = () => {
   const logout = async (
     e: React.FormEvent<HTMLFormElement>,
     authType: 'users' | 'admins',
-    setAuthFunc: React.Dispatch<React.SetStateAction<User>>,
-    setIsAuthFunc: React.Dispatch<React.SetStateAction<boolean>>
   ) => {
     e.preventDefault();
 
@@ -51,9 +48,13 @@ const Header: React.FC = () => {
         'X-Xsrf-Token': Cookies.get('XSRF-TOKEN'),
       },
     }).then((res) => {
-      setAuthFunc({ id: undefined, name: '', email: '' });
-
-      setIsAuthFunc(false);
+      if (authType === 'users') {
+        setUser({ id: undefined, name: '', email: '', file_path: '' });
+        setIsAuth(false);
+      } else if (authType === 'admins') {
+        setAdmin({ id: undefined, name: '', email: '' });
+        setIsAuthAdmin(false);
+      }
 
       router.push(`/${authType}/login`);
     }).catch(error => {
@@ -87,9 +88,9 @@ const Header: React.FC = () => {
               {user.id && (
                 <>
                   <li><Link href={`/users/${user.id}/profile`} className="mr-4">マイページ</Link></li>
-                  
+
                   <li>
-                    <form onSubmit={(e) => logout(e, 'users', setUser, setIsAuth)} className="inline-block">
+                    <form onSubmit={(e) => logout(e, 'users')} className="inline-block">
                       <button type='submit' className="inline-block">ログアウト</button>
                     </form>
                   </li>
@@ -101,7 +102,7 @@ const Header: React.FC = () => {
                   <li><Link href={`admins/${admin.id}/dashboard`} className="mr-4">dashboard</Link></li>
 
                   <li>
-                    <form onSubmit={(e) => logout(e, 'admins', setAdmin, setIsAuthAdmin)} className="inline-block">
+                    <form onSubmit={(e) => logout(e, 'admins')} className="inline-block">
                       <button type='submit' className="inline-block">ログアウト</button>
                     </form>
                   </li>
@@ -144,7 +145,7 @@ const Header: React.FC = () => {
                   <li><Link href={`/users/${user.id}/profile`} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">マイページ</Link></li>
 
                   <li>
-                    <form onSubmit={(e) => logout(e, 'users', setUser, setIsAuth)} className="inline-block w-full">
+                    <form onSubmit={(e) => logout(e, 'users')} className="inline-block w-full">
                       <button type='submit' className="inline-block text-center h-12 leading-[48px]  w-full">ログアウト</button>
                     </form>
                   </li>
@@ -156,7 +157,7 @@ const Header: React.FC = () => {
                   <li><Link href={`admins/${admin.id}/dashboard`} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green w-full">dashboard</Link></li>
 
                   <li>
-                    <form onSubmit={(e) => logout(e, 'admins', setAdmin, setIsAuthAdmin)} className="inline-block w-full">
+                    <form onSubmit={(e) => logout(e, 'admins')} className="inline-block w-full">
                       <button type='submit' className="inline-block text-center h-12 leading-[48px]  w-full">ログアウト</button>
                     </form>
                   </li>
