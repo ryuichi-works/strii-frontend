@@ -1,6 +1,16 @@
 import type { NextPage } from "next";
 import type { User } from "@/context/AuthContext";
-
+import type {
+  Frequency,
+  PlayStyle,
+  GripForm,
+  FavaritShot,
+  WeakShot,
+  Age,
+  Gender,
+  Height,
+  Physique
+} from "./edit/tennis_profile";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/context/AuthContext";
 import AuthCheck from "@/components/AuthCheck";
@@ -40,14 +50,15 @@ export type TennisProfile = {
   user_id: number,
   my_racket_id?: number,
   experience_period: number,
-  frequency: string,
-  play_style: string,
-  grip_form: string,
-  favarit_shot: string,
-  weak_shot: string,
-  age: string,
-  height: string,
-  physique: string,
+  frequency: Frequency,
+  play_style: PlayStyle,
+  grip_form: GripForm,
+  favarit_shot: FavaritShot,
+  weak_shot: WeakShot,
+  age: Age,
+  gender: Gender,
+  height: Height,
+  physique: Physique,
   racket: Racket,
   user: User
 }
