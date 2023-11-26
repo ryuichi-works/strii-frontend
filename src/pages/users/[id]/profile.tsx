@@ -1,15 +1,74 @@
 import type { NextPage } from "next";
+import type { User } from "@/context/AuthContext";
 
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/context/AuthContext";
 import AuthCheck from "@/components/AuthCheck";
 import Link from "next/link";
+import axios from "@/lib/axios";
+
+export type Maker = {
+  id: number,
+  name_ja: string,
+  name_en: string,
+  created_at: string,
+  updated_at: string
+}
+
+export type RacketImage = {
+  id: 2,
+  file_path: string,
+  title: string,
+  created_at: string,
+  updated_at: string
+}
+
+export type Racket = {
+  id: number,
+  name_ja: string,
+  name_en: string,
+  maker_id: number,
+  image_id: number,
+  need_posting_image: number,
+  created_at: string,
+  updated_at: string,
+  maker: Maker,
+  racket_image: RacketImage
+}
+
+export type TennisProfile = {
+  user_id: number,
+  my_racket_id?: number,
+  experience_period: number,
+  frequency: string,
+  play_style: string,
+  grip_form: string,
+  favarit_shot: string,
+  weak_shot: string,
+  age: string,
+  height: string,
+  physique: string,
+  racket: Racket,
+  user: User
+}
 
 const UserProfile: NextPage = () => {
 
   const { isAuth, user } = useContext(AuthContext);
 
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/'
+
+  const [tennisProfile, setTennisProfile] = useState<TennisProfile>();
+
+  useEffect(() => {
+    const getTennisProfile = async () => {
+      await axios.get(`api/tennis_profiles/${user.id}`).then(res => {
+        setTennisProfile(res.data);
+      })
+    }
+
+    getTennisProfile();
+  }, [])
 
   return (
     <>
@@ -61,31 +120,31 @@ const UserProfile: NextPage = () => {
                   </div>
 
                   <hr />
-                  <p className="py-1">テニス歴：</p>
+                  <p className="py-1">テニス歴：{tennisProfile?.experience_period}</p>
 
                   <hr />
-                  <p className="py-1">テニス頻度：</p>
+                  <p className="py-1">テニス頻度：{tennisProfile?.frequency}</p>
 
                   <hr />
-                  <p className="py-1">プレースタイル：</p>
+                  <p className="py-1">プレースタイル：{tennisProfile?.play_style}</p>
 
                   <hr />
-                  <p className="py-1">グリップ：</p>
+                  <p className="py-1">グリップ：{tennisProfile?.grip_form}</p>
 
                   <hr />
-                  <p className="py-1">好きなショット：</p>
+                  <p className="py-1">好きなショット：{tennisProfile?.favarit_shot}</p>
 
                   <hr />
-                  <p className="py-1">苦手なショット：</p>
+                  <p className="py-1">苦手なショット：{tennisProfile?.weak_shot}</p>
 
                   <hr />
-                  <p className="py-1">年齢：</p>
+                  <p className="py-1">年齢：{tennisProfile?.age}</p>
 
                   <hr />
-                  <p className="py-1">背丈：</p>
+                  <p className="py-1">背丈：{tennisProfile?.height}</p>
 
                   <hr />
-                  <p className="py-1 mb-4">体格：</p>
+                  <p className="py-1 mb-4">体格：{tennisProfile?.physique}</p>
 
                   <div className=" flex justify-end mb-14">
                     <Link href={`/users/${user.id}/edit/tennis_profile`}>
