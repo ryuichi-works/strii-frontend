@@ -59,12 +59,10 @@ const UserProfile: NextPage = () => {
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/'
 
   const [tennisProfile, setTennisProfile] = useState<TennisProfile>();
-  console.log('tennisProfile',tennisProfile);
 
   useEffect(() => {
     const getTennisProfile = async () => {
       await axios.get(`api/tennis_profiles/${user.id}`).then(res => {
-        console.log('res.data', res.data);
         setTennisProfile(res.data);
       })
     }
