@@ -87,6 +87,7 @@ const Header: React.FC = () => {
 
               {user.id && (
                 <>
+                  <li><Link href={'/reviews'} className="mr-4">レビュー</Link></li>
                   <li><Link href={`/users/${user.id}/profile`} className="mr-4">マイページ</Link></li>
 
                   <li>
@@ -142,6 +143,7 @@ const Header: React.FC = () => {
 
               {user.id && (
                 <>
+                  <li><Link href={'/reviews'} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">レビュー</Link></li>
                   <li><Link href={`/users/${user.id}/profile`} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">マイページ</Link></li>
 
                   <li>
