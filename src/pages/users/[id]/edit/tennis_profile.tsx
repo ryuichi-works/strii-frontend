@@ -47,7 +47,8 @@ const TennisProfileEdit: NextPage = () => {
     getTennisProfile();
   }, [])
 
-  
+  const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/'
+
 
   const [myRacketId, setMyRacketId] = useState<number | undefined>();
   const [experiencePeriod, setExperiencePeriod] = useState<number | undefined>();
@@ -61,11 +62,17 @@ const TennisProfileEdit: NextPage = () => {
   const [height, setHeight] = useState<Height | undefined>();
   const [physique, setPhysique] = useState<Physique | undefined>();
 
-  const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/'
+  const frequencys: Frequency[] = ['未設定', '週１回', '週２回', '週３回', '週４回', '週５回', '週６回', '月１回', '月２回', '月３回', '月４回', "毎日"]
+  const playStyles: PlayStyle[] = ['オールラウンダー', 'ストローカー', 'ビッグサーバー', 'サーブアンドボレーヤー', '未設定']
+  const gripForms: GripForm[] = ['未設定', 'コンチネンタル', 'イースタン', 'セミウェスタン', 'ウェスタン', 'フルウェスタン']
+  const favaritShots: FavaritShot[] = ['未設定', 'フォアハンド', 'バックハンド', 'サーブ', 'フォアハンドボレー', 'バックハンドボレー']
+  const weakShots: WeakShot[] = ['未設定', 'フォアハンド', 'バックハンド', 'サーブ', 'フォアハンドボレー', 'バックハンドボレー']
+  const ages: Age[] = ['未設定', '１０代前半', '１０代後半', '２０代前半', '２０代後半', '３０代前半', '３０代後半', '４０代前半', '４０代後半', '５０代前半', '５０代後半', '６０代以上'];
+  const genders: Gender[] = ['未設定', '男', '女'];
+  const heights: Height[] = ['未設定', '高い', 'やや高い', '普通', 'やや小柄', '小柄'];
+  const physiques: Physique[] = ['未設定', '普通', 'がっしり'];
 
   const onChangeFrequency = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const frequencys: Frequency[] = ['未設定', '週１回', '週２回', '週３回', '週４回', '週５回', '週６回', '月１回', '月２回', '月３回', '月４回', "毎日"]
-
     //asでFrequency型に変換する前にインプット値のFrequency型との比較
     frequencys.forEach(frequency => {
       if (e.target.value === frequency) {
@@ -77,9 +84,6 @@ const TennisProfileEdit: NextPage = () => {
   }
 
   const onChangePlayStyle = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const playStyles: PlayStyle[] = ['オールラウンダー', 'ストローカー', 'ビッグサーバー', 'サーブアンドボレーヤー', '未設定']
-
-    //asでFrequency型に変換する前にインプット値のFrequency型との比較
     playStyles.forEach(playStyle => {
       if (e.target.value === playStyle) {
         setPlayStyle(e.target.value as PlayStyle);
@@ -89,8 +93,6 @@ const TennisProfileEdit: NextPage = () => {
     return
   }
   const onChangeGripForm = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const gripForms: GripForm[] = ['未設定', 'コンチネンタル', 'イースタン', 'セミウェスタン', 'ウェスタン', 'フルウェスタン']
-
     gripForms.forEach(gripForm => {
       if (e.target.value === gripForm) {
         setGripForm(e.target.value as GripForm);
@@ -101,8 +103,6 @@ const TennisProfileEdit: NextPage = () => {
   }
 
   const onChangeFavaritShot = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const favaritShots: FavaritShot[] = ['未設定', 'フォアハンド', 'バックハンド', 'サーブ', 'フォアハンドボレー', 'バックハンドボレー']
-
     favaritShots.forEach(favaritShot => {
       if (e.target.value === favaritShot) {
         setFavaritShot(e.target.value as FavaritShot);
@@ -113,8 +113,6 @@ const TennisProfileEdit: NextPage = () => {
   }
 
   const onChangeWeakShot = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const weakShots: WeakShot[] = ['未設定', 'フォアハンド', 'バックハンド', 'サーブ', 'フォアハンドボレー', 'バックハンドボレー']
-
     weakShots.forEach(weakShot => {
       if (e.target.value === weakShot) {
         setWeakShot(e.target.value as WeakShot);
@@ -125,8 +123,6 @@ const TennisProfileEdit: NextPage = () => {
   }
 
   const onChangeAge = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const ages: Age[] = ['未設定', '１０代前半', '１０代後半', '２０代前半', '２０代後半', '３０代前半', '３０代後半', '４０代前半', '４０代後半', '５０代前半', '５０代後半', '６０代以上'];
-
     ages.forEach(age => {
       if (e.target.value === age) {
         setAge(e.target.value as Age);
@@ -137,8 +133,6 @@ const TennisProfileEdit: NextPage = () => {
   }
 
   const onChangeGender = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const genders: Gender[] = ['未設定', '男', '女'];
-
     genders.forEach(gender => {
       if (e.target.value === gender) {
         setGender(e.target.value as Gender);
@@ -149,8 +143,6 @@ const TennisProfileEdit: NextPage = () => {
   }
 
   const onChangeHeight = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const heights: Height[] = ['未設定', '高い', 'やや高い', '普通', 'やや小柄', '小柄'];
-
     heights.forEach(height => {
       if (e.target.value === height) {
         setHeight(e.target.value as Height);
@@ -161,8 +153,6 @@ const TennisProfileEdit: NextPage = () => {
   }
 
   const onChangePhysique = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const physiques: Physique[] = ['未設定', '普通', 'がっしり'];
-
     physiques.forEach(physique => {
       if (e.target.value === physique) {
         setPhysique(e.target.value as Physique);
@@ -224,7 +214,6 @@ const TennisProfileEdit: NextPage = () => {
 
     await csrf();
 
-    // await axios.post(`/api/users/${user.id}`, updatedData, {
     await axios.post(`/api/tennis_profiles/${user.id}`, updatedData, {
       headers: {
         'X-Xsrf-Token': Cookies.get('XSRF-TOKEN'),
@@ -233,7 +222,7 @@ const TennisProfileEdit: NextPage = () => {
       router.push(`/users/${user.id}/profile`);
     }).catch((e) => {
       console.log(e);
-      const newErrors = {...initialErrors, ...e.response.data.errors };
+      const newErrors = { ...initialErrors, ...e.response.data.errors };
       setErrors(newErrors);
 
       console.log('基本プロフィール更新に失敗しました。');
@@ -275,8 +264,10 @@ const TennisProfileEdit: NextPage = () => {
                   <form onSubmit={updateTennisProfile}>
                     <div className="mb-6">
                       <label htmlFor="experience_period" className="block">テニス歴</label>
+
                       <input type="number" name="experience_period" onChange={(e) => setExperiencePeriod(Number(e.target.value))} min="0" max="100" defaultValue={experiencePeriod} className="border border-gray-300 rounded w-40 h-10 p-2 focus:outline-sub-green" />
                       <span className="ml-4">年</span>
+
                       {errors.experience_period.length !== 0 &&
                         errors.experience_period.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                       }
@@ -284,20 +275,11 @@ const TennisProfileEdit: NextPage = () => {
 
                     <div className=" mb-8">
                       <label htmlFor="frequency" className="block">テニス頻度</label>
+
                       <select name="frequency" id="frequency" value={frequency} onChange={onChangeFrequency} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
-                        <option value="未設定">未設定</option>
-                        <option value="週１回">週１回</option>
-                        <option value="週２回">週２回</option>
-                        <option value="週３回">週３回</option>
-                        <option value="週４回">週４回</option>
-                        <option value="週５回">週５回</option>
-                        <option value="週６回">週６回</option>
-                        <option value="月１回">月１回</option>
-                        <option value="月２回">月２回</option>
-                        <option value="月３回">月３回</option>
-                        <option value="月４回">月４回</option>
-                        <option value="毎日">毎日</option>
+                        {frequencys.map(_frequency => (<option key={_frequency} value={_frequency}>{_frequency}</option>))}
                       </select>
+
                       {errors.frequency.length !== 0 &&
                         errors.frequency.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                       }
@@ -305,13 +287,11 @@ const TennisProfileEdit: NextPage = () => {
 
                     <div className=" mb-8">
                       <label htmlFor="play_style" className="block">プレースタイル</label>
+
                       <select name="play_style" id="play_style" onChange={onChangePlayStyle} value={playStyle} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
-                        <option value="未設定">未設定</option>
-                        <option value="オールラウンダー">オールラウンダー</option>
-                        <option value="ストローカー">ストローカー</option>
-                        <option value="ビッグサーバー">ビッグサーバー</option>
-                        <option value="サーブアンドボレーヤー">サーブアンドボレーヤー</option>
+                        {playStyles.map(_playStyle => (<option key={_playStyle} value={_playStyle}>{_playStyle}</option>))}
                       </select>
+
                       {errors.play_style.length !== 0 &&
                         errors.play_style.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                       }
@@ -319,14 +299,11 @@ const TennisProfileEdit: NextPage = () => {
 
                     <div className=" mb-8">
                       <label htmlFor="grip_form" className="block">グリップ</label>
+
                       <select name="grip_form" id="grip_form" onChange={onChangeGripForm} value={gripForm} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
-                        <option value="未設定">未設定</option>
-                        <option value="コンチネンタル">コンチネンタル</option>
-                        <option value="イースタン">イースタン</option>
-                        <option value="セミウェスタン">セミウェスタン</option>
-                        <option value="ウェスタン">ウェスタン</option>
-                        <option value="フルウェスタン">フルウェスタン</option>
+                        {gripForms.map(_gripForm => (<option key={_gripForm} value={_gripForm}>{_gripForm}</option>))}
                       </select>
+
                       {errors.grip_form.length !== 0 &&
                         errors.grip_form.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                       }
@@ -334,14 +311,11 @@ const TennisProfileEdit: NextPage = () => {
 
                     <div className=" mb-8">
                       <label htmlFor="favarit_shot" className="block">好きなショット</label>
+
                       <select name="favarit_shot" id="favarit_shot" onChange={onChangeFavaritShot} value={favaritShot} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
-                        <option value="未設定">未設定</option>
-                        <option value="フォアハンド">フォアハンド</option>
-                        <option value="バックハンド">バックハンド</option>
-                        <option value="サーブ">サーブ</option>
-                        <option value="フォアハンドボレー">フォアハンドボレー</option>
-                        <option value="バックハンドボレー">バックハンドボレー</option>
+                        {favaritShots.map(_favaritShot => (<option key={_favaritShot} value={_favaritShot}>{_favaritShot}</option>))}
                       </select>
+
                       {errors.favarit_shot.length !== 0 &&
                         errors.favarit_shot.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                       }
@@ -349,14 +323,11 @@ const TennisProfileEdit: NextPage = () => {
 
                     <div className=" mb-8">
                       <label htmlFor="weak_shot" className="block">苦手なショット</label>
+
                       <select name="weak_shot" id="weak_shot" onChange={onChangeWeakShot} value={weakShot} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
-                        <option value="未設定">未設定</option>
-                        <option value="フォアハンド">フォアハンド</option>
-                        <option value="バックハンド">バックハンド</option>
-                        <option value="サーブ">サーブ</option>
-                        <option value="フォアハンドボレー">フォアハンドボレー</option>
-                        <option value="バックハンドボレー">バックハンドボレー</option>
+                        {weakShots.map(_weakShot => (<option key={_weakShot} value={_weakShot}>{_weakShot}</option>))}
                       </select>
+
                       {errors.weak_shot.length !== 0 &&
                         errors.weak_shot.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                       }
@@ -364,20 +335,11 @@ const TennisProfileEdit: NextPage = () => {
 
                     <div className=" mb-8">
                       <label htmlFor="age" className="block">年齢</label>
+
                       <select name="age" id="age" onChange={onChangeAge} value={age} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
-                        <option value="未設定">未設定</option>
-                        <option value="１０代前半">１０代前半</option>
-                        <option value="１０代後半">１０代後半</option>
-                        <option value="２０代前半">２０代前半</option>
-                        <option value="２０代後半">２０代後半</option>
-                        <option value="３０代前半">３０代前半</option>
-                        <option value="３０代後半">３０代後半</option>
-                        <option value="４０代前半">４０代前半</option>
-                        <option value="４０代後半">４０代後半</option>
-                        <option value="５０代前半">５０代前半</option>
-                        <option value="５０代後半">５０代後半</option>
-                        <option value="６０代以上">６０代以上</option>
+                        {ages.map(_age => (<option key={_age} value={_age}>{_age}</option>))}
                       </select>
+
                       {errors.age.length !== 0 &&
                         errors.age.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                       }
@@ -385,11 +347,11 @@ const TennisProfileEdit: NextPage = () => {
 
                     <div className=" mb-8">
                       <label htmlFor="gender" className="block">性別</label>
+
                       <select name="gender" id="gender" onChange={onChangeGender} value={gender} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
-                        <option value="未設定">未設定</option>
-                        <option value="男">男</option>
-                        <option value="女">女</option>
+                        {genders.map(_gender => (<option key={_gender} value={_gender}>{_gender}</option>))}
                       </select>
+
                       {errors.gender.length !== 0 &&
                         errors.gender.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                       }
@@ -397,14 +359,11 @@ const TennisProfileEdit: NextPage = () => {
 
                     <div className=" mb-8">
                       <label htmlFor="height" className="block">背丈</label>
+
                       <select name="height" id="height" onChange={onChangeHeight} value={height} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
-                        <option value="未設定">未設定</option>
-                        <option value="高い">高い</option>
-                        <option value="やや高い">やや高い</option>
-                        <option value="普通">普通</option>
-                        <option value="やや小柄">やや小柄</option>
-                        <option value="小柄">小柄</option>
+                        {heights.map(_height => (<option key={_height} value={_height}>{_height}</option>))}
                       </select>
+
                       {errors.height.length !== 0 &&
                         errors.height.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                       }
@@ -412,11 +371,11 @@ const TennisProfileEdit: NextPage = () => {
 
                     <div className=" mb-8">
                       <label htmlFor="physique" className="block">体格</label>
+
                       <select name="physique" id="physique" onChange={onChangePhysique} value={physique} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
-                        <option value="未設定">未設定</option>
-                        <option value="普通">普通</option>
-                        <option value="がっしり">がっしり</option>
+                        {physiques.map(_physique => (<option key={_physique} value={_physique}>{_physique}</option>))}
                       </select>
+
                       {errors.physique.length !== 0 &&
                         errors.physique.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                       }
