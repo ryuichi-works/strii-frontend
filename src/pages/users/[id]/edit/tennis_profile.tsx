@@ -27,24 +27,28 @@ const TennisProfileEdit: NextPage = () => {
   const [tennisProfile, setTennisProfile] = useState<TennisProfile>();
 
   useEffect(() => {
-    const getTennisProfile = async () => {
-      await axios.get(`api/tennis_profiles/${user.id}`).then(res => {
-        setTennisProfile(res.data);
-        setMyRacketId(res.data.my_racket_id);
-        setExperiencePeriod(res.data.experience_period);
-        setFrequency(res.data.frequency);
-        setPlayStyle(res.data.play_style);
-        setGripForm(res.data.grip_form);
-        setFavaritShot(res.data.favarit_shot);
-        setWeakShot(res.data.weak_shot);
-        setAge(res.data.age);
-        setGender(res.data.gender);
-        setHeight(res.data.height);
-        setPhysique(res.data.physique);
-      })
+    if(user.id) {
+      const getTennisProfile = async () => {
+        await axios.get(`api/tennis_profiles/${user.id}`).then(res => {
+          setTennisProfile(res.data);
+          setMyRacketId(res.data.my_racket_id);
+          setExperiencePeriod(res.data.experience_period);
+          setFrequency(res.data.frequency);
+          setPlayStyle(res.data.play_style);
+          setGripForm(res.data.grip_form);
+          setFavaritShot(res.data.favarit_shot);
+          setWeakShot(res.data.weak_shot);
+          setAge(res.data.age);
+          setGender(res.data.gender);
+          setHeight(res.data.height);
+          setPhysique(res.data.physique);
+        })
+      }
+  
+      getTennisProfile();
+    } else {
+      router.push('/users/login')
     }
-
-    getTennisProfile();
   }, [])
 
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/'

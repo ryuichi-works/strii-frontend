@@ -16,6 +16,7 @@ import { AuthContext } from "@/context/AuthContext";
 import AuthCheck from "@/components/AuthCheck";
 import Link from "next/link";
 import axios from "@/lib/axios";
+import { Router, useRouter } from "next/router";
 
 export type Maker = {
   id: number,
@@ -64,7 +65,8 @@ export type TennisProfile = {
 }
 
 const UserProfile: NextPage = () => {
-
+  const router = useRouter();
+  
   const { isAuth, user } = useContext(AuthContext);
 
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/'
@@ -72,13 +74,17 @@ const UserProfile: NextPage = () => {
   const [tennisProfile, setTennisProfile] = useState<TennisProfile>();
 
   useEffect(() => {
-    const getTennisProfile = async () => {
-      await axios.get(`api/tennis_profiles/${user.id}`).then(res => {
-        setTennisProfile(res.data);
-      })
-    }
+    if(user.id) {
+      const getTennisProfile = async () => {
+        await axios.get(`api/tennis_profiles/${user.id}`).then(res => {
+          setTennisProfile(res.data);
+        })
+      }
 
-    getTennisProfile();
+      getTennisProfile();
+    } else {
+      router.push('/reviews');
+    }
   }, [])
 
   return (
