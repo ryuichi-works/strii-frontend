@@ -275,7 +275,7 @@ const TennisProfileEdit: NextPage = () => {
                   <form onSubmit={updateTennisProfile}>
                     <div className="mb-6">
                       <label htmlFor="experience_period" className="block">テニス歴</label>
-                      <input type="number" name="experience_period" onChange={(e) => setExperiencePeriod(Number(e.target.value))} min="0" max="100" defaultValue={tennisProfile?.experience_period} className="border border-gray-300 rounded w-40 h-10 p-2 focus:outline-sub-green" />
+                      <input type="number" name="experience_period" onChange={(e) => setExperiencePeriod(Number(e.target.value))} min="0" max="100" defaultValue={experiencePeriod} className="border border-gray-300 rounded w-40 h-10 p-2 focus:outline-sub-green" />
                       <span className="ml-4">年</span>
                       {errors.experience_period.length !== 0 &&
                         errors.experience_period.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
@@ -284,22 +284,20 @@ const TennisProfileEdit: NextPage = () => {
 
                     <div className=" mb-8">
                       <label htmlFor="frequency" className="block">テニス頻度</label>
-                      {/* <select name="frequency" id="frequency" onChange={(e) => setFrequency(e.target.value)} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green"> */}
-                      <select name="frequency" id="frequency" value={tennisProfile?.frequency} onChange={onChangeFrequency} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
-                        <option defaultValue="未設定" selected className="w-full">未設定</option>
-                        <option defaultValue="週１回">週１回</option>
-                        <option defaultValue="週２回">週２回</option>
-                        <option defaultValue="週３回">週３回</option>
-                        <option defaultValue="週４回">週４回</option>
-                        <option defaultValue="週５回">週５回</option>
-                        <option defaultValue="週６回">週６回</option>
-                        <option defaultValue="月１回">月１回</option>
-                        <option defaultValue="月２回">月２回</option>
-                        <option defaultValue="月３回">月３回</option>
-                        <option defaultValue="月４回">月４回</option>
-                        <option defaultValue="毎日">毎日</option>
+                      <select name="frequency" id="frequency" value={frequency} onChange={onChangeFrequency} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
+                        <option value="未設定">未設定</option>
+                        <option value="週１回">週１回</option>
+                        <option value="週２回">週２回</option>
+                        <option value="週３回">週３回</option>
+                        <option value="週４回">週４回</option>
+                        <option value="週５回">週５回</option>
+                        <option value="週６回">週６回</option>
+                        <option value="月１回">月１回</option>
+                        <option value="月２回">月２回</option>
+                        <option value="月３回">月３回</option>
+                        <option value="月４回">月４回</option>
+                        <option value="毎日">毎日</option>
                       </select>
-                      {/* <input type="email" name="email" defaultValue={user.email} onChange={(e) => set(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green" /> */}
                       {errors.frequency.length !== 0 &&
                         errors.frequency.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                       }
@@ -307,15 +305,13 @@ const TennisProfileEdit: NextPage = () => {
 
                     <div className=" mb-8">
                       <label htmlFor="play_style" className="block">プレースタイル</label>
-                      {/* <select name="frequency" id="frequency" onChange={(e) => setFrequency(e.target.value)} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green"> */}
-                      <select name="play_style" id="play_style" onChange={onChangePlayStyle} value={tennisProfile?.play_style} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
-                        <option defaultValue="未設定" selected className="w-full">未設定</option>
-                        <option defaultValue="オールラウンダー">オールラウンダー</option>
-                        <option defaultValue="ストローカー">ストローカー</option>
-                        <option defaultValue="ビッグサーバー">ビッグサーバー</option>
-                        <option defaultValue="サーブアンドボレーヤー">サーブアンドボレーヤー</option>
+                      <select name="play_style" id="play_style" onChange={onChangePlayStyle} value={playStyle} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
+                        <option value="未設定">未設定</option>
+                        <option value="オールラウンダー">オールラウンダー</option>
+                        <option value="ストローカー">ストローカー</option>
+                        <option value="ビッグサーバー">ビッグサーバー</option>
+                        <option value="サーブアンドボレーヤー">サーブアンドボレーヤー</option>
                       </select>
-                      {/* <input type="email" name="email" defaultValue={user.email} onChange={(e) => set(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green" /> */}
                       {errors.play_style.length !== 0 &&
                         errors.play_style.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                       }
@@ -323,16 +319,14 @@ const TennisProfileEdit: NextPage = () => {
 
                     <div className=" mb-8">
                       <label htmlFor="grip_form" className="block">グリップ</label>
-                      {/* <select name="frequency" id="frequency" onChange={(e) => setFrequency(e.target.value)} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green"> */}
-                      <select name="grip_form" id="grip_form" onChange={onChangeGripForm} value={tennisProfile?.grip_form} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
-                        <option defaultValue="未設定" selected className="w-full">未設定</option>
-                        <option defaultValue="コンチネンタル">コンチネンタル</option>
-                        <option defaultValue="イースタン">イースタン</option>
-                        <option defaultValue="セミウェスタン">セミウェスタン</option>
-                        <option defaultValue="ウェスタン">ウェスタン</option>
-                        <option defaultValue="フルウェスタン">フルウェスタン</option>
+                      <select name="grip_form" id="grip_form" onChange={onChangeGripForm} value={gripForm} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
+                        <option value="未設定">未設定</option>
+                        <option value="コンチネンタル">コンチネンタル</option>
+                        <option value="イースタン">イースタン</option>
+                        <option value="セミウェスタン">セミウェスタン</option>
+                        <option value="ウェスタン">ウェスタン</option>
+                        <option value="フルウェスタン">フルウェスタン</option>
                       </select>
-                      {/* <input type="email" name="email" defaultValue={user.email} onChange={(e) => set(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green" /> */}
                       {errors.grip_form.length !== 0 &&
                         errors.grip_form.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                       }
@@ -340,16 +334,14 @@ const TennisProfileEdit: NextPage = () => {
 
                     <div className=" mb-8">
                       <label htmlFor="favarit_shot" className="block">好きなショット</label>
-                      {/* <select name="frequency" id="frequency" onChange={(e) => setFrequency(e.target.value)} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green"> */}
-                      <select name="favarit_shot" id="favarit_shot" onChange={onChangeFavaritShot} value={tennisProfile?.favarit_shot} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
-                        <option defaultValue="未設定" selected className="w-full">未設定</option>
-                        <option defaultValue="フォアハンド">フォアハンド</option>
-                        <option defaultValue="バックハンド">バックハンド</option>
-                        <option defaultValue="サーブ">サーブ</option>
-                        <option defaultValue="フォアハンドボレー">フォアハンドボレー</option>
-                        <option defaultValue="バックハンドボレー">バックハンドボレー</option>
+                      <select name="favarit_shot" id="favarit_shot" onChange={onChangeFavaritShot} value={favaritShot} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
+                        <option value="未設定">未設定</option>
+                        <option value="フォアハンド">フォアハンド</option>
+                        <option value="バックハンド">バックハンド</option>
+                        <option value="サーブ">サーブ</option>
+                        <option value="フォアハンドボレー">フォアハンドボレー</option>
+                        <option value="バックハンドボレー">バックハンドボレー</option>
                       </select>
-                      {/* <input type="email" name="email" defaultValue={user.email} onChange={(e) => set(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green" /> */}
                       {errors.favarit_shot.length !== 0 &&
                         errors.favarit_shot.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                       }
@@ -357,16 +349,14 @@ const TennisProfileEdit: NextPage = () => {
 
                     <div className=" mb-8">
                       <label htmlFor="weak_shot" className="block">苦手なショット</label>
-                      {/* <select name="frequency" id="frequency" onChange={(e) => setFrequency(e.target.value)} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green"> */}
-                      <select name="weak_shot" id="weak_shot" onChange={onChangeWeakShot} value={tennisProfile?.weak_shot} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
-                        <option defaultValue="未設定" selected className="w-full">未設定</option>
-                        <option defaultValue="フォアハンド">フォアハンド</option>
-                        <option defaultValue="バックハンド">バックハンド</option>
-                        <option defaultValue="サーブ">サーブ</option>
-                        <option defaultValue="フォアハンドボレー">フォアハンドボレー</option>
-                        <option defaultValue="バックハンドボレー">バックハンドボレー</option>
+                      <select name="weak_shot" id="weak_shot" onChange={onChangeWeakShot} value={weakShot} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
+                        <option value="未設定">未設定</option>
+                        <option value="フォアハンド">フォアハンド</option>
+                        <option value="バックハンド">バックハンド</option>
+                        <option value="サーブ">サーブ</option>
+                        <option value="フォアハンドボレー">フォアハンドボレー</option>
+                        <option value="バックハンドボレー">バックハンドボレー</option>
                       </select>
-                      {/* <input type="email" name="email" defaultValue={user.email} onChange={(e) => set(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green" /> */}
                       {errors.weak_shot.length !== 0 &&
                         errors.weak_shot.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                       }
@@ -374,22 +364,20 @@ const TennisProfileEdit: NextPage = () => {
 
                     <div className=" mb-8">
                       <label htmlFor="age" className="block">年齢</label>
-                      {/* <select name="frequency" id="frequency" onChange={(e) => setFrequency(e.target.value)} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green"> */}
-                      <select name="age" id="age" onChange={onChangeAge} value={tennisProfile?.age} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
-                        <option defaultValue="未設定" selected className="w-full">未設定</option>
-                        <option defaultValue="１０代前半">１０代前半</option>
-                        <option defaultValue="１０代後半">１０代後半</option>
-                        <option defaultValue="２０代前半">２０代前半</option>
-                        <option defaultValue="２０代後半">２０代後半</option>
-                        <option defaultValue="３０代前半">３０代前半</option>
-                        <option defaultValue="３０代後半">３０代後半</option>
-                        <option defaultValue="４０代前半">４０代前半</option>
-                        <option defaultValue="４０代後半">４０代後半</option>
-                        <option defaultValue="５０代前半">５０代前半</option>
-                        <option defaultValue="５０代後半">５０代後半</option>
-                        <option defaultValue="６０代以上">６０代以上</option>
+                      <select name="age" id="age" onChange={onChangeAge} value={age} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
+                        <option value="未設定">未設定</option>
+                        <option value="１０代前半">１０代前半</option>
+                        <option value="１０代後半">１０代後半</option>
+                        <option value="２０代前半">２０代前半</option>
+                        <option value="２０代後半">２０代後半</option>
+                        <option value="３０代前半">３０代前半</option>
+                        <option value="３０代後半">３０代後半</option>
+                        <option value="４０代前半">４０代前半</option>
+                        <option value="４０代後半">４０代後半</option>
+                        <option value="５０代前半">５０代前半</option>
+                        <option value="５０代後半">５０代後半</option>
+                        <option value="６０代以上">６０代以上</option>
                       </select>
-                      {/* <input type="email" name="email" defaultValue={user.email} onChange={(e) => set(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green" /> */}
                       {errors.age.length !== 0 &&
                         errors.age.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                       }
@@ -397,13 +385,11 @@ const TennisProfileEdit: NextPage = () => {
 
                     <div className=" mb-8">
                       <label htmlFor="gender" className="block">性別</label>
-                      {/* <select name="frequency" id="frequency" onChange={(e) => setFrequency(e.target.value)} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green"> */}
-                      <select name="gender" id="gender" onChange={onChangeGender} value={tennisProfile?.gender} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
-                        <option defaultValue="未設定" selected className="w-full">未設定</option>
-                        <option defaultValue="男">男</option>
-                        <option defaultValue="女">女</option>
+                      <select name="gender" id="gender" onChange={onChangeGender} value={gender} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
+                        <option value="未設定">未設定</option>
+                        <option value="男">男</option>
+                        <option value="女">女</option>
                       </select>
-                      {/* <input type="email" name="email" defaultValue={user.email} onChange={(e) => set(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green" /> */}
                       {errors.gender.length !== 0 &&
                         errors.gender.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                       }
@@ -411,16 +397,14 @@ const TennisProfileEdit: NextPage = () => {
 
                     <div className=" mb-8">
                       <label htmlFor="height" className="block">背丈</label>
-                      {/* <select name="frequency" id="frequency" onChange={(e) => setFrequency(e.target.value)} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green"> */}
-                      <select name="height" id="height" onChange={onChangeHeight} value={tennisProfile?.height} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
-                        <option defaultValue="未設定" selected className="w-full">未設定</option>
-                        <option defaultValue="高い">高い</option>
-                        <option defaultValue="やや高い">やや高い</option>
-                        <option defaultValue="普通">普通</option>
-                        <option defaultValue="やや小柄">やや小柄</option>
-                        <option defaultValue="小柄">小柄</option>
+                      <select name="height" id="height" onChange={onChangeHeight} value={height} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
+                        <option value="未設定">未設定</option>
+                        <option value="高い">高い</option>
+                        <option value="やや高い">やや高い</option>
+                        <option value="普通">普通</option>
+                        <option value="やや小柄">やや小柄</option>
+                        <option value="小柄">小柄</option>
                       </select>
-                      {/* <input type="email" name="email" defaultValue={user.email} onChange={(e) => set(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green" /> */}
                       {errors.height.length !== 0 &&
                         errors.height.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                       }
@@ -428,13 +412,11 @@ const TennisProfileEdit: NextPage = () => {
 
                     <div className=" mb-8">
                       <label htmlFor="physique" className="block">体格</label>
-                      {/* <select name="frequency" id="frequency" onChange={(e) => setFrequency(e.target.value)} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green"> */}
-                      <select name="physique" id="physique" onChange={onChangePhysique} value={tennisProfile?.physique} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
-                        <option defaultValue="未設定" selected className="w-full">未設定</option>
-                        <option defaultValue="普通">普通</option>
-                        <option defaultValue="がっしり">がっしり</option>
+                      <select name="physique" id="physique" onChange={onChangePhysique} value={physique} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
+                        <option value="未設定">未設定</option>
+                        <option value="普通">普通</option>
+                        <option value="がっしり">がっしり</option>
                       </select>
-                      {/* <input type="email" name="email" defaultValue={user.email} onChange={(e) => set(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green" /> */}
                       {errors.physique.length !== 0 &&
                         errors.physique.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                       }
