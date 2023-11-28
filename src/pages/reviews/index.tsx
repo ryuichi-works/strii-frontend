@@ -53,7 +53,7 @@ type MyEquipment = {
   user: User
 }
 
-type Review = {
+export type Review = {
   id: number,
   equipment_id: number,
   match_rate: number,

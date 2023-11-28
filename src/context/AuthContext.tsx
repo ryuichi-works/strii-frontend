@@ -1,3 +1,4 @@
+import type { TennisProfile } from "@/pages/users/[id]/profile";
 import axios from "@/lib/axios";
 import { useRouter } from "next/router";
 import { useState, createContext, ReactNode, FC, useEffect, useLayoutEffect } from "react";
@@ -6,7 +7,8 @@ export type User = {
   id?: number,
   name: string,
   email: string,
-  file_path: string
+  file_path: string,
+  tennis_profile?: TennisProfile
 }
 
 export type Admin = {
