@@ -71,8 +71,16 @@ const MyEquipment = () => {
                         <p className="text-[14px] mb-2 md:text-[16px] md:h-[18px]">Baborat</p>
                         <p className="text-[14px] mb-2 md:text-[18px] md:text-center md:h-[20px]">RPM ブラスト</p>
                         <TextUnderBar className="w-[100%] max-w-[92px] mb-2 md:max-w-[185px]" />
-                        <p className="text-[14px] mb-2 md:text-[16px] md:h-[18px]">1.24ｍｍ</p>
-                        <p className="text-[14px] md:text-[16px] md:h-[18px]">50ポンド</p>
+
+                        {myEquipment?.stringing_way === 'hybrid' && (
+                          <>
+                            <p className="text-[14px] mb-2 md:text-[16px] md:h-[18px]">{myEquipment.main_gut_guage}ｍｍ</p>
+                            <p className="text-[14px] md:text-[16px] md:h-[18px]">{myEquipment?.cross_gut_tension}ポンド</p>
+                          </>
+                        )}
+                        
+                        <p className="text-[14px] mb-2 md:text-[16px] md:h-[18px]">{myEquipment?.main_gut_guage}/{myEquipment?.cross_gut_guage}ｍｍ</p>
+                        <p className="text-[14px] md:text-[16px] md:h-[18px]">{myEquipment?.main_gut_tension}/{myEquipment?.cross_gut_tension}ポンド</p>
                       </div>
                     </div>
 
@@ -150,23 +158,5 @@ const MyEquipment = () => {
     </>
   );
 }
-
-// const SubHeading: React.FC<{ text: string, className?: string }> = ({
-//   text,
-//   className
-// }) => {
-//   return (
-//     <h2 className={`${className}`}>{text}</h2>
-//   );
-// }
-
-// const TextUnderBar: React.FC<{ barColor?: string, className?: string }> = ({
-//   barColor = 'border-sub-green',
-//   className
-// }) => {
-//   return (
-//     <hr className={`${barColor} ${className}`} />
-//   );
-// }
 
 export default MyEquipment;
