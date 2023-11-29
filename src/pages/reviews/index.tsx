@@ -28,7 +28,7 @@ type Gut = {
   gut_image: GutImage
 }
 
-type MyEquipment = {
+export type MyEquipment = {
   id: number,
   user_id: number,
   user_height: string,
