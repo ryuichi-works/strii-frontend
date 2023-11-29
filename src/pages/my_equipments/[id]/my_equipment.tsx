@@ -1,10 +1,12 @@
 import type { MyEquipment } from "@/pages/reviews";
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/context/AuthContext";
+import { useRouter } from "next/router";
+import axios from "@/lib/axios";
 
 import AuthCheck from "@/components/AuthCheck";
-import axios from "@/lib/axios";
-import { useRouter } from "next/router";
+import SubHeading from "@/components/SubHeading";
+import TextUnderBar from "@/components/TextUnderBar";
 
 const MyEquipment = () => {
   const router = useRouter();
@@ -41,7 +43,7 @@ const MyEquipment = () => {
               <div className="mb-6">
                 <h1 className="text-[18px] text-center">Equipment</h1>
               </div>
-              
+
               <div className="md:flex md:flex-col md:max-h-[700px] md:flex-wrap">
                 {/* ガットセクション */}
                 <div className="mb-8 md:w-[100%] md:max-w-[360px]">
@@ -149,22 +151,22 @@ const MyEquipment = () => {
   );
 }
 
-const SubHeading: React.FC<{ text: string, className?: string }> = ({
-  text,
-  className
-}) => {
-  return (
-    <h2 className={`${className}`}>{text}</h2>
-  );
-}
+// const SubHeading: React.FC<{ text: string, className?: string }> = ({
+//   text,
+//   className
+// }) => {
+//   return (
+//     <h2 className={`${className}`}>{text}</h2>
+//   );
+// }
 
-const TextUnderBar: React.FC<{ barColor?: string, className?: string }> = ({
-  barColor = 'border-sub-green',
-  className
-}) => {
-  return (
-    <hr className={`${barColor} ${className}`} />
-  );
-}
+// const TextUnderBar: React.FC<{ barColor?: string, className?: string }> = ({
+//   barColor = 'border-sub-green',
+//   className
+// }) => {
+//   return (
+//     <hr className={`${barColor} ${className}`} />
+//   );
+// }
 
 export default MyEquipment;
