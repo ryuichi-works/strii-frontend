@@ -12,7 +12,6 @@ const MyEquipmentList = () => {
   const { isAuth, user } = useContext(AuthContext);
 
   const [myEquipments, setMyEquipments] = useState<MyEquipment[]>();
-  console.log(myEquipments);
 
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/'
 
