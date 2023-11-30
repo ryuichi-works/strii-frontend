@@ -7,6 +7,7 @@ import Link from "next/link";
 
 import AuthCheck from "@/components/AuthCheck";
 import TextUnderBar from "@/components/TextUnderBar";
+import PrimaryHeading from "@/components/PrimaryHeading";
 
 const GutList = () => {
   const router = useRouter();
@@ -71,12 +72,6 @@ const GutList = () => {
         )}
       </AuthCheck>
     </>
-  );
-}
-
-const PrimaryHeading: React.FC<{ text: string, className?: string }> = ({ text, className }) => {
-  return (
-    <h1 className={`${className}`}>{text}</h1>
   );
 }
 
