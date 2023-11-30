@@ -15,7 +15,7 @@ type GutImage = {
   updated_at: string
 }
 
-type Gut = {
+export type Gut = {
   id: number,
   name_ja: string,
   name_en: string,
