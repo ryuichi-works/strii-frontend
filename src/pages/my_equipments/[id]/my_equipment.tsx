@@ -68,19 +68,23 @@ const MyEquipment = () => {
                       </div>
 
                       <div className="md:w-[185px] md:mt-[24px]">
-                        <p className="text-[14px] mb-2 md:text-[16px] md:h-[18px]">Baborat</p>
-                        <p className="text-[14px] mb-2 md:text-[18px] md:text-center md:h-[20px]">RPM ブラスト</p>
+                        <p className="text-[14px] mb-2 md:text-[16px] md:h-[18px]">{myEquipment?.main_gut.maker.name_ja}</p>
+                        <p className="text-[14px] mb-2 md:text-[18px] md:text-center md:h-[20px]">{myEquipment?.main_gut.name_ja}</p>
                         <TextUnderBar className="w-[100%] max-w-[92px] mb-2 md:max-w-[185px]" />
 
-                        {myEquipment?.stringing_way === 'hybrid' && (
-                          <>
-                            <p className="text-[14px] mb-2 md:text-[16px] md:h-[18px]">{myEquipment.main_gut_guage}ｍｍ</p>
-                            <p className="text-[14px] md:text-[16px] md:h-[18px]">{myEquipment?.cross_gut_tension}ポンド</p>
-                          </>
-                        )}
-                        
-                        <p className="text-[14px] mb-2 md:text-[16px] md:h-[18px]">{myEquipment?.main_gut_guage}/{myEquipment?.cross_gut_guage}ｍｍ</p>
-                        <p className="text-[14px] md:text-[16px] md:h-[18px]">{myEquipment?.main_gut_tension}/{myEquipment?.cross_gut_tension}ポンド</p>
+                        {myEquipment?.stringing_way === 'hybrid'
+                          ? (
+                            <>
+                              <p className="text-[14px] mb-2 md:text-[16px] md:h-[18px]">{myEquipment.main_gut_guage.toFixed(2)}ｍｍ</p>
+                              <p className="text-[14px] md:text-[16px] md:h-[18px]">{myEquipment?.cross_gut_tension}ポンド</p>
+                            </>
+                          ) : (
+                            <>
+                              <p className="text-[14px] mb-2 md:text-[16px] md:h-[18px]">{myEquipment?.main_gut_guage.toFixed(2)}/{myEquipment?.cross_gut_guage.toFixed(2)}ｍｍ</p>
+                              <p className="text-[14px] md:text-[16px] md:h-[18px]">{myEquipment?.main_gut_tension}/{myEquipment?.cross_gut_tension}ポンド</p>
+                            </>
+                          )
+                        }
                       </div>
                     </div>
 
@@ -97,11 +101,11 @@ const MyEquipment = () => {
                           </div>
 
                           <div className="md:w-[185px] md:mt-[24px]">
-                            <p className="text-[14px] mb-2 md:text-[16px] md:h-[18px]">Baborat</p>
-                            <p className="text-[14px] mb-2 md:text-[18px] md:text-center md:h-[20px]">RPM ブラスト</p>
+                            <p className="text-[14px] mb-2 md:text-[16px] md:h-[18px]">{myEquipment?.cross_gut.maker.name_ja}</p>
+                            <p className="text-[14px] mb-2 md:text-[18px] md:text-center md:h-[20px]">{myEquipment?.cross_gut.name_ja}</p>
                             <TextUnderBar className="w-[100%] max-w-[92px] mb-2 md:max-w-[185px]" />
-                            <p className="text-[14px] mb-2 md:text-[16px] md:h-[18px]">1.24ｍｍ</p>
-                            <p className="text-[14px] md:text-[16px] md:h-[18px]">50ポンド</p>
+                            <p className="text-[14px] mb-2 md:text-[16px] md:h-[18px]">{myEquipment.cross_gut_guage.toFixed(2)}ｍｍ</p>
+                            <p className="text-[14px] md:text-[16px] md:h-[18px]">{myEquipment?.cross_gut_tension}ポンド</p>
                           </div>
                         </div>
                       </>
@@ -126,8 +130,8 @@ const MyEquipment = () => {
                     </div>
 
                     <div className="md:w-[185px]">
-                      <p className="text-[14px] mb-2 md:text-[16px]">baborat</p>
-                      <p className="text-[16px] mb-2 md:text-[18px]">ピュアアエロ</p>
+                      <p className="text-[14px] mb-2 md:text-[16px]">{myEquipment?.racket.maker.name_ja}</p>
+                      <p className="text-[16px] mb-2 md:text-[18px] md:text-center">{myEquipment?.racket.name_ja}</p>
                       <TextUnderBar className="w-[100%] max-w-[116px] md:max-w-[185px]" />
                     </div>
                   </div>
