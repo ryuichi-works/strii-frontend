@@ -41,7 +41,7 @@ const RacketList = () => {
         {isAuth && (
           <>
             {/* <h1>ラケット一覧ページ</h1> */}
-            <div className="container">
+            <div className="container mx-auto">
               <div className="text-center mb-6">
                 <PrimaryHeading text="Rackets" className="text-[18px] h-[20px] md:text-[20px] md:h-[22px]" />
               </div>
@@ -52,10 +52,10 @@ const RacketList = () => {
 
               {/* ラケットセクション */}
               <div>
-                <div className="w-[100%] max-w-[320px] mx-auto">
+                <div className="w-[100%] max-w-[320px] mx-auto md:max-w-[768px] md:flex md:flex-wrap md:justify-between">
                   {rackets?.map(racket => (
-                    <Link href={`/rackets/${racket.id}`} key={racket.id} className="block hover:opacity-80 hover:cursor-pointer">
-                      <div className="flex  mb-6 hover:opacity-80 hover:cursor-pointer">
+                    <Link href={`/rackets/${racket.id}`} key={racket.id} className="block hover:opacity-80 hover:cursor-pointer md:w-[100%] md:max-w-[360px]">
+                      <div className="flex  mb-6 hover:opacity-80 hover:cursor-pointer md:w-[100%] md:max-w-[360px]">
                         <div className="w-[120px] mr-6">
                           {racket.racket_image.file_path
                             ? <img src={`${baseImagePath}${racket.racket_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[160px]" />
@@ -63,10 +63,10 @@ const RacketList = () => {
                           }
                         </div>
 
-                        <div className="w-[100%] max-w-[176px] pt-4 ">
-                          <p className="text-[14px] mb-2 pl-2 ">{firstLetterToUpperCase(racket.maker.name_en)}</p>
-                          <p className="text-[16px] text-center mb-2">{racket.name_ja}</p>
-                          <TextUnderBar className="w-[100%] max-w-[176px]" />
+                        <div className="w-[100%] max-w-[176px] pt-4 md:max-w-[216px]">
+                          <p className="text-[14px] mb-2 pl-2 md:text-[16px]">{firstLetterToUpperCase(racket.maker.name_en)}</p>
+                          <p className="text-[16px] text-center mb-2 md:text-[18px]">{racket.name_ja}</p>
+                          <TextUnderBar className="w-[100%] max-w-[176px] md:max-w-[216px]" />
                         </div>
                       </div>
                     </Link>
