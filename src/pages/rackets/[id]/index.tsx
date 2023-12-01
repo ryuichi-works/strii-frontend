@@ -1,27 +1,26 @@
 import type { Racket } from "@/pages/users/[id]/profile";
-import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "@/context/AuthContext";
-import AuthCheck from "@/components/AuthCheck";
-import PrimaryHeading from "@/components/PrimaryHeading";
 import axios from "@/lib/axios";
+import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import TextUnderBar from "@/components/TextUnderBar";
+import { AuthContext } from "@/context/AuthContext";
+
 import Link from "next/link";
+import PrimaryHeading from "@/components/PrimaryHeading";
+import TextUnderBar from "@/components/TextUnderBar";
+import AuthCheck from "@/components/AuthCheck";
 
 import { firstLetterToUpperCase } from "@/modules/firstLetterToUpperCase";
 
 const RacketShow = () => {
   const router = useRouter();
 
-  const [id, setId] = useState(router.query.id)
+  const [id, setId] = useState(router.query.id);
 
   const { isAuth, user } = useContext(AuthContext);
 
   const [racket, setRacket] = useState<Racket>();
-  console.log(racket);
 
   const [otherRackets, setOtherRackets] = useState<Racket[]>();
-  console.log(otherRackets);
 
   const otherRacketsCount = 5;
 
@@ -54,7 +53,6 @@ const RacketShow = () => {
     <>
       <AuthCheck>
         {isAuth && (
-          // <h1>ラケット詳細ページ</h1>
           <div className="container mx-auto">
             <div className="text-center mb-6 md:mb-[48px]">
               <PrimaryHeading text="Rackets" className="text-[18px] h-[20px] md:text-[20px] md:h-[22px]" />
