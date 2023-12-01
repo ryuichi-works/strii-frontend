@@ -84,25 +84,25 @@ const RacketShow = () => {
                 <table className="flex justify-center w-[100%] max-w-[320px] md:max-w-[768px] ">
                   <thead className="w-[100%] max-w-[160px] md:max-w-[384px]">
                     <tr className="flex flex-col text-left ">
-                      <th className="font-normal text-[14px] min-h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:min-h-[50px] md:leading-[50px] md:pl-6">メーカー</th>
-                      <th className="font-normal text-[14px] min-h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:min-h-[50px] md:leading-[50px] md:pl-6">ヘッドサイズ</th>
-                      <th className="font-normal text-[14px] min-h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:min-h-[50px] md:leading-[50px] md:pl-6">重さ</th>
-                      <th className="font-normal text-[14px] min-h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:min-h-[50px] md:leading-[50px] md:pl-6">長さ</th>
-                      <th className="font-normal text-[14px] min-h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:min-h-[50px] md:leading-[50px] md:pl-6">バランス</th>
-                      <th className="font-normal text-[14px] min-h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:min-h-[50px] md:leading-[50px] md:pl-6">ストリングパターン</th>
-                      <th className="font-normal text-[14px] min-h-[32px] leading-[32px] p-[0px] pl-1 border-y border-sub-green md:text-[16px] md:min-h-[50px] md:leading-[50px] md:pl-6">フレーム厚</th>
+                      <th className="font-normal text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px] md:pl-6">メーカー</th>
+                      <th className="font-normal text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px] md:pl-6">ヘッドサイズ</th>
+                      <th className="font-normal text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px] md:pl-6">重さ</th>
+                      <th className="font-normal text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px] md:pl-6">長さ</th>
+                      <th className="font-normal text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px] md:pl-6">バランス</th>
+                      <th className="font-normal text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px] md:pl-6">ストリングパターン</th>
+                      <th className="font-normal text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-y border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px] md:pl-6">フレーム厚</th>
                     </tr>
                   </thead>
 
                   <tbody className="w-[100%] max-w-[320px] md:max-w-[384px]">
                     <tr className="flex flex-col text-left">
-                      <td className="text-[14px] min-h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:min-h-[50px] md:leading-[50px]">{racket?.maker.name_ja}</td>
-                      <td className="text-[14px] min-h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:min-h-[50px] md:leading-[50px]">未登録</td>
-                      <td className="text-[14px] min-h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:min-h-[50px] md:leading-[50px]">未登録</td>
-                      <td className="text-[14px] min-h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:min-h-[50px] md:leading-[50px]">未登録</td>
-                      <td className="text-[14px] min-h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:min-h-[50px] md:leading-[50px]">未登録</td>
-                      <td className="text-[14px] min-h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:min-h-[50px] md:leading-[50px]">未登録</td>
-                      <td className="text-[14px] min-h-[32px] leading-[32px] p-[0px] pl-1 border-y border-sub-green md:text-[16px] md:min-h-[50px] md:leading-[50px]">未登録</td>
+                      <td className="text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px]">{racket?.maker.name_ja}</td>
+                      <td className="text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px]">未登録</td>
+                      <td className="text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px]">未登録</td>
+                      <td className="text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px]">未登録</td>
+                      <td className="text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px]">未登録</td>
+                      <td className="text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px]">未登録</td>
+                      <td className="text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-y border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px]">未登録</td>
                     </tr>
                   </tbody>
                 </table>
