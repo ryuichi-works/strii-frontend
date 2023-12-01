@@ -1,12 +1,12 @@
 import type { Racket } from "../users/[id]/profile";
+import axios from "@/lib/axios";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/context/AuthContext";
+import { useRouter } from "next/router";
 
+import Link from "next/link";
 import AuthCheck from "@/components/AuthCheck";
 import PrimaryHeading from "@/components/PrimaryHeading";
-import axios from "@/lib/axios";
-import { useRouter } from "next/router";
-import Link from "next/link";
 import TextUnderBar from "@/components/TextUnderBar";
 
 import { firstLetterToUpperCase } from "@/modules/firstLetterToUpperCase";
@@ -14,10 +14,9 @@ import { firstLetterToUpperCase } from "@/modules/firstLetterToUpperCase";
 const RacketList = () => {
   const router = useRouter();
 
-  const { isAuth, user, setUser, setIsAuth } = useContext(AuthContext);
+  const { isAuth, user } = useContext(AuthContext);
 
   const [rackets, setRackets] = useState<Racket[]>();
-  console.log(rackets);
 
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/';
 
@@ -40,7 +39,6 @@ const RacketList = () => {
       <AuthCheck>
         {isAuth && (
           <>
-            {/* <h1>ラケット一覧ページ</h1> */}
             <div className="container mx-auto">
               <div className="text-center mb-6">
                 <PrimaryHeading text="Rackets" className="text-[18px] h-[20px] md:text-[20px] md:h-[22px]" />
