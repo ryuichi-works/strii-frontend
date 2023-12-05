@@ -103,8 +103,6 @@ export default async function getCroppedImg(
   //canvas要素をurl->blob->fileにそれぞれ変換してreturn
 
   return new Promise(async (resolve, reject) => {
-
-
     const url: string = croppedCanvas.toDataURL('image/jpeg');
 
     const file: File = await fetch(url)
