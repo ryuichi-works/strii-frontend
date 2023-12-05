@@ -92,6 +92,7 @@ const Header: React.FC = () => {
                   <li><Link href={'/guts'} className="mr-4">ストリング</Link></li>
                   <li><Link href={'/rackets'} className="mr-4">ラケット</Link></li>
                   <li><Link href={'/gut_images/register'} className="mr-4">ストリング画像提供</Link></li>
+                  <li><Link href={'/racket_images/register'} className="mr-4">ラケット画像提供</Link></li>
                   <li><Link href={`/users/${user.id}/profile`} className="mr-4">マイページ</Link></li>
 
                   <li>
@@ -152,6 +153,7 @@ const Header: React.FC = () => {
                   <li><Link href={'/guts'} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">ストリング</Link></li>
                   <li><Link href={'/rackets'} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">ラケット</Link></li>
                   <li><Link href={'/gut_images/register'} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">ストリング画像提供</Link></li>
+                  <li><Link href={'/racket_images/register'} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">ラケット画像提供</Link></li>
                   <li><Link href={`/users/${user.id}/profile`} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">マイページ</Link></li>
 
                   <li>
