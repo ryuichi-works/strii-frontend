@@ -90,21 +90,21 @@ const GutImageRegister: NextPage = () => {
 
     await csrf();
 
-    await axios.post('api/gut_images', registerData, {
+    await axios.post('api/racket_images', registerData, {
       headers: {
         'X-Xsrf-Token': Cookies.get('XSRF-TOKEN'),
         'Content-Type': 'multipart/form-data;'
       }
     }).then(async (res) => {
-      console.log('ストリング画像を登録しました');
+      console.log('ラケット画像を登録しました');
 
-      router.push('/gut_images');
+      router.push('/racket_images');
     }).catch((e) => {
       console.log(e);
       const newErrors = { title: [], file: [], ...e.response.data.errors };
       setErrors(newErrors);
 
-      console.log('基本プロフィール更新に失敗しました。');
+      console.log('ラケット画像登録に失敗しました。');
     })
   }
 
@@ -115,7 +115,7 @@ const GutImageRegister: NextPage = () => {
           <>
             <div className="container mx-auto mb-[48px]">
               <div className="text-center mb-6 md:mb-[48px]">
-                <PrimaryHeading text="ストリング画像登録" className="text-[18px] h-[20px] md:text-[20px] md:h-[22px]" />
+                <PrimaryHeading text="ラケット画像登録" className="text-[18px] h-[20px] md:text-[20px] md:h-[22px]" />
               </div>
 
               <div>
@@ -150,7 +150,7 @@ const GutImageRegister: NextPage = () => {
                                 crop={crop}
                                 rotation={rotation}
                                 zoom={zoom}
-                                aspect={1 / 1}
+                                aspect={3 / 4}
                                 onCropChange={setCrop}
                                 onRotationChange={setRotation}
                                 onCropComplete={onCropComplete}
