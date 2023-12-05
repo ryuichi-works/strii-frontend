@@ -8,8 +8,9 @@ import axios from "@/lib/axios";
 import Cookies from "js-cookie";
 
 import Cropper, { type Point, Area } from "react-easy-crop";
-import getCroppedImg from "@/modules/cropImage";
+import getCroppedImg, { CropedImageInfo } from "@/modules/cropImage";
 import { useRouter } from "next/router";
+import PrimaryHeading from "@/components/PrimaryHeading";
 
 const GutImageRegister: NextPage = () => {
   const router = useRouter();
@@ -43,7 +44,9 @@ const GutImageRegister: NextPage = () => {
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area>()
   const [croppedImage, setCroppedImage] = useState<File>();
+  const [croppedImageUrl, setCroppedImageUrl] = useState<string>();
   console.log('state cropppedImage', croppedImage);
+  console.log('croppedImageUrl', croppedImageUrl);
 
 
   const onCropComplete = (croppedArea: Area, croppedAreaPixels: Area) => {
@@ -53,14 +56,31 @@ const GutImageRegister: NextPage = () => {
 
   const showCroppedImage = async () => {
     try {
-      const croppedImage: File = await getCroppedImg(
+      // const croppedImage: File = await getCroppedImg(
+      const cropedImageInfo: CropedImageInfo = await getCroppedImg(
         imageFileUrl,
         croppedAreaPixels as Area,
         rotation
-      ) as File
+      ) as CropedImageInfo
+
+      const croppedImage = cropedImageInfo.file;
+
+      const croppedImageUrl = cropedImageInfo.url
 
       console.log('型', typeof (croppedImage), croppedImage);
-      setCroppedImage(croppedImage)
+
+      setCroppedImage(croppedImage);
+
+      setCroppedImageUrl(croppedImageUrl);
+
+      // const croppedImage: File = await getCroppedImg(
+      //   imageFileUrl,
+      //   croppedAreaPixels as Area,
+      //   rotation
+      // ) as File
+
+      // console.log('型', typeof (croppedImage), croppedImage);
+      // setCroppedImage(croppedImage)
     } catch (e) {
       console.error(e)
     }
@@ -116,94 +136,113 @@ const GutImageRegister: NextPage = () => {
       <AuthCheck>
         {isAuth && (
           <>
-            <h1>ストリング画像登録</h1>
+            {/* <h1>ストリング画像登録</h1> */}
 
-            <div className="container mx-auto">
-
+            <div className="container mx-auto mb-[48px]">
+              <div className="text-center mb-6">
+                <PrimaryHeading text="ストリング画像登録" className="text-[18px] h-[20px] md:text-[20px] md:h-[22px]" />
+              </div>
 
               <div>
-                <form action="" onSubmit={uploadGutImage}>
-                  <div className="mb-6">
-                    <label htmlFor="title" className="block">タイトル</label>
-                    <input type="text" name="title" onChange={(e) => setTitle(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green" />
-                    {/* {errors.name.length !== 0 &&
+                <div className="w-[100%] max-w-[320px] mx-auto">
+                  <form action="" onSubmit={uploadGutImage}>
+                    <div className="mb-6">
+                      <label htmlFor="title" className="block">画像タイトル</label>
+                      <input type="text" name="title" onChange={(e) => setTitle(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green" />
+                      {/* {errors.name.length !== 0 &&
                         errors.name.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                       } */}
-                  </div>
+                    </div>
 
-                  <div className="flex flex-col mb-6">
-                    <label htmlFor="gut_image_file">ストリング画像ファイル</label>
-                    <input type="file" name="gut_image_file" accept=".jpg, .jpeg, .png" onChange={onChangeFile} className="h-8" />
-                    {/* {errors.file.length !== 0 &&
+                    <div className="flex flex-col mb-6">
+                      <label htmlFor="gut_image_file">画像ファイル</label>
+                      <input type="file" name="gut_image_file" accept=".jpg, .jpeg, .png" onChange={onChangeFile} className="h-8" />
+                      {/* {errors.file.length !== 0 &&
                         errors.file.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                       } */}
-                  </div>
+                    </div>
 
-                  {imageFileUrl && (
-                    <>
-                      <div>
-                        <p>画像トリミング</p>
-                        <div className="h-[300px] relative ">
-                          <Cropper
-                            image={imageFileUrl}
-                            crop={crop}
-                            rotation={rotation}
-                            zoom={zoom}
-                            aspect={1 / 1}
-                            onCropChange={setCrop}
-                            onRotationChange={setRotation}
-                            onCropComplete={onCropComplete}
-                            onZoomChange={setZoom}
-                          />
-                        </div>
+                    {/* トリミングエリア */}
+                    <div className="mb-6 ">
+                      <p>画像トリミング</p>
+                      <div className="border-t rounded min-h-[40px]">
 
-                        <div className="flex justify-center">
-                          ズーム：
-                          <input
-                            type="range"
-                            value={zoom}
-                            min={1}
-                            max={3}
-                            step={0.1}
-                            aria-labelledby="Zoom"
-                            onChange={(e) => {
-                              setZoom(Number(e.target.value))
-                            }}
-                            className="zoom-range"
-                          />
-                        </div>
+                        {imageFileUrl && (
+                          <>
+                            <div className="h-[300px] relative mb-8">
+                              <Cropper
+                                image={imageFileUrl}
+                                crop={crop}
+                                rotation={rotation}
+                                zoom={zoom}
+                                aspect={1 / 1}
+                                onCropChange={setCrop}
+                                onRotationChange={setRotation}
+                                onCropComplete={onCropComplete}
+                                onZoomChange={setZoom}
+                              />
+                            </div>
 
-                        <div className="flex justify-center mt-6">
-                          回転：
-                          <input
-                            type="range"
-                            value={rotation}
-                            min={0}
-                            max={360}
-                            step={0.5}
-                            aria-labelledby="Rotation"
-                            onChange={(e) => {
-                              setRotation(Number(e.target.value))
-                            }}
-                            className="zoom-range"
-                          />
-                        </div>
+                            <div className="flex justify-start w-[100%] max-w-[288px] mx-auto mb-8">
+                              <span className="inline-block h-[16px] text-[14px] text-center w-[100%] max-w-[68px]">ズーム：</span>
+                              <input
+                                type="range"
+                                value={zoom}
+                                min={1}
+                                max={3}
+                                step={0.1}
+                                aria-labelledby="Zoom"
+                                onChange={(e) => {
+                                  setZoom(Number(e.target.value))
+                                }}
+                                className="inline-block h-[16px] w-[100%] max-w-[220px]"
+                              />
+                            </div>
 
-                        <div>
-                          <p onClick={showCroppedImage} className="inline-block border p-2">トリミングを完了</p>
-                        </div>
+                            <div className="flex justify-center mt-6 mb-[40px]">
+
+                              <span className="inline-block h-[16px] text-[14px] text-center w-[100%] max-w-[68px]" >回転：</span>
+                              <input
+                                type="range"
+                                value={rotation}
+                                min={0}
+                                max={360}
+                                step={0.5}
+                                aria-labelledby="Rotation"
+                                onChange={(e) => {
+                                  setRotation(Number(e.target.value))
+                                }}
+                                className="inline-block h-[16px] w-[100%] max-w-[220px]"
+                              />
+                            </div>
+
+                            <div className="flex justify-end">
+                              <p onClick={showCroppedImage} className="inline-block border  hover:cursor-pointer hover:opacity-60 font-semibold text-white text-[14px] w-[192px] h-8 rounded  bg-sub-green text-center leading-[32px]">トリミングを完了</p>
+                            </div>
+                          </>
+                        )}
                       </div>
-                    </>
-                  )}
+                    </div>
+
+                    <div className="mb-[64px]">
+                      {croppedImageUrl && (
+                        <>
+                          <p className="text-[14px] mb-1">プレビュー</p>
+                          <img src={croppedImageUrl} alt="" className="w-[100%] max-w-[160px]" />
+                        </>
+
+                      )}
+                    </div>
 
 
-                  <div>
-                    {croppedImage &&
-                      <button type="submit" className="border p-2">画像を追加する</button>
-                    }
-                  </div>
+                    <div className="flex justify-center ">
+                      {croppedImage &&
+                        <button type="submit" className="text-white text-[14px] w-[200px] h-8 rounded  bg-sub-green">画像を追加する</button>
+                      }
+                    </div>
 
-                </form>
+                  </form>
+                </div>
               </div>
 
               {/* //モーダル */}
