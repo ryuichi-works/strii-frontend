@@ -1,15 +1,15 @@
-import AuthCheck from "@/components/AuthCheck";
-import { AuthContext } from "@/context/AuthContext";
-import { NextPage } from "next";
-import { useContext, useState } from "react";
-// import ModalSpSize from "@/components/ModalSpSize";
-import CloseIcon from "@/components/CloseIcon";
+import type { NextPage } from "next";
+
 import axios from "@/lib/axios";
 import Cookies from "js-cookie";
-
 import Cropper, { type Point, Area } from "react-easy-crop";
 import getCroppedImg, { CropedImageInfo } from "@/modules/cropImage";
+
+import { useContext, useState } from "react";
 import { useRouter } from "next/router";
+import { AuthContext } from "@/context/AuthContext";
+
+import AuthCheck from "@/components/AuthCheck";
 import PrimaryHeading from "@/components/PrimaryHeading";
 
 const GutImageRegister: NextPage = () => {
@@ -18,10 +18,8 @@ const GutImageRegister: NextPage = () => {
   const { isAuth, user } = useContext(AuthContext);
 
   const [title, setTitle] = useState<string>('');
-  console.log('title', title);
 
   const [imageFileUrl, setImageFileUrl] = useState<string>('');
-  console.log(imageFileUrl);
 
   const onChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
@@ -37,26 +35,19 @@ const GutImageRegister: NextPage = () => {
     }
   }
 
-
-
   const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
   const [rotation, setRotation] = useState(0)
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area>()
   const [croppedImage, setCroppedImage] = useState<File>();
   const [croppedImageUrl, setCroppedImageUrl] = useState<string>();
-  console.log('state cropppedImage', croppedImage);
-  console.log('croppedImageUrl', croppedImageUrl);
-
 
   const onCropComplete = (croppedArea: Area, croppedAreaPixels: Area) => {
-    // console.log(croppedArea, croppedAreaPixels);
     setCroppedAreaPixels(croppedAreaPixels)
   };
 
   const showCroppedImage = async () => {
     try {
-      // const croppedImage: File = await getCroppedImg(
       const cropedImageInfo: CropedImageInfo = await getCroppedImg(
         imageFileUrl,
         croppedAreaPixels as Area,
@@ -67,20 +58,9 @@ const GutImageRegister: NextPage = () => {
 
       const croppedImageUrl = cropedImageInfo.url
 
-      console.log('型', typeof (croppedImage), croppedImage);
-
       setCroppedImage(croppedImage);
 
       setCroppedImageUrl(croppedImageUrl);
-
-      // const croppedImage: File = await getCroppedImg(
-      //   imageFileUrl,
-      //   croppedAreaPixels as Area,
-      //   rotation
-      // ) as File
-
-      // console.log('型', typeof (croppedImage), croppedImage);
-      // setCroppedImage(croppedImage)
     } catch (e) {
       console.error(e)
     }
@@ -90,12 +70,13 @@ const GutImageRegister: NextPage = () => {
     setCroppedImage(undefined);
   }
 
+  type Errors = {
+    title: string[],
+    file: string[]
+  }
 
-  // const [showingModal, setShowingModal] = useState<boolean>(false);
+  const [errors, setErrors] = useState<Errors>({ title: [], file: [] });
 
-  // const toggleModal = () => {
-  //   setShowingModal(prev => !prev);
-  // }
 
   const csrf = async () => await axios.get('/sanctum/csrf-cookie');
 
@@ -115,17 +96,13 @@ const GutImageRegister: NextPage = () => {
         'Content-Type': 'multipart/form-data;'
       }
     }).then(async (res) => {
-      setCroppedImage(undefined);
-      setCrop({ x: 0, y: 0 });
-      setRotation(0);
-      setZoom(1);
-      setCroppedAreaPixels(undefined);
-      setTitle('');
       console.log('ストリング画像を登録しました');
+
+      router.push('/gut_images');
     }).catch((e) => {
       console.log(e);
-      // const newErrors = {name: [], email: [], password: [], file: [], ...e.response.data.errors };
-      // setErrors(newErrors);
+      const newErrors = { title: [], file: [], ...e.response.data.errors };
+      setErrors(newErrors);
 
       console.log('基本プロフィール更新に失敗しました。');
     })
@@ -136,36 +113,34 @@ const GutImageRegister: NextPage = () => {
       <AuthCheck>
         {isAuth && (
           <>
-            {/* <h1>ストリング画像登録</h1> */}
-
             <div className="container mx-auto mb-[48px]">
-              <div className="text-center mb-6">
+              <div className="text-center mb-6 md:mb-[48px]">
                 <PrimaryHeading text="ストリング画像登録" className="text-[18px] h-[20px] md:text-[20px] md:h-[22px]" />
               </div>
 
               <div>
-                <div className="w-[100%] max-w-[320px] mx-auto">
+                <div className="w-[100%] max-w-[320px] mx-auto md:max-w-[380px]">
                   <form action="" onSubmit={uploadGutImage}>
                     <div className="mb-6">
-                      <label htmlFor="title" className="block">画像タイトル</label>
+                      <label htmlFor="title" className="block mb-1 text-[14px] md:text-[16px] md:mb-2">画像タイトル</label>
                       <input type="text" name="title" onChange={(e) => setTitle(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green" />
-                      {/* {errors.name.length !== 0 &&
-                        errors.name.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                      } */}
+                      {errors.title.length !== 0 &&
+                        errors.title.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                      }
                     </div>
 
                     <div className="flex flex-col mb-6">
-                      <label htmlFor="gut_image_file">画像ファイル</label>
+                      <label htmlFor="gut_image_file" className="text-[14px] mb-1 md:text-[16px] md:mb-2">画像ファイル</label>
                       <input type="file" name="gut_image_file" accept=".jpg, .jpeg, .png" onChange={onChangeFile} className="h-8" />
-                      {/* {errors.file.length !== 0 &&
+                      {errors.file.length !== 0 &&
                         errors.file.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                      } */}
+                      }
                     </div>
 
                     {/* トリミングエリア */}
                     <div className="mb-6 ">
                       <p>画像トリミング</p>
-                      <div className="border-t rounded min-h-[40px]">
+                      <div className="border-t rounded min-h-[40px] w-[100%] max-w-[320px] md:max-w-[380px]">
 
                         {imageFileUrl && (
                           <>
@@ -184,7 +159,7 @@ const GutImageRegister: NextPage = () => {
                             </div>
 
                             <div className="flex justify-start w-[100%] max-w-[288px] mx-auto mb-8">
-                              <span className="inline-block h-[16px] text-[14px] text-center w-[100%] max-w-[68px]">ズーム：</span>
+                              <span className="inline-block h-[16px] text-[14px] text-center w-[100%] max-w-[68px] md:text-[16px] md:h-[18px] leading-[18px]">ズーム：</span>
                               <input
                                 type="range"
                                 value={zoom}
@@ -195,13 +170,13 @@ const GutImageRegister: NextPage = () => {
                                 onChange={(e) => {
                                   setZoom(Number(e.target.value))
                                 }}
-                                className="inline-block h-[16px] w-[100%] max-w-[220px]"
+                                className="inline-block h-[16px] w-[100%] max-w-[220px] md:h-[18px]"
                               />
                             </div>
 
                             <div className="flex justify-center mt-6 mb-[40px]">
 
-                              <span className="inline-block h-[16px] text-[14px] text-center w-[100%] max-w-[68px]" >回転：</span>
+                              <span className="inline-block h-[16px] text-[14px] text-center w-[100%] max-w-[68px] md:text-[16px] md:h-[18px] leading-[18px]" >回転：</span>
                               <input
                                 type="range"
                                 value={rotation}
@@ -212,52 +187,50 @@ const GutImageRegister: NextPage = () => {
                                 onChange={(e) => {
                                   setRotation(Number(e.target.value))
                                 }}
-                                className="inline-block h-[16px] w-[100%] max-w-[220px]"
+                                className="inline-block h-[16px] w-[100%] max-w-[220px] md:h-[18px]"
                               />
                             </div>
 
                             <div className="flex justify-end">
-                              <p onClick={showCroppedImage} className="inline-block border  hover:cursor-pointer hover:opacity-60 font-semibold text-white text-[14px] w-[192px] h-8 rounded  bg-sub-green text-center leading-[32px]">トリミングを完了</p>
+                              <p onClick={showCroppedImage} className="inline-block border  hover:cursor-pointer hover:opacity-60 font-semibold text-white text-[14px] w-[192px] h-8 rounded  bg-sub-green text-center leading-[32px] md:text-[16px]">トリミングを完了</p>
                             </div>
                           </>
                         )}
                       </div>
                     </div>
 
-                    <div className="mb-[64px]">
-                      {croppedImageUrl && (
-                        <>
-                          <p className="text-[14px] mb-1">プレビュー</p>
-                          <img src={croppedImageUrl} alt="" className="w-[100%] max-w-[160px]" />
-                        </>
+                    <div className="md:flex justify-between items-start md:w-[100%] md:max-w-[380px] ">
+                      {/* プレビュー */}
+                      <div className="mb-[64px] md:mb-0">
+                        {croppedImageUrl && (
+                          <>
+                            <p className="text-[14px] mb-1 md:text-[16px] md:mb-2">プレビュー</p>
+                            <img src={croppedImageUrl} alt="" className="w-[100%] max-w-[160px] md:max-w-[180px]" />
+                          </>
+                        )}
+                      </div>
 
-                      )}
+
+                      <div className="flex justify-center md:mt-[32px]">
+                        {croppedImage && (
+                          <>
+                            <div>
+                              <button type="submit" className="text-white text-[14px] w-[200px] h-8 rounded  bg-sub-green md:w-[150px] md:text-[16px] md:block md:ml-auto">画像を追加する</button>
+                              {errors.title.length !== 0 &&
+                                errors.title.map((message, i) => <p key={i} className="text-red-400 mt-2">{message}</p>)
+                              }
+                              {errors.file.length !== 0 &&
+                                errors.file.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                              }
+                            </div>
+                          </>
+                        )}
+                      </div>
                     </div>
-
-
-                    <div className="flex justify-center ">
-                      {croppedImage &&
-                        <button type="submit" className="text-white text-[14px] w-[200px] h-8 rounded  bg-sub-green">画像を追加する</button>
-                      }
-                    </div>
-
                   </form>
                 </div>
               </div>
-
-              {/* //モーダル */}
-              {/* <div className="h-screen bg-sub-gray bg-opacity-30">
-                <div className="pt-6">
-                  <div className="flex justify-end w-[100%] max-w-[320px] mx-auto">
-                    <span className="inline-block" onClick={toggleModal}>
-                      <CloseIcon size={32} />
-                    </span>
-                  </div>
-                </div>
-              </div> */}
-
             </div>
-
           </>
         )}
       </AuthCheck >
