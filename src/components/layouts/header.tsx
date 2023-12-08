@@ -105,7 +105,7 @@ const Header: React.FC = () => {
 
               {admin.id && (
                 <>
-                  <li><Link href={`admins/${admin.id}/dashboard`} className="mr-4">dashboard</Link></li>
+                  <li><Link href={`/admins/${admin.id}/dashboard`} className="mr-4">dashboard</Link></li>
                   <li><Link href={'/guts'} className="mr-4">ストリング</Link></li>
                   <li><Link href={'/guts/register'} className="mr-4">ストリング登録</Link></li>
                   <li><Link href={'/gut_images/register'} className="mr-4">ストリング画像提供</Link></li>
@@ -169,7 +169,7 @@ const Header: React.FC = () => {
 
               {admin.id && (
                 <>
-                  <li><Link href={`admins/${admin.id}/dashboard`} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green w-full">dashboard</Link></li>
+                  <li><Link href={`/admins/${admin.id}/dashboard`} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green w-full">dashboard</Link></li>
                   <li><Link href={'/guts'} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">ストリング</Link></li>
                   <li><Link href={'/guts/register'} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">ストリング登録</Link></li>
                   <li><Link href={'/gut_images/register'} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">ストリング画像提供</Link></li>
