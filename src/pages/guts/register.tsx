@@ -6,8 +6,18 @@ import { AuthContext } from "@/context/AuthContext";
 import axios from "@/lib/axios";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { IoClose } from "react-icons/io5";
+
+export type GutImage = {
+  id: number,
+  file_path: string,
+  title: string,
+  created_at: string,
+  updated_at: string,
+  maker_id: number,
+  maker: Maker
+}
 
 const GutRegister: NextPage = () => {
   const router = useRouter();
@@ -26,10 +36,12 @@ const GutRegister: NextPage = () => {
   const [makers, setMakers] = useState<Maker[]>();
 
 
-  //検索用のstate
+  //検索関連のstate
   const [inputSearchWord, setInputSearchWord] = useState<string>('');
 
   const [inputSearchMaker, setInputSearchMaker] = useState<number | null>();
+
+  const [searchedGutImages, setSearchedGutImages] = useState<GutImage[]>();
 
   //モーダルの開閉に関するstate
   const [modalVisible, setModalVisible] = useState<boolean>(false);
@@ -46,8 +58,11 @@ const GutRegister: NextPage = () => {
   console.log('gutImageId', gutImageId);
   console.log('inputSearchWord', inputSearchWord);
   console.log('inputSearchMaker', inputSearchMaker);
+  console.log('searchedGutImages', searchedGutImages);
 
   const { admin, isAuthAdmin, } = useContext(AuthContext);
+
+  const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/'
 
   useEffect(() => {
     if (admin.id) {
@@ -90,6 +105,25 @@ const GutRegister: NextPage = () => {
     setModalVisibilityClassName('opacity-100 scale-100')
   }
 
+  //gutImage検索
+  const searchGutImages = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+      await axios.get('api/gut_images/search', {
+        params: {
+          several_words: inputSearchWord,
+          maker: inputSearchMaker
+        }
+      }).then((res) => {
+        setSearchedGutImages(res.data);
+      })
+
+      console.log('検索完了しました')
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
   return (
     <>
@@ -170,7 +204,7 @@ const GutRegister: NextPage = () => {
                     <IoClose size={48} />
                   </div>
 
-                  <form action="">
+                  <form action="" onSubmit={searchGutImages} className="mb-[24px]">
                     <div className="mb-6">
                       <label htmlFor="name_ja" className="block mb-1 text-[14px] md:text-[16px] md:mb-2">画像 検索ワード</label>
                       <input type="text" name="name_ja" onChange={(e) => setInputSearchWord(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green" />
@@ -195,8 +229,33 @@ const GutRegister: NextPage = () => {
                     <div className="flex justify-end">
                       <button type="submit" className="text-white font-bold text-[14px] w-[160px] h-8 rounded  bg-sub-green">検索する</button>
                     </div>
-
                   </form>
+
+                  {/* 検索結果表示欄 */}
+                  <div className="w-[100%] max-w-[320px]">
+                    <p className="text-[14px] mb-[16px]">検索結果</p>
+                    <div className="flex justify-between flex-wrap w-[100%] max-w-[320px]">
+                      {searchedGutImages?.map(gutImage => (
+                        <>
+                          {/* ガット画像情報カード */}
+                          <div className="bg-white p-2 rounded-lg w-[100%] max-w-[136px] hover:opacity-80 mb-6">
+                            <div className="w-[120px] mb-2">
+                              {gutImage.file_path && <img src={`${baseImagePath}${gutImage.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px]" />}
+                              {/* {gutImage.file_path
+                              ? <img src={`${baseImagePath}${gutImage.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px]" />
+                              : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} alt="ストリング画像" className="w-[120px] h-[120px]" />
+                            } */}
+                            </div>
+
+                            <p className="text-[14px] mb-1">{gutImage.maker.name_ja}</p>
+
+                            <p className="text-[14px]">{gutImage.title}</p>
+                          </div>
+                        </>
+                      ))}
+                    </div>
+
+                  </div>
                 </div>
               </div>
             </div>
