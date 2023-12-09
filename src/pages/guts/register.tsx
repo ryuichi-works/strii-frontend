@@ -35,6 +35,8 @@ const GutRegister: NextPage = () => {
 
   const [makers, setMakers] = useState<Maker[]>();
 
+  const [selectedGutImagePath, setSelectedGutImagePath] = useState<string>();
+
 
   //検索関連のstate
   const [inputSearchWord, setInputSearchWord] = useState<string>('');
@@ -125,6 +127,12 @@ const GutRegister: NextPage = () => {
     }
   }
 
+  const selectImage = (gutImage: GutImage) => {
+    setSelectedGutImagePath(gutImage.file_path);
+    setGutImageId(gutImage.id);
+    closeModal();
+  }
+
   return (
     <>
       <AuthAdminCheck>
@@ -185,7 +193,10 @@ const GutRegister: NextPage = () => {
                         </div>
 
                         <div className="w-[100%] max-w-[200px] h-[120px] flex justify-center">
-                          <img src="" alt="" className="w-[100%] max-w-[120px] border" />
+                          {selectedGutImagePath
+                            ? <img src={`${baseImagePath}${selectedGutImagePath}`} alt="" className="w-[100%] max-w-[120px] border" />
+                            : <img src={`${baseImagePath}images/guts/default_gut.jpg`} alt="" className="w-[100%] max-w-[120px] border" />
+                          }
                         </div>
                       </div>
                     </div>
@@ -238,13 +249,9 @@ const GutRegister: NextPage = () => {
                       {searchedGutImages?.map(gutImage => (
                         <>
                           {/* ガット画像情報カード */}
-                          <div className="bg-white p-2 rounded-lg w-[100%] max-w-[136px] hover:opacity-80 mb-6">
+                          <div onClick={() => selectImage(gutImage)} className="bg-white p-2 rounded-lg w-[100%] max-w-[136px] hover:opacity-80 mb-6">
                             <div className="w-[120px] mb-2">
                               {gutImage.file_path && <img src={`${baseImagePath}${gutImage.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px]" />}
-                              {/* {gutImage.file_path
-                              ? <img src={`${baseImagePath}${gutImage.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px]" />
-                              : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} alt="ストリング画像" className="w-[120px] h-[120px]" />
-                            } */}
                             </div>
 
                             <p className="text-[14px] mb-1">{gutImage.maker.name_ja}</p>
