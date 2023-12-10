@@ -4,6 +4,7 @@ import AuthAdminCheck from "@/components/AuthAdminCheck";
 import PrimaryHeading from "@/components/PrimaryHeading";
 import { AuthContext } from "@/context/AuthContext";
 import axios from "@/lib/axios";
+import Cookies from "js-cookie";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
@@ -35,7 +36,10 @@ const GutRegister: NextPage = () => {
 
   const [makers, setMakers] = useState<Maker[]>();
 
+  const [defaultGutImage, setDefaultGutImage] = useState<GutImage>();
+
   const [selectedGutImagePath, setSelectedGutImagePath] = useState<string>();
+  const [selectedGutImage, setSelectedGutImage] = useState<GutImage>();
 
 
   //検索関連のstate
@@ -67,17 +71,13 @@ const GutRegister: NextPage = () => {
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/'
 
   useEffect(() => {
-    if (admin.id) {
-      const getGutList = async () => {
-        await axios.get('api/makers').then(res => {
-          setMakers(res.data);
-        })
-      }
-
-      getGutList();
-    } else {
-      router.push('/admins/login')
+    const getGutList = async () => {
+      await axios.get('api/makers').then(res => {
+        setMakers(res.data);
+      })
     }
+
+    getGutList();
   }, [])
 
   const onChangeMaker = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -107,6 +107,18 @@ const GutRegister: NextPage = () => {
     setModalVisibilityClassName('opacity-100 scale-100')
   }
 
+  //エラーメッセージ関連
+  type Errors = {
+    name_ja: string[],
+    name_en: string[],
+    maker_id: string[],
+    image_id: string[],
+  }
+
+  const initialErrorVals = { name_ja: [], name_en: [], maker_id: [], image_id: [] };
+
+  const [errors, setErrors] = useState<Errors>(initialErrorVals);
+
   //gutImage検索
   const searchGutImages = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -127,10 +139,44 @@ const GutRegister: NextPage = () => {
     }
   }
 
+
   const selectImage = (gutImage: GutImage) => {
-    setSelectedGutImagePath(gutImage.file_path);
+    setSelectedGutImage(gutImage);
     setGutImageId(gutImage.id);
     closeModal();
+  }
+
+  //gut登録処理関連
+  const csrf = async () => await axios.get('/sanctum/csrf-cookie');
+
+  const registerGut = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const registerData = {
+      name_ja: inputNameJa,
+      name_en: inputNameEn,
+      maker_id: gutMakerId,
+      image_id: gutImageId,
+      need_posting_image: needPostingImage,
+    }
+
+    await csrf();
+
+    await axios.post('api/guts', registerData, {
+      headers: {
+        'X-Xsrf-Token': Cookies.get('XSRF-TOKEN'),
+      }
+    }).then(res => {
+      console.log('ストリングを新規登録しました。');
+
+      router.push('/guts');
+    }).catch((e) => {
+      const newErrors = { ...initialErrorVals, ...e.response.data.errors };
+
+      setErrors(newErrors);
+
+      console.log('ストリングの登録に失敗しました');
+    })
   }
 
   return (
@@ -146,21 +192,21 @@ const GutRegister: NextPage = () => {
               </div>
 
               <div className="w-[100%] max-w-[320px] md:w-[500px] mx-auto flex flex-col md:justify-center">
-                <form action="" >
+                <form action="" onSubmit={(e) => registerGut(e)}>
                   <div className="mb-6">
                     <label htmlFor="name_ja" className="block mb-1 text-[14px] md:text-[16px] md:mb-2">ストリング名(カナ)</label>
                     <input type="text" name="name_ja" onChange={(e) => setInputNameJa(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green" />
-                    {/* {errors.title.length !== 0 &&
-                        errors.title.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                      } */}
+                    {errors.name_ja.length !== 0 &&
+                      errors.name_ja.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                    }
                   </div>
 
                   <div className="mb-6">
-                    <label htmlFor="name_ja" className="block mb-1 text-[14px] md:text-[16px] md:mb-2">ストリング名(アルファベット)</label>
-                    <input type="text" name="name_ja" onChange={(e) => setInputNameEn(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green" />
-                    {/* {errors.title.length !== 0 &&
-                        errors.title.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                      } */}
+                    <label htmlFor="name_en" className="block mb-1 text-[14px] md:text-[16px] md:mb-2">ストリング名(アルファベット)</label>
+                    <input type="text" name="name_en" onChange={(e) => setInputNameEn(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green" />
+                    {errors.name_en.length !== 0 &&
+                      errors.name_en.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                    }
                   </div>
 
                   <div className=" mb-8">
@@ -171,9 +217,9 @@ const GutRegister: NextPage = () => {
                       {makers?.map((maker) => (<option key={maker.id} value={maker.id}>{maker.name_ja}</option>))}
                     </select>
 
-                    {/* {errors.grip_form.length !== 0 &&
-                        errors.grip_form.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                      } */}
+                    {errors.maker_id.length !== 0 &&
+                      errors.maker_id.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                    }
                   </div>
 
                   <div className="mb-6">
@@ -186,15 +232,15 @@ const GutRegister: NextPage = () => {
                     <input type="hidden" name="image_id" />
 
                     <div>
-                      <p className="mb-2">選択中：{ }</p>
+                      <p className="mb-2">選択中：{selectedGutImage ? selectedGutImage.title : 'デフォルト'}</p>
                       <div className="flex justify-between">
                         <div className="self-end">
                           <button type="button" onClick={openModal} className="text-white font-bold text-[14px] w-[80px] h-6 rounded  bg-sub-green">変更</button>
                         </div>
 
                         <div className="w-[100%] max-w-[200px] h-[120px] flex justify-center">
-                          {selectedGutImagePath
-                            ? <img src={`${baseImagePath}${selectedGutImagePath}`} alt="" className="w-[100%] max-w-[120px] border" />
+                          {selectedGutImage
+                            ? <img src={`${baseImagePath}${selectedGutImage?.file_path}`} alt="" className="w-[100%] max-w-[120px] border" />
                             : <img src={`${baseImagePath}images/guts/default_gut.jpg`} alt="" className="w-[100%] max-w-[120px] border" />
                           }
                         </div>
@@ -219,9 +265,6 @@ const GutRegister: NextPage = () => {
                     <div className="mb-6">
                       <label htmlFor="name_ja" className="block mb-1 text-[14px] md:text-[16px] md:mb-2">画像 検索ワード</label>
                       <input type="text" name="name_ja" onChange={(e) => setInputSearchWord(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green" />
-                      {/* {errors.title.length !== 0 &&
-                          errors.title.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                        } */}
                     </div>
 
                     <div className=" mb-8">
@@ -231,10 +274,6 @@ const GutRegister: NextPage = () => {
                         <option value="未選択" selected>未選択</option>
                         {makers?.map((maker) => (<option key={maker.id} value={maker.id}>{maker.name_ja}</option>))}
                       </select>
-
-                      {/* {errors.grip_form.length !== 0 &&
-                          errors.grip_form.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                        } */}
                     </div>
 
                     <div className="flex justify-end">
