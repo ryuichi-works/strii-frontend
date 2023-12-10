@@ -20,17 +20,17 @@ const Gut = () => {
 
   const otherGutsCount = 5;
 
-  const { isAuth, user } = useContext(AuthContext);
+  const { isAuth, user, isAuthAdmin } = useContext(AuthContext);
 
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/'
 
   useEffect(() => {
-    if (user.id) {
       const getGut = async () => {
         await axios.get(`/api/guts/${id}`).then(res => {
           setGut(res.data);
         })
       }
+      
       const getOtherGuts = async () => {
         await axios.get(`/api/guts/${id}/others`, {
           params: { count: otherGutsCount }
@@ -41,15 +41,12 @@ const Gut = () => {
 
       getGut();
       getOtherGuts();
-    } else {
-      router.push('/users/login');
-    }
   }, [id])
 
   return (
     <>
       <AuthCheck>
-        {isAuth && (
+        {(isAuth || isAuthAdmin) && (
           <>
             <div className="container md:mx-auto">
               <div className="text-center mb-6 md:mb-[48px]">
