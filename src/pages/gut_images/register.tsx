@@ -111,7 +111,7 @@ const GutImageRegister: NextPage = () => {
   return (
     <>
       <AuthCheck>
-        {isAuth || isAuthAdmin && (
+        {(isAuth || isAuthAdmin) && (
           <>
             <div className="container mx-auto mb-[48px]">
               <div className="text-center mb-6 md:mb-[48px]">
