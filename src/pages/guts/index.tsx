@@ -8,17 +8,19 @@ import Link from "next/link";
 import AuthCheck from "@/components/AuthCheck";
 import TextUnderBar from "@/components/TextUnderBar";
 import PrimaryHeading from "@/components/PrimaryHeading";
+import { Adamina } from "next/font/google";
 
 const GutList = () => {
   const router = useRouter();
-  const { isAuth, user, setUser, setIsAuth } = useContext(AuthContext);
+  const { isAuth, user, setUser, setIsAuth, admin, isAuthAdmin } = useContext(AuthContext);
 
   const [guts, setGuts] = useState<Gut[]>();
+  console.log(guts);
 
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/'
 
   useEffect(() => {
-    if (user.id) {
+    if (user.id || admin.id) {
       const getAllGuts = async () => {
         await axios.get('api/guts').then(res => {
           setGuts(res.data);
@@ -34,7 +36,7 @@ const GutList = () => {
   return (
     <>
       <AuthCheck>
-        {isAuth && (
+        {(isAuth || isAuthAdmin) && (
           <div className="container mx-auto">
             <div className="text-center mb-6">
               <PrimaryHeading text="Strings" className="text-[18px] h-[20px] md:text-[20px] md:h-[22px]" />
