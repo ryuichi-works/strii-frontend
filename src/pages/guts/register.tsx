@@ -36,12 +36,9 @@ const GutRegister: NextPage = () => {
 
   const [makers, setMakers] = useState<Maker[]>();
 
-  const [defaultGutImage, setDefaultGutImage] = useState<GutImage>();
-
-  const [selectedGutImagePath, setSelectedGutImagePath] = useState<string>();
   const [selectedGutImage, setSelectedGutImage] = useState<GutImage>();
 
-
+``
   //検索関連のstate
   const [inputSearchWord, setInputSearchWord] = useState<string>('');
 
@@ -50,21 +47,7 @@ const GutRegister: NextPage = () => {
   const [searchedGutImages, setSearchedGutImages] = useState<GutImage[]>();
 
   //モーダルの開閉に関するstate
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
-
   const [modalVisibilityClassName, setModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
-
-
-
-  console.log('makers', makers)
-  console.log('inputNameJa', inputNameJa);
-  console.log('inputNameEn', inputNameEn);
-  console.log('gutMakerId', gutMakerId);
-  console.log('needPostingImage', needPostingImage);
-  console.log('gutImageId', gutImageId);
-  console.log('inputSearchWord', inputSearchWord);
-  console.log('inputSearchMaker', inputSearchMaker);
-  console.log('searchedGutImages', searchedGutImages);
 
   const { admin, isAuthAdmin, } = useContext(AuthContext);
 
