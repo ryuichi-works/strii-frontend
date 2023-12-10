@@ -9,10 +9,10 @@ type AuthProps = {
 const AuthCheck: React.FC<AuthProps> = ({ children }) => {
   const router = useRouter();
 
-  const { isAuth } = useContext(AuthContext);
+  const { isAuth, isAuthAdmin } = useContext(AuthContext);
 
   useEffect(() => {
-    if (!isAuth) {
+    if (!isAuth && !isAuthAdmin) {
       router.push('/users/login');
     }
   }, [])

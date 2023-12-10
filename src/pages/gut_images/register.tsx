@@ -15,7 +15,7 @@ import PrimaryHeading from "@/components/PrimaryHeading";
 const GutImageRegister: NextPage = () => {
   const router = useRouter();
 
-  const { isAuth, user } = useContext(AuthContext);
+  const { isAuth, user, isAuthAdmin } = useContext(AuthContext);
 
   const [title, setTitle] = useState<string>('');
 
@@ -111,7 +111,7 @@ const GutImageRegister: NextPage = () => {
   return (
     <>
       <AuthCheck>
-        {isAuth && (
+        {isAuth || isAuthAdmin && (
           <>
             <div className="container mx-auto mb-[48px]">
               <div className="text-center mb-6 md:mb-[48px]">
