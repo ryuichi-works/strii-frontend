@@ -16,7 +16,7 @@ const RacketShow = () => {
 
   const [id, setId] = useState(router.query.id);
 
-  const { isAuth, user } = useContext(AuthContext);
+  const { isAuth, user, isAuthAdmin } = useContext(AuthContext);
 
   const [racket, setRacket] = useState<Racket>();
 
@@ -27,7 +27,6 @@ const RacketShow = () => {
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/';
 
   useEffect(() => {
-    if (user.id) {
       const getRacket = async () => {
         await axios.get(`api/rackets/${id}`).then(res => {
           setRacket(res.data);
@@ -44,15 +43,12 @@ const RacketShow = () => {
 
       getRacket();
       getOtherGuts();
-    } else {
-      router.push('/users/login');
-    }
   }, [id])
 
   return (
     <>
       <AuthCheck>
-        {isAuth && (
+        {(isAuth || isAuthAdmin) && (
           <div className="container mx-auto">
             <div className="text-center mb-6 md:mb-[48px]">
               <PrimaryHeading text="Rackets" className="text-[18px] h-[20px] md:text-[20px] md:h-[22px]" />
