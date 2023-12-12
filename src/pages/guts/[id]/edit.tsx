@@ -1,4 +1,5 @@
-import type { Maker } from "../users/[id]/profile";
+import type { Maker } from "@/pages/users/[id]/profile";
+import type { Gut } from "@/pages/reviews";
 
 import AuthAdminCheck from "@/components/AuthAdminCheck";
 import PrimaryHeading from "@/components/PrimaryHeading";
@@ -23,14 +24,20 @@ export type GutImage = {
 const GutEdit: NextPage = () => {
   const router = useRouter();
 
+  const id = router.query.id;
+
+  const [currentGut, setCurrentGut] = useState<Gut>();
+  // console.log('currentGut', currentGut);
+
   //gut登録用のデータstate
   const [inputNameJa, setInputNameJa] = useState<string>('');
+  
 
   const [inputNameEn, setInputNameEn] = useState<string>('');
 
-  const [gutMakerId, setGutMakerId] = useState<number | null>(null);
+  const [gutMakerId, setGutMakerId] = useState<number>();
 
-  const [needPostingImage, setNeedPostingImage] = useState<boolean>(true);
+  const [needPostingImage, setNeedPostingImage] = useState<boolean>();
 
   const [gutImageId, setGutImageId] = useState<number>();
 
@@ -38,7 +45,13 @@ const GutEdit: NextPage = () => {
 
   const [selectedGutImage, setSelectedGutImage] = useState<GutImage>();
 
-``
+  // console.log('selectedGutImage', selectedGutImage)
+  // console.log('inputNameJa', inputNameJa)
+  // console.log('inputNameEn', inputNameEn)
+  // console.log('gutMakerId', gutMakerId)
+  // console.log('needPostingImage', needPostingImage)
+  // console.log('gutImageId', gutImageId)
+
   //検索関連のstate
   const [inputSearchWord, setInputSearchWord] = useState<string>('');
 
@@ -54,18 +67,32 @@ const GutEdit: NextPage = () => {
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/'
 
   useEffect(() => {
-    const getGutList = async () => {
+    const getMakerList = async () => {
       await axios.get('api/makers').then(res => {
         setMakers(res.data);
       })
     }
 
-    getGutList();
+    const getCurrentGut = async () => {
+      await axios.get(`api/guts/${id}`).then(res => {
+        const gut: Gut = res.data;
+
+        setCurrentGut(gut);
+        setInputNameJa(gut.name_ja);
+        setInputNameEn(gut.name_en);
+        setGutMakerId(gut.maker_id);
+        setNeedPostingImage(!!gut.need_posting_image);
+        setGutImageId(gut.image_id);
+      })
+    }
+
+    getMakerList();
+    getCurrentGut();
   }, [])
 
   const onChangeMaker = (e: React.ChangeEvent<HTMLSelectElement>) => {
     if (e.target.value === '未選択') {
-      setGutMakerId(null);
+      setGutMakerId(undefined);
       return
     };
 
@@ -171,14 +198,14 @@ const GutEdit: NextPage = () => {
             <div className="container mx-auto mb-8 w-screen pt-[24px] overflow-y-auto">
 
               <div className="text-center mb-6">
-                <PrimaryHeading text="ストリング登録" className="text-[18px] h-[20px] md:text-[20px] md:h-[22px]" />
+                <PrimaryHeading text="ストリング情報更新" className="text-[18px] h-[20px] md:text-[20px] md:h-[22px]" />
               </div>
 
               <div className="w-[100%] max-w-[320px] md:max-w-[380px] mx-auto flex flex-col md:justify-center">
                 <form action="" onSubmit={(e) => registerGut(e)}>
                   <div className="mb-6">
                     <label htmlFor="name_ja" className="block mb-1 text-[14px] md:text-[16px] md:mb-2">ストリング名(カナ)</label>
-                    <input type="text" name="name_ja" onChange={(e) => setInputNameJa(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green" />
+                    <input type="text" name="name_ja" onChange={(e) => setInputNameJa(e.target.value)} defaultValue={currentGut?.name_ja} className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green" />
                     {errors.name_ja.length !== 0 &&
                       errors.name_ja.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                     }
@@ -186,7 +213,7 @@ const GutEdit: NextPage = () => {
 
                   <div className="mb-6">
                     <label htmlFor="name_en" className="block mb-1 text-[14px] md:text-[16px] md:mb-2">ストリング名(アルファベット)</label>
-                    <input type="text" name="name_en" onChange={(e) => setInputNameEn(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green" />
+                    <input type="text" name="name_en" onChange={(e) => setInputNameEn(e.target.value)} defaultValue={currentGut?.name_en} className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green" />
                     {errors.name_en.length !== 0 &&
                       errors.name_en.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                     }
@@ -195,7 +222,7 @@ const GutEdit: NextPage = () => {
                   <div className=" mb-8">
                     <label htmlFor="maker" className="block text-[14px] md:text-[16px]">メーカー</label>
 
-                    <select name="maker" id="maker" onChange={(e) => { onChangeMaker(e) }} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
+                    <select name="maker" id="maker" onChange={(e) => { onChangeMaker(e) }} value={gutMakerId} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
                       <option value="未選択" selected>未選択</option>
                       {makers?.map((maker) => (<option key={maker.id} value={maker.id}>{maker.name_ja}</option>))}
                     </select>
@@ -215,24 +242,22 @@ const GutEdit: NextPage = () => {
                     <input type="hidden" name="image_id" />
 
                     <div className="md:w-[100%] md:max-w-[380px]">
-                      <p className="mb-2 text-[14px] md:text-[16px]">選択中：{selectedGutImage ? selectedGutImage.title : 'デフォルト'}</p>
+                      <p className="mb-2 text-[14px] md:text-[16px]">選択中：{selectedGutImage ? selectedGutImage.title : `${currentGut?.gut_image.title}`}</p>
                       <div className="flex justify-between md:w-[100%] md:max-w-[380px]">
                         <div className="self-end">
                           <button type="button" onClick={openModal} className="text-white font-bold text-[14px] w-[80px] h-6 rounded  bg-sub-green">変更</button>
                         </div>
 
                         <div className="w-[100%] max-w-[200px] h-[120px] flex justify-center md:h-[160px] md:max-w-[] md:justify-end">
-                          {selectedGutImage
-                            ? <img src={`${baseImagePath}${selectedGutImage?.file_path}`} alt="" className="w-[100%] max-w-[120px] border md:max-w-[160px]" />
-                            : <img src={`${baseImagePath}images/guts/default_gut.jpg`} alt="" className="w-[100%] max-w-[120px] border md:max-w-[160px]" />
-                          }
+                          {selectedGutImage && <img src={`${baseImagePath}${selectedGutImage?.file_path}`} alt="" className="w-[100%] max-w-[120px] border md:max-w-[160px]" />}
+                          { (currentGut?.gut_image && !selectedGutImage) && <img src={`${baseImagePath}${currentGut?.gut_image.file_path}`} alt="" className="w-[100%] max-w-[120px] border md:max-w-[160px]" /> }
                         </div>
                       </div>
                     </div>
                   </div>
 
                   <div className="flex justify-center">
-                    <button type="submit" className="text-white font-bold text-[14px] w-[200px] h-8 rounded  bg-sub-green">登録</button>
+                    <button type="submit" className="text-white font-bold text-[14px] w-[200px] h-8 rounded  bg-sub-green">更新する</button>
                   </div>
                 </form>
               </div>
