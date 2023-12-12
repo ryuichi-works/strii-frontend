@@ -27,7 +27,6 @@ const GutEdit: NextPage = () => {
   const id = router.query.id;
 
   const [currentGut, setCurrentGut] = useState<Gut>();
-  // console.log('currentGut', currentGut);
 
   //gut登録用のデータstate
   const [inputNameJa, setInputNameJa] = useState<string>('');
@@ -44,13 +43,6 @@ const GutEdit: NextPage = () => {
   const [makers, setMakers] = useState<Maker[]>();
 
   const [selectedGutImage, setSelectedGutImage] = useState<GutImage>();
-
-  // console.log('selectedGutImage', selectedGutImage)
-  // console.log('inputNameJa', inputNameJa)
-  // console.log('inputNameEn', inputNameEn)
-  // console.log('gutMakerId', gutMakerId)
-  // console.log('needPostingImage', needPostingImage)
-  // console.log('gutImageId', gutImageId)
 
   //検索関連のstate
   const [inputSearchWord, setInputSearchWord] = useState<string>('');
@@ -159,10 +151,11 @@ const GutEdit: NextPage = () => {
   //gut登録処理関連
   const csrf = async () => await axios.get('/sanctum/csrf-cookie');
 
-  const registerGut = async (e: React.FormEvent<HTMLFormElement>) => {
+  const updateGut = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const registerData = {
+    const udpatedData = {
+      _method: 'PUT',
       name_ja: inputNameJa,
       name_en: inputNameEn,
       maker_id: gutMakerId,
@@ -172,20 +165,20 @@ const GutEdit: NextPage = () => {
 
     await csrf();
 
-    await axios.post('api/guts', registerData, {
+    await axios.post(`api/guts/${currentGut?.id}`, udpatedData, {
       headers: {
         'X-Xsrf-Token': Cookies.get('XSRF-TOKEN'),
       }
     }).then(res => {
-      console.log('ストリングを新規登録しました。');
+      console.log('ストリング情報を更新しました。');
 
-      router.push('/guts');
+      router.push(`/guts/${currentGut?.id}`);
     }).catch((e) => {
       const newErrors = { ...initialErrorVals, ...e.response.data.errors };
 
       setErrors(newErrors);
 
-      console.log('ストリングの登録に失敗しました');
+      console.log('ストリング情報の更新に失敗しました');
     })
   }
 
@@ -202,7 +195,7 @@ const GutEdit: NextPage = () => {
               </div>
 
               <div className="w-[100%] max-w-[320px] md:max-w-[380px] mx-auto flex flex-col md:justify-center">
-                <form action="" onSubmit={(e) => registerGut(e)}>
+                <form action="" onSubmit={(e) => updateGut(e)}>
                   <div className="mb-6">
                     <label htmlFor="name_ja" className="block mb-1 text-[14px] md:text-[16px] md:mb-2">ストリング名(カナ)</label>
                     <input type="text" name="name_ja" onChange={(e) => setInputNameJa(e.target.value)} defaultValue={currentGut?.name_ja} className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green" />
@@ -234,7 +227,7 @@ const GutEdit: NextPage = () => {
 
                   <div className="mb-6">
                     <label htmlFor="need_posting_image" className="text-[14px] mr-1 md:text-[16px]">画像提供受付</label>
-                    <input type="checkbox" name="need_posting_image" id="need_posting_image" defaultChecked={needPostingImage} onChange={(e) => setNeedPostingImage(prev => !prev)} className="align-middle"/>
+                    <input type="checkbox" name="need_posting_image" id="need_posting_image" checked={needPostingImage} onChange={(e) => setNeedPostingImage(e.target.checked)}  className="align-middle"/>
                   </div>
 
                   {/* 画像選択 */}
