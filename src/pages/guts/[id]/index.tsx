@@ -95,6 +95,14 @@ const Gut = () => {
                     </table>
                   </div>
                 </div>
+                
+                  {isAuthAdmin && (
+                    <div className="flex justify-end">
+                      <Link href={`/guts/${gut?.id}/edit`}>
+                        <button type="button" className="text-white font-bold text-[14px] w-[200px] h-8 rounded  bg-sub-green">更新</button>
+                      </Link>
+                    </div>
+                  )}
               </div>
 
               {/* otherガットセクション */}
