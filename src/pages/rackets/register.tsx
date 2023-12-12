@@ -216,10 +216,10 @@ const RacketRegister: NextPage = () => {
                           <button type="button" onClick={openModal} className="text-white font-bold text-[14px] w-[80px] h-6 rounded  bg-sub-green">選ぶ</button>
                         </div>
 
-                        <div className="w-[100%] max-w-[200px] h-[120px] flex justify-center md:h-[160px] md:max-w-[] md:justify-end">
+                        <div className="w-[100%] max-w-[200px] h-[160px] flex justify-center md:h-[200px] md:justify-end">
                           {selectedRacketImage
-                            ? <img src={`${baseImagePath}${selectedRacketImage?.file_path}`} alt="" className="w-[100%] max-w-[120px] border md:max-w-[160px]" />
-                            : <img src={`${baseImagePath}images/guts/default_gut.jpg`} alt="" className="w-[100%] max-w-[120px] border md:max-w-[160px]" />
+                            ? <img src={`${baseImagePath}${selectedRacketImage?.file_path}`} alt="" className="w-[100%] max-w-[120px] h-[160px] border md:max-w-[150px] md:h-[200px]" />
+                            : <img src={`${baseImagePath}images/rackets/default_racket_image.png`} alt="" className="w-[100%] max-w-[120px] h-[160px] border md:max-w-[150px] md:h-[200px]" />
                           }
                         </div>
                       </div>
