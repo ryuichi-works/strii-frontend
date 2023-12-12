@@ -228,12 +228,12 @@ const RacketEdit: NextPage = () => {
                       <p className="mb-2 text-[14px] md:text-[16px]">選択中：{selectedRacketImage ? selectedRacketImage.title : `${currentRacket?.racket_image.title}`}</p>
                       <div className="flex justify-between md:w-[100%] md:max-w-[380px]">
                         <div className="self-end">
-                          <button type="button" onClick={openModal} className="text-white font-bold text-[14px] w-[80px] h-6 rounded  bg-sub-green">変更</button>
+                          <button type="button" onClick={openModal} className="text-white font-bold text-[14px] w-[80px] h-6 rounded  bg-sub-green">選ぶ</button>
                         </div>
 
-                        <div className="w-[100%] max-w-[200px] h-[120px] flex justify-center md:h-[160px] md:max-w-[] md:justify-end">
-                          {selectedRacketImage && <img src={`${baseImagePath}${selectedRacketImage?.file_path}`} alt="" className="w-[100%] max-w-[120px] border md:max-w-[160px]" />}
-                          { (currentRacket?.racket_image && !selectedRacketImage) && <img src={`${baseImagePath}${currentRacket?.racket_image.file_path}`} alt="" className="w-[100%] max-w-[120px] border md:max-w-[160px]" /> }
+                        <div className="w-[100%] max-w-[200px] h-[160px] flex justify-center md:justify-end">
+                          {selectedRacketImage && <img src={`${baseImagePath}${selectedRacketImage?.file_path}`} alt="" className="w-[100%] max-w-[120px] h-[160px] border" />}
+                          { (currentRacket?.racket_image && !selectedRacketImage) && <img src={`${baseImagePath}${currentRacket?.racket_image.file_path}`} alt="" className="w-[100%] max-w-[120px] h-[160px] border " /> }
                         </div>
                       </div>
                     </div>
@@ -281,7 +281,7 @@ const RacketEdit: NextPage = () => {
                           {/* ガット画像情報カード */}
                           <div onClick={() => selectImage(racketImage)} className="bg-white p-2 rounded-lg w-[100%] max-w-[136px] hover:opacity-80 mb-6 hover:cursor-pointer md:[&:not(:last-child)]:mr-[24px]">
                             <div className="w-[120px] mb-2">
-                              {racketImage.file_path && <img src={`${baseImagePath}${racketImage.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px]" />}
+                              {racketImage.file_path && <img src={`${baseImagePath}${racketImage.file_path}`} alt="ストリング画像" className="w-[120px] h-[160px]" />}
                             </div>
 
                             <p className="text-[14px] mb-1 md:text-[16px]">{racketImage.maker.name_ja}</p>
