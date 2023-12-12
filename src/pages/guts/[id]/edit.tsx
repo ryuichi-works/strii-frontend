@@ -1,14 +1,15 @@
+import type { NextPage } from "next";
 import type { Maker } from "@/pages/users/[id]/profile";
 import type { Gut } from "@/pages/reviews";
 
-import AuthAdminCheck from "@/components/AuthAdminCheck";
-import PrimaryHeading from "@/components/PrimaryHeading";
-import { AuthContext } from "@/context/AuthContext";
 import axios from "@/lib/axios";
 import Cookies from "js-cookie";
-import type { NextPage } from "next";
-import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { AuthContext } from "@/context/AuthContext";
+
+import AuthAdminCheck from "@/components/AuthAdminCheck";
+import PrimaryHeading from "@/components/PrimaryHeading";
 import { IoClose } from "react-icons/io5";
 
 export type GutImage = {
@@ -31,7 +32,6 @@ const GutEdit: NextPage = () => {
   //gut登録用のデータstate
   const [inputNameJa, setInputNameJa] = useState<string>('');
   
-
   const [inputNameEn, setInputNameEn] = useState<string>('');
 
   const [gutMakerId, setGutMakerId] = useState<number>();
