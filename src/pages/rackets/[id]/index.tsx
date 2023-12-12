@@ -16,7 +16,7 @@ const RacketShow = () => {
 
   const [id, setId] = useState(router.query.id);
 
-  const { isAuth, user } = useContext(AuthContext);
+  const { isAuth, user, isAuthAdmin } = useContext(AuthContext);
 
   const [racket, setRacket] = useState<Racket>();
 
@@ -27,32 +27,28 @@ const RacketShow = () => {
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/';
 
   useEffect(() => {
-    if (user.id) {
-      const getRacket = async () => {
-        await axios.get(`api/rackets/${id}`).then(res => {
-          setRacket(res.data);
-        })
-      }
-
-      const getOtherGuts = async () => {
-        await axios.get(`api/rackets/${id}/others`, {
-          params: { count: otherRacketsCount }
-        }).then(res => {
-          setOtherRackets(res.data);
-        })
-      }
-
-      getRacket();
-      getOtherGuts();
-    } else {
-      router.push('/users/login');
+    const getRacket = async () => {
+      await axios.get(`api/rackets/${id}`).then(res => {
+        setRacket(res.data);
+      })
     }
+
+    const getOtherGuts = async () => {
+      await axios.get(`api/rackets/${id}/others`, {
+        params: { count: otherRacketsCount }
+      }).then(res => {
+        setOtherRackets(res.data);
+      })
+    }
+
+    getRacket();
+    getOtherGuts();
   }, [id])
 
   return (
     <>
       <AuthCheck>
-        {isAuth && (
+        {(isAuth || isAuthAdmin) && (
           <div className="container mx-auto">
             <div className="text-center mb-6 md:mb-[48px]">
               <PrimaryHeading text="Rackets" className="text-[18px] h-[20px] md:text-[20px] md:h-[22px]" />
@@ -105,6 +101,14 @@ const RacketShow = () => {
                   </tbody>
                 </table>
               </div>
+
+              {isAuthAdmin && (
+                <div className="flex justify-center w-[100%] max-w-[320px] mx-auto mt-6 md:max-w-[720px] md:justify-end">
+                  <Link href={`/rackets/${racket?.id}/edit`}>
+                    <button type="button" className="text-white font-bold text-[14px] w-[200px] h-8 rounded  bg-sub-green">更新</button>
+                  </Link>
+                </div>
+              )}
             </div>
 
             {/* otherラケットセクション */}
