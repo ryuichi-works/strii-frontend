@@ -27,11 +27,13 @@ export type Maker = {
 }
 
 export type RacketImage = {
-  id: 2,
+  id: number,
   file_path: string,
   title: string,
   created_at: string,
-  updated_at: string
+  updated_at: string,
+  maker_id: number,
+  maker: Maker
 }
 
 export type Racket = {
