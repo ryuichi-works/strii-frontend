@@ -14,30 +14,26 @@ import { firstLetterToUpperCase } from "@/modules/firstLetterToUpperCase";
 const RacketList = () => {
   const router = useRouter();
 
-  const { isAuth, user } = useContext(AuthContext);
+  const { isAuth, user, isAuthAdmin } = useContext(AuthContext);
 
   const [rackets, setRackets] = useState<Racket[]>();
 
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/';
 
   useEffect(() => {
-    if (user.id) {
-      const getAllRackets = async () => {
-        await axios.get('api/rackets').then(res => {
-          setRackets(res.data);
-        })
-      }
-
-      getAllRackets();
-    } else {
-      router.push('/users/login');
+    const getAllRackets = async () => {
+      await axios.get('api/rackets').then(res => {
+        setRackets(res.data);
+      })
     }
+
+    getAllRackets();
   }, [])
 
   return (
     <>
       <AuthCheck>
-        {isAuth && (
+        {(isAuth || isAuthAdmin) && (
           <>
             <div className="container mx-auto">
               <div className="text-center mb-6">

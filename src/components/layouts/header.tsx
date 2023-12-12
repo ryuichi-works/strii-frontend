@@ -109,7 +109,9 @@ const Header: React.FC = () => {
                   <li><Link href={'/guts'} className="mr-4">ストリング</Link></li>
                   <li><Link href={'/guts/register'} className="mr-4">ストリング登録</Link></li>
                   <li><Link href={'/gut_images/register'} className="mr-4">ストリング画像提供</Link></li>
+                  <li><Link href={'/rackets'} className="mr-4">ラケット</Link></li>
                   <li><Link href={'/rackets/register'} className="mr-4">ラケット登録</Link></li>
+                  <li><Link href={'/racket_images/register'} className="mr-4">ラケット画像提供</Link></li>
 
                   <li>
                     <form onSubmit={(e) => logout(e, 'admins')} className="inline-block">
@@ -174,7 +176,9 @@ const Header: React.FC = () => {
                   <li><Link href={'/guts'} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">ストリング</Link></li>
                   <li><Link href={'/guts/register'} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">ストリング登録</Link></li>
                   <li><Link href={'/gut_images/register'} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">ストリング画像提供</Link></li>
+                  <li><Link href={'/rackets'} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">ラケット</Link></li>
                   <li><Link href={'/rackets/register'} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">ラケット登録</Link></li>
+                  <li><Link href={'/racket_images/register'} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">ラケット画像提供</Link></li>
                   <li>
                     <form onSubmit={(e) => logout(e, 'admins')} className="inline-block w-full">
                       <button type='submit' className="inline-block text-center h-12 leading-[48px]  w-full">ログアウト</button>
