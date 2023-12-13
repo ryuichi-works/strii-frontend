@@ -89,6 +89,7 @@ const Header: React.FC = () => {
                 <>
                   <li><Link href={'/reviews'} className="mr-4">レビュー</Link></li>
                   <li><Link href={'/my_equipments'} className="mr-4">マイ装備</Link></li>
+                  <li><Link href={'/my_equipments/register'} className="mr-4">マイ装備追加</Link></li>
                   <li><Link href={'/guts'} className="mr-4">ストリング</Link></li>
                   <li><Link href={'/rackets'} className="mr-4">ラケット</Link></li>
                   <li><Link href={'/gut_images/register'} className="mr-4">ストリング画像提供</Link></li>
@@ -156,6 +157,7 @@ const Header: React.FC = () => {
                 <>
                   <li><Link href={'/reviews'} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">レビュー</Link></li>
                   <li><Link href={'/my_equipments'} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">マイ装備</Link></li>
+                  <li><Link href={'/my_equipments/register'} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">マイ装備追加</Link></li>
                   <li><Link href={'/guts'} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">ストリング</Link></li>
                   <li><Link href={'/rackets'} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">ラケット</Link></li>
                   <li><Link href={'/gut_images/register'} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">ストリング画像提供</Link></li>
