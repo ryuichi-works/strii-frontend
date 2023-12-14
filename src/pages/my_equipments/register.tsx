@@ -9,17 +9,27 @@ import SubHeading from "@/components/SubHeading";
 import TextUnderBar from "@/components/TextUnderBar";
 import { Gut } from "../reviews";
 import { IoClose } from "react-icons/io5";
-import { Maker, Racket } from "../users/[id]/profile";
+import { Maker, Racket, TennisProfile } from "../users/[id]/profile";
 import axios from "@/lib/axios";
 import { getToday } from "@/modules/getToday";
+import Cookies from "js-cookie";
+import { useRouter } from "next/router";
 
 // import Modal from "@/components/Modal";
 // import { useModal } from "@/hooks/useModal";
 
 const MyEquipmentRegister: NextPage = () => {
+  const router = useRouter();
+
   const { isAuth, user, isAuthAdmin } = useContext(AuthContext);
 
-  const [stringingWay, setStringingWay] = useState<string>();
+  const today: string = getToday();
+
+  const [userTennisProfile, setUserTennisProfile] = useState<TennisProfile>();
+  console.log('userTennisProfile', userTennisProfile)
+
+  //my_equipmentの登録に使うstate群
+  const [stringingWay, setStringingWay] = useState<string>('single');
   console.log('stringingWay', stringingWay)
 
   const [mainGut, setMainGut] = useState<Gut>();
@@ -31,6 +41,7 @@ const MyEquipmentRegister: NextPage = () => {
   const [racket, setRacket] = useState<Racket>();
   console.log('racket', racket)
 
+  //要素の表示などに使用するstate群
   const [makers, setMakers] = useState<Maker[]>();
   console.log('makers', makers)
 
@@ -50,13 +61,13 @@ const MyEquipmentRegister: NextPage = () => {
   const [inputMainCrossTension, setInputMainCrossTension] = useState<number>(50);
   console.log('inputMainCrossTension', inputMainCrossTension)
 
-  const [inputNewGutDate, setInputNewGutDate] = useState<string>();
+  const [inputNewGutDate, setInputNewGutDate] = useState<string>(today);
   console.log('inputNewGutDate', inputNewGutDate)
 
   const [inputChangeGutDate, setInputChangeGutDate] = useState<string>();
   console.log('inputChangeGutDate', inputChangeGutDate)
 
-  const [comment, setComment] = useState<string>();
+  const [comment, setComment] = useState<string>('');
   console.log('comment', comment)
 
   //モーダルの開閉に関するstate
@@ -77,8 +88,6 @@ const MyEquipmentRegister: NextPage = () => {
   const [searchedRackets, setSearchedRackets] = useState<Racket[]>();
   console.log('searchedRackets', searchedRackets)
 
-  const today: string = getToday();
-
   useEffect(() => {
     const getMakerList = async () => {
       await axios.get('api/makers').then(res => {
@@ -86,9 +95,17 @@ const MyEquipmentRegister: NextPage = () => {
       })
     }
 
+    const getUserTennisProfile = async () => {
+      await axios.get(`api/tennis_profiles/${user.id}`).then(res => {
+        setUserTennisProfile(res.data);
+      })
+    }
+
+    getUserTennisProfile();
     getMakerList();
   }, [])
 
+  //inputの制御関数群
   const onChangeInputStringingWay = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setStringingWay(e.target.value);
     setCrossGut(undefined);
@@ -212,6 +229,92 @@ const MyEquipmentRegister: NextPage = () => {
     closeRacketSearchModal();
   }
 
+  type Errors = {
+    user_id: string[],
+    user_height: string[],
+    user_age: string[],
+    experience_period: string[],
+    stringing_way: string[],
+    main_gut_id: string[],
+    cross_gut_id: string[],
+    main_gut_guage: string[],
+    cross_gut_guage: string[],
+    main_gut_tension: string[],
+    cross_gut_tension: string[],
+    racket_id: string[],
+    new_gut_date: string[],
+    change_gut_date: string[],
+    comment: string[],
+  }
+
+  const initialErrorVals = {
+    user_id: [],
+    user_height: [],
+    user_age: [],
+    experience_period: [],
+    stringing_way: [],
+    main_gut_id: [],
+    cross_gut_id: [],
+    main_gut_guage: [],
+    cross_gut_guage: [],
+    main_gut_tension: [],
+    cross_gut_tension: [],
+    racket_id: [],
+    new_gut_date: [],
+    change_gut_date: [],
+    comment: [],
+  }
+
+  const [errors, setErrors] = useState<Errors>(initialErrorVals);
+  console.log('errors', errors)
+
+  //gut登録処理関連
+  const csrf = async () => await axios.get('/sanctum/csrf-cookie');
+
+  const registerGut = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const registerData = {
+      user_id: user.id,
+      user_height: userTennisProfile?.height,
+      user_age: userTennisProfile?.age,
+      experience_period: userTennisProfile?.experience_period,
+      stringing_way: stringingWay,
+      main_gut_id: mainGut?.id,
+      cross_gut_id: stringingWay === 'hybrid' && crossGut ? crossGut.id : mainGut?.id,
+      main_gut_guage: inputMainGutGuage,
+      cross_gut_guage: inputCrossGutGuage,
+      main_gut_tension: inputMainGutTension,
+      cross_gut_tension: inputMainCrossTension,
+      racket_id: racket?.id,
+      new_gut_date: inputNewGutDate,
+      change_gut_date: inputChangeGutDate ? inputChangeGutDate : null,
+      comment: comment,
+    }
+
+    console.log(registerData);
+    console.log(user);
+
+
+    await csrf();
+
+    await axios.post('api/my_equipments', registerData, {
+      headers: {
+        'X-Xsrf-Token': Cookies.get('XSRF-TOKEN'),
+      }
+    }).then(res => {
+      console.log('マイ装備を追加しました。');
+
+      router.push('/my_equipments');
+    }).catch((e) => {
+      const newErrors = { ...initialErrorVals, ...e.response.data.errors };
+
+      setErrors(newErrors);
+
+      console.log('マイ装備の追加に失敗しました');
+    })
+  }
+
   return (
     <>
       <AuthCheck>
@@ -224,7 +327,7 @@ const MyEquipmentRegister: NextPage = () => {
 
               <div className="w-[100%] max-w-[320px] mx-auto">
 
-                <form action="">
+                <form action="" onSubmit={registerGut}>
                   {/* ストリング関連 */}
                   <div>
                     <div className="w-[100%] max-w-[320px] mb-4 md:max-w-[360px]">
@@ -241,9 +344,9 @@ const MyEquipmentRegister: NextPage = () => {
                         <option value="hybrid" >ハイブリッド</option>
                       </select>
 
-                      {/* {errors.maker_id.length !== 0 &&
-                      errors.maker_id.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                    } */}
+                      {errors.stringing_way.length !== 0 &&
+                        errors.stringing_way.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                      }
                     </div>
 
                     {/* ストリング選択セクション */}
@@ -254,54 +357,67 @@ const MyEquipmentRegister: NextPage = () => {
                       <p className="text-[14px] h-[16px] mb-[8px] leading-[16px]">使用ストリング</p>
 
                       {stringingWay === 'hybrid' && <p className="text-[14px] h-[16px] mb-[4px] leading-[16px]">メイン</p>}
+                      <div className="mb-6">
 
-                      <div className="flex  mb-6 md:w-[100%] md:max-w-[360px]">
-                        <div className="w-[120px] mr-6">
-                          {mainGut && mainGut.gut_image.file_path
-                            ? <img src={`${baseImagePath}${mainGut.gut_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px]" />
-                            : <img src={`${baseImagePath}images/guts/default_gut_image.jpg`} alt="ストリング画像" className="w-[120px] h-[120px]" />
-                          }
-                        </div>
-
-                        <div className="w-[100%] max-w-[176px] md:max-w-[216px]">
-                          <p className="text-[14px] h-[16px] mb-[4px] leading-[16px]">選択中</p>
-
-                          <div className="border rounded py-[8px] mb-[16px]">
-                            <p className="text-[14px] pb-1 h-[16px] pl-[16px] leading-[16px] md:text-[16px]">{mainGut ? mainGut.maker.name_en : ''}</p>
-                            <p className="text-[16px] text-center h-[18px] leading-[18px] md:text-[18px]">{mainGut ? mainGut.name_ja : '未選択'}</p>
+                        <div className="flex md:w-[100%] md:max-w-[360px]">
+                          <div className="w-[120px] mr-6">
+                            {mainGut && mainGut.gut_image.file_path
+                              ? <img src={`${baseImagePath}${mainGut.gut_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px]" />
+                              : <img src={`${baseImagePath}images/guts/default_gut_image.jpg`} alt="ストリング画像" className="w-[120px] h-[120px]" />
+                            }
                           </div>
 
-                          <div className="flex justify-end">
-                            <button type="button" onClick={openMainGutSearchModal} className="text-white font-bold text-[14px] w-[80px] h-[32px] rounded ml-auto  bg-sub-green">変更</button>
+                          <div className="w-[100%] max-w-[176px] md:max-w-[216px]">
+                            <p className="text-[14px] h-[16px] mb-[4px] leading-[16px]">選択中</p>
+
+                            <div className="border rounded py-[8px] mb-[16px]">
+                              <p className="text-[14px] pb-1 h-[16px] pl-[16px] leading-[16px] md:text-[16px]">{mainGut ? mainGut.maker.name_en : ''}</p>
+                              <p className="text-[16px] text-center h-[18px] leading-[18px] md:text-[18px]">{mainGut ? mainGut.name_ja : '未選択'}</p>
+                            </div>
+
+                            <div className="flex justify-end">
+                              <button type="button" onClick={openMainGutSearchModal} className="text-white font-bold text-[14px] w-[80px] h-[32px] rounded ml-auto  bg-sub-green">変更</button>
+                            </div>
                           </div>
                         </div>
+
+                        {errors.main_gut_id.length !== 0 &&
+                          errors.main_gut_id.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                        }
                       </div>
 
                       {/* ハイブリッド張りの時crossGutを表示 */}
                       {stringingWay === 'hybrid' && (
                         <>
-                          <p className="text-[14px] h-[16px] mb-[4px] leading-[16px]">クロス</p>
+                          <div className=" mb-6">
 
-                          <div className="flex  mb-6 md:w-[100%] md:max-w-[360px]">
-                            <div className="w-[120px] mr-6">
-                              {crossGut && crossGut.gut_image.file_path
-                                ? <img src={`${baseImagePath}${crossGut.gut_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px]" />
-                                : <img src={`${baseImagePath}images/guts/default_gut_image.jpg`} alt="ストリング画像" className="w-[120px] h-[120px]" />
-                              }
-                            </div>
+                            <p className="text-[14px] h-[16px] mb-[4px] leading-[16px]">クロス</p>
 
-                            <div className="w-[100%] max-w-[176px] md:max-w-[216px]">
-                              <p className="text-[14px] h-[16px] mb-[4px] leading-[16px]">選択中</p>
-
-                              <div className="border rounded py-[8px] mb-[16px]">
-                                <p className="text-[14px] pb-1 h-[16px] pl-[16px] leading-[16px] md:text-[16px]">{crossGut ? crossGut.maker.name_ja : ''}</p>
-                                <p className="text-[16px] text-center h-[18px] leading-[18px] md:text-[18px]">{crossGut ? crossGut.name_ja : '未選択'}</p>
+                            <div className="flex md:w-[100%] md:max-w-[360px]">
+                              <div className="w-[120px] mr-6">
+                                {crossGut && crossGut.gut_image.file_path
+                                  ? <img src={`${baseImagePath}${crossGut.gut_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px]" />
+                                  : <img src={`${baseImagePath}images/guts/default_gut_image.jpg`} alt="ストリング画像" className="w-[120px] h-[120px]" />
+                                }
                               </div>
 
-                              <div className="flex justify-end">
-                                <button type="button" onClick={openCrossGutSearchModal} className="text-white font-bold text-[14px] w-[80px] h-[32px] rounded ml-auto  bg-sub-green">変更</button>
+                              <div className="w-[100%] max-w-[176px] md:max-w-[216px]">
+                                <p className="text-[14px] h-[16px] mb-[4px] leading-[16px]">選択中</p>
+
+                                <div className="border rounded py-[8px] mb-[16px]">
+                                  <p className="text-[14px] pb-1 h-[16px] pl-[16px] leading-[16px] md:text-[16px]">{crossGut ? crossGut.maker.name_ja : ''}</p>
+                                  <p className="text-[16px] text-center h-[18px] leading-[18px] md:text-[18px]">{crossGut ? crossGut.name_ja : '未選択'}</p>
+                                </div>
+
+                                <div className="flex justify-end">
+                                  <button type="button" onClick={openCrossGutSearchModal} className="text-white font-bold text-[14px] w-[80px] h-[32px] rounded ml-auto  bg-sub-green">変更</button>
+                                </div>
                               </div>
                             </div>
+
+                            {errors.cross_gut_id.length !== 0 &&
+                              errors.cross_gut_id.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                            }
                           </div>
                         </>
                       )}
@@ -336,6 +452,12 @@ const MyEquipmentRegister: NextPage = () => {
                         />
                         <span className="inline-block text-[14px] h-[16px] leading-[16px]">mm</span>
                       </div>
+                      {errors.main_gut_guage.length !== 0 &&
+                        errors.main_gut_guage.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                      }
+                      {errors.cross_gut_guage.length !== 0 &&
+                        errors.cross_gut_guage.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                      }
                     </div>
 
                     {/* gutテンション選択 */}
@@ -365,31 +487,49 @@ const MyEquipmentRegister: NextPage = () => {
                         />
                         <span className="inline-block text-[14px] h-[16px] leading-[16px]">ポンド</span>
                       </div>
+                      {errors.main_gut_tension.length !== 0 &&
+                        errors.main_gut_tension.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                      }
+                      {errors.cross_gut_tension.length !== 0 &&
+                        errors.cross_gut_tension.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                      }
                     </div>
 
                     {/* gutを新調日 */}
-                    <div className="flex flex-col mb-6">
-                      <label htmlFor="new_gut_date" className="mb-1">張った日</label>
-                      <input
-                        type="date"
-                        name="new_gut_date"
-                        id="new_gut_date"
-                        defaultValue={today}
-                        onChange={onChangeInputNewGutDate}
-                        className="inline-block border border-gray-300 rounded w-[140px] h-10 p-2 focus:outline-sub-green mr-1"
-                      />
+                    <div className=" mb-6">
+                      <div className="flex flex-col">
+                        <label htmlFor="new_gut_date" className="mb-1">張った日</label>
+                        <input
+                          type="date"
+                          name="new_gut_date"
+                          id="new_gut_date"
+                          defaultValue={today}
+                          onChange={onChangeInputNewGutDate}
+                          className="inline-block border border-gray-300 rounded w-[140px] h-10 p-2 focus:outline-sub-green mr-1"
+                        />
+                      </div>
+
+                      {errors.new_gut_date.length !== 0 &&
+                        errors.new_gut_date.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                      }
                     </div>
 
                     {/* gut交換日 */}
-                    <div className="flex flex-col mb-[40px]">
-                      <label htmlFor="change_gut_date" className="mb-1">張り替え・ストリングが切れた日</label>
-                      <input
-                        type="date"
-                        name="change_gut_date"
-                        id="change_gut_date"
-                        onChange={onChangeInputChangeGutDate}
-                        className="inline-block border border-gray-300 rounded w-[140px] h-10 p-2 focus:outline-sub-green mr-1"
-                      />
+                    <div className="mb-[40px]">
+                      <div className="flex flex-col">
+                        <label htmlFor="change_gut_date" className="mb-1">張り替え・ストリングが切れた日</label>
+                        <input
+                          type="date"
+                          name="change_gut_date"
+                          id="change_gut_date"
+                          onChange={onChangeInputChangeGutDate}
+                          className="inline-block border border-gray-300 rounded w-[140px] h-10 p-2 focus:outline-sub-green mr-1"
+                        />
+                      </div>
+
+                      {errors.change_gut_date.length !== 0 &&
+                        errors.change_gut_date.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                      }
                     </div>
                   </div>
 
@@ -423,14 +563,24 @@ const MyEquipmentRegister: NextPage = () => {
                         </div>
                       </div>
                     </div>
+
+                    {errors.racket_id.length !== 0 &&
+                      errors.racket_id.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                    }
                   </div>
 
-                  <div>
+                  <div className="mb-[48px]">
                     <label htmlFor="comment">コメント</label>
                     <textarea name="comment" id="comment" onChange={(e) => setComment(e.target.value)} className="inline-block border border-gray-300 rounded w-[320px] min-h-[160px] p-2 focus:outline-sub-green" />
+
+                    {errors.comment.length !== 0 &&
+                      errors.comment.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                    }
                   </div>
 
-
+                  <div className="flex justify-center">
+                    <button type="submit" className="text-white font-bold text-[14px] w-[200px] h-8 rounded  bg-sub-green">追加する</button>
+                  </div>
                 </form>
 
                 {/* gut検索モーダル */}
