@@ -11,6 +11,7 @@ import { Gut } from "../reviews";
 import { IoClose } from "react-icons/io5";
 import { Maker } from "../users/[id]/profile";
 import axios from "@/lib/axios";
+import { getToday } from "@/modules/getToday";
 
 // import Modal from "@/components/Modal";
 // import { useModal } from "@/hooks/useModal";
@@ -46,6 +47,12 @@ const MyEquipmentRegister: NextPage = () => {
   const [inputMainCrossTension, setInputMainCrossTension] = useState<number>(50);
   console.log('inputMainCrossTension', inputMainCrossTension)
 
+  const [inputNewGutDate, setInputNewGutDate ] = useState<string>();
+  console.log('inputNewGutDate', inputNewGutDate)
+
+  const [inputChangeGutDate, setInputChangeGutDate ] = useState<string>();
+  console.log('inputChangeGutDate', inputChangeGutDate)
+
 
   //モーダルの開閉に関するstate
   const [modalVisibilityClassName, setModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
@@ -59,6 +66,8 @@ const MyEquipmentRegister: NextPage = () => {
 
   const [searchedGuts, setSearchedGuts] = useState<Gut[]>();
   console.log('searchedGuts', searchedGuts)
+
+  const today: string = getToday();
 
   useEffect(() => {
     const getMakerList = async () => {
@@ -82,6 +91,22 @@ const MyEquipmentRegister: NextPage = () => {
     };
 
     setInputSearchMaker(Number(e.target.value));
+  }
+
+  const onChangeInputNewGutDate = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const todayRegex: RegExp = /\d{4}-\d{2}-\d{2}$/;
+
+    if(todayRegex.test(e.target.value)) {
+      setInputNewGutDate(e.target.value);
+    }
+  }
+
+  const onChangeInputChangeGutDate = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const todayRegex: RegExp = /\d{4}-\d{2}-\d{2}$/;
+
+    if(todayRegex.test(e.target.value)) {
+      setInputChangeGutDate(e.target.value);
+    }
   }
 
   //モーダルの開閉
@@ -264,7 +289,7 @@ const MyEquipmentRegister: NextPage = () => {
                   </div>
 
                   {/* gutテンション選択 */}
-                  <div>
+                  <div className="mb-6">
                     <p className="text-[14px] h-[16px] mb-[4px] leading-[16px]">テンション（メイン / クロス）</p>
                     <div>
                       <input
@@ -290,6 +315,31 @@ const MyEquipmentRegister: NextPage = () => {
                       />
                       <span className="inline-block text-[14px] h-[16px] leading-[16px]">ポンド</span>
                     </div>
+                  </div>
+
+                  {/* gutを新調日 */}
+                  <div className="flex flex-col mb-6">
+                    <label htmlFor="new_gut_date" className="mb-1">張った日</label>
+                    <input
+                      type="date"
+                      name="new_gut_date"
+                      id="new_gut_date"
+                      defaultValue={today}
+                      onChange={onChangeInputNewGutDate}
+                      className="inline-block border border-gray-300 rounded w-[140px] h-10 p-2 focus:outline-sub-green mr-1"
+                    />
+                  </div>
+
+                  {/* gut交換日 */}
+                  <div className="flex flex-col">
+                    <label htmlFor="change_gut_date" className="mb-1">張り替え・ストリングが切れた日</label>
+                    <input
+                      type="date"
+                      name="change_gut_date"
+                      id="change_gut_date"
+                      onChange={onChangeInputChangeGutDate}
+                      className="inline-block border border-gray-300 rounded w-[140px] h-10 p-2 focus:outline-sub-green mr-1"
+                    />
                   </div>
 
 
