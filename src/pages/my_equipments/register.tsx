@@ -33,6 +33,20 @@ const MyEquipmentRegister: NextPage = () => {
   const [witchSelectingGut, setWitchSelectingGut] = useState<string>('');
   console.log('witchSelectingGut', witchSelectingGut)
 
+  // inputに関するstate
+  const [inputMainGutGuage, setInputMainGutGuage] = useState<number>(1.25);
+  console.log('inputMainGutGuage', inputMainGutGuage)
+  
+  const [inputCrossGutGuage, setInputCrossGutGuage] = useState<number>(1.25);
+  console.log('inputCrossGutGuage', inputCrossGutGuage)
+
+  const [inputMainGutTension, setInputMainGutTension] = useState<number>(50);
+  console.log('inputMainGutTension', inputMainGutTension)
+
+  const [inputMainCrossTension, setInputMainCrossTension] = useState<number>(50);
+  console.log('inputMainCrossTension', inputMainCrossTension)
+
+
   //モーダルの開閉に関するstate
   const [modalVisibilityClassName, setModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
 
@@ -187,7 +201,7 @@ const MyEquipmentRegister: NextPage = () => {
                         </div>
                       </div>
                     </div>
-                    
+
                     {/* ハイブリッド張りの時crossGutを表示 */}
                     {stringingWay === 'hybrid' && (
                       <>
@@ -216,7 +230,69 @@ const MyEquipmentRegister: NextPage = () => {
                         </div>
                       </>
                     )}
+
                   </div>
+
+                  {/* gut太さ選択 */}
+                  <div className="mb-[24px]">
+                    <p className="text-[14px] h-[16px] mb-[4px] leading-[16px]">太さ（メイン / クロス）</p>
+                    <div>
+                      <input
+                        type="number"
+                        name="main_gut_guage"
+                        step={0.01}
+                        defaultValue={1.25}
+                        min="1.05"
+                        max="1.50"
+                        onChange={(e) => setInputMainGutGuage(Number(e.target.value))}
+                        className="inline-block border border-gray-300 rounded w-[72px] h-10 p-2 focus:outline-sub-green mr-1"
+                      />
+                      <span className="inline-block text-[14px] h-[16px] leading-[16px] mr-[16px]">mm</span>
+                      <span className="inline-block text-[16px] text-center h-[18px] leading-[16px] mr-[16px] w-[100%] max-w-[16px]">/</span>
+                      <input
+                        type="number"
+                        name="cross_gut_guage"
+                        step={0.01}
+                        defaultValue={1.25}
+                        min="1.05"
+                        max="1.50"
+                        onChange={(e) => setInputCrossGutGuage(Number(e.target.value))}
+                        className="inline-block border border-gray-300 rounded w-[72px] h-10 p-2 focus:outline-sub-green mr-1"
+                      />
+                      <span className="inline-block text-[14px] h-[16px] leading-[16px]">mm</span>
+                    </div>
+                  </div>
+
+                  {/* gutテンション選択 */}
+                  <div>
+                    <p className="text-[14px] h-[16px] mb-[4px] leading-[16px]">テンション（メイン / クロス）</p>
+                    <div>
+                      <input
+                        type="number"
+                        name="main_gut_guage"
+                        step={1}
+                        defaultValue={50}
+                        min="1"
+                        max="100"
+                        onChange={(e) => setInputMainGutTension(Number(e.target.value))}
+                        className="inline-block border border-gray-300 rounded w-[64px] h-10 p-2 focus:outline-sub-green mr-1"
+                      />
+                      <span className="inline-block text-[16px] text-center h-[18px] mb-[4px] leading-[16px] mr-[4px] w-[100%] max-w-[16px]">/</span>
+                      <input
+                        type="number"
+                        name="cross_gut_guage"
+                        step={1}
+                        defaultValue={50}
+                        min="1"
+                        max="100"
+                        onChange={(e) => setInputMainCrossTension(Number(e.target.value))}
+                        className="inline-block border border-gray-300 rounded w-[64px] h-10 p-2 focus:outline-sub-green mr-1"
+                      />
+                      <span className="inline-block text-[14px] h-[16px] leading-[16px]">ポンド</span>
+                    </div>
+                  </div>
+
+
                 </form>
 
                 {/* gut検索モーダル */}
