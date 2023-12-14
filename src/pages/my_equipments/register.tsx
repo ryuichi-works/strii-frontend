@@ -1,22 +1,20 @@
 import type { NextPage } from "next";
+import type { Maker, Racket, TennisProfile } from "../users/[id]/profile";
+import type { Gut } from "../reviews";
+
+import axios from "@/lib/axios";
+import Cookies from "js-cookie";
 
 import React, { useContext, useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import { AuthContext } from "@/context/AuthContext";
 
 import AuthCheck from "@/components/AuthCheck";
 import PrimaryHeading from "@/components/PrimaryHeading";
 import SubHeading from "@/components/SubHeading";
 import TextUnderBar from "@/components/TextUnderBar";
-import { Gut } from "../reviews";
 import { IoClose } from "react-icons/io5";
-import { Maker, Racket, TennisProfile } from "../users/[id]/profile";
-import axios from "@/lib/axios";
 import { getToday } from "@/modules/getToday";
-import Cookies from "js-cookie";
-import { useRouter } from "next/router";
-
-// import Modal from "@/components/Modal";
-// import { useModal } from "@/hooks/useModal";
 
 const MyEquipmentRegister: NextPage = () => {
   const router = useRouter();
@@ -26,49 +24,35 @@ const MyEquipmentRegister: NextPage = () => {
   const today: string = getToday();
 
   const [userTennisProfile, setUserTennisProfile] = useState<TennisProfile>();
-  console.log('userTennisProfile', userTennisProfile)
 
   //my_equipmentの登録に使うstate群
   const [stringingWay, setStringingWay] = useState<string>('single');
-  console.log('stringingWay', stringingWay)
 
   const [mainGut, setMainGut] = useState<Gut>();
-  console.log('mainGut', mainGut)
 
   const [crossGut, setCrossGut] = useState<Gut>();
-  console.log('crossGut', crossGut)
 
   const [racket, setRacket] = useState<Racket>();
-  console.log('racket', racket)
 
   //要素の表示などに使用するstate群
   const [makers, setMakers] = useState<Maker[]>();
-  console.log('makers', makers)
 
   const [witchSelectingGut, setWitchSelectingGut] = useState<string>('');
-  console.log('witchSelectingGut', witchSelectingGut)
 
   // inputに関するstate
   const [inputMainGutGuage, setInputMainGutGuage] = useState<number>(1.25);
-  console.log('inputMainGutGuage', inputMainGutGuage)
 
   const [inputCrossGutGuage, setInputCrossGutGuage] = useState<number>(1.25);
-  console.log('inputCrossGutGuage', inputCrossGutGuage)
 
   const [inputMainGutTension, setInputMainGutTension] = useState<number>(50);
-  console.log('inputMainGutTension', inputMainGutTension)
 
   const [inputMainCrossTension, setInputMainCrossTension] = useState<number>(50);
-  console.log('inputMainCrossTension', inputMainCrossTension)
 
   const [inputNewGutDate, setInputNewGutDate] = useState<string>(today);
-  console.log('inputNewGutDate', inputNewGutDate)
 
   const [inputChangeGutDate, setInputChangeGutDate] = useState<string>();
-  console.log('inputChangeGutDate', inputChangeGutDate)
 
   const [comment, setComment] = useState<string>('');
-  console.log('comment', comment)
 
   //モーダルの開閉に関するstate
   const [modalVisibilityClassName, setModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
@@ -77,16 +61,12 @@ const MyEquipmentRegister: NextPage = () => {
 
   //検索関連のstate
   const [inputSearchWord, setInputSearchWord] = useState<string>('');
-  console.log('inputSearchWord', inputSearchWord)
 
   const [inputSearchMaker, setInputSearchMaker] = useState<number | null>();
-  console.log('inputSearchMaker', inputSearchMaker)
 
   const [searchedGuts, setSearchedGuts] = useState<Gut[]>();
-  console.log('searchedGuts', searchedGuts)
 
   const [searchedRackets, setSearchedRackets] = useState<Racket[]>();
-  console.log('searchedRackets', searchedRackets)
 
   useEffect(() => {
     const getMakerList = async () => {
@@ -220,11 +200,6 @@ const MyEquipmentRegister: NextPage = () => {
     closeModal();
   }
   const selectRacket = (racket: Racket) => {
-    // if (witchSelectingGut === 'main') {
-    //   setMainGut(gut);
-    // } else if (witchSelectingGut === 'cross') {
-    //   setCrossGut(gut);
-    // }
     setRacket(racket)
     closeRacketSearchModal();
   }
@@ -266,7 +241,6 @@ const MyEquipmentRegister: NextPage = () => {
   }
 
   const [errors, setErrors] = useState<Errors>(initialErrorVals);
-  console.log('errors', errors)
 
   //gut登録処理関連
   const csrf = async () => await axios.get('/sanctum/csrf-cookie');
@@ -291,10 +265,6 @@ const MyEquipmentRegister: NextPage = () => {
       change_gut_date: inputChangeGutDate ? inputChangeGutDate : null,
       comment: comment,
     }
-
-    console.log(registerData);
-    console.log(user);
-
 
     await csrf();
 
