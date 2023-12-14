@@ -5,7 +5,6 @@ const getToday = (): string => {
   const month_mm: string = ("0" + (date.getMonth() + 1)).slice(-2);
   const day_dd: string = ("0" + date.getDate()).slice(-2);
 
-  // document.getElementById("today").value=yyyy+'-'+mm+'-'+dd;
   const today: string = year_yyyy + '-' + month_mm + '-' + day_dd;
   return today;
 }

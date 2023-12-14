@@ -148,7 +148,6 @@ const MyEquipmentRegister: NextPage = () => {
 
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/'
 
-
   //gut検索
   const searchGuts = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -188,7 +187,6 @@ const MyEquipmentRegister: NextPage = () => {
       console.log(e);
     }
   }
-
 
   const selectGut = (gut: Gut) => {
     if (witchSelectingGut === 'main') {
