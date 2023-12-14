@@ -56,6 +56,8 @@ const MyEquipmentRegister: NextPage = () => {
   const [inputChangeGutDate, setInputChangeGutDate] = useState<string>();
   console.log('inputChangeGutDate', inputChangeGutDate)
 
+  const [comment, setComment] = useState<string>();
+  console.log('comment', comment)
 
   //モーダルの開閉に関するstate
   const [modalVisibilityClassName, setModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
@@ -392,7 +394,7 @@ const MyEquipmentRegister: NextPage = () => {
                   </div>
 
                   {/* ラケット関連 */}
-                  <div>
+                  <div className="mb-[40px]">
                     <div className="w-[100%] max-w-[320px] mb-4 md:max-w-[360px]">
                       <SubHeading text='ラケット' className="text-[16px] md:text-[18px] md:mb-2" />
                       <TextUnderBar className="w-[100%] max-w-[320px] md:max-w-[360px]" />
@@ -421,6 +423,11 @@ const MyEquipmentRegister: NextPage = () => {
                         </div>
                       </div>
                     </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="comment">コメント</label>
+                    <textarea name="comment" id="comment" onChange={(e) => setComment(e.target.value)} className="inline-block border border-gray-300 rounded w-[320px] min-h-[160px] p-2 focus:outline-sub-green" />
                   </div>
 
 
