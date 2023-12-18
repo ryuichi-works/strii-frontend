@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import type { Maker, Racket, TennisProfile } from "@/pages/users/[id]/profile";
-import type { Gut } from "@/pages/reviews"; 
+import type { Gut } from "@/pages/reviews";
 import type { MyEquipment } from "@/pages/reviews";
 
 import axios from "@/lib/axios";
@@ -18,32 +18,24 @@ import { IoClose } from "react-icons/io5";
 import { getToday } from "@/modules/getToday";
 
 const MyEquipmentEdit: NextPage = () => {
-  
-  const router = useRouter();
-  
-  const currentMyEquipmentId = router.query.id;
 
-  const [currentMyEquipment, setCurrentMyEquipment] = useState<MyEquipment>();
-  console.log('currentMyEquipment', currentMyEquipment)
+  const router = useRouter();
 
   const { isAuth, user, isAuthAdmin } = useContext(AuthContext);
 
-  const today: string = getToday();
+  const currentMyEquipmentId = router.query.id;
 
-  const [userTennisProfile, setUserTennisProfile] = useState<TennisProfile>();
+  const [currentMyEquipment, setCurrentMyEquipment] = useState<MyEquipment>();
+
 
   //my_equipmentの登録に使うstate群
   const [stringingWay, setStringingWay] = useState<string>('');
-  console.log('stringingWay', stringingWay)
 
   const [mainGut, setMainGut] = useState<Gut>();
-  console.log('mainGut', mainGut)
 
   const [crossGut, setCrossGut] = useState<Gut>();
-  console.log('crossGut', crossGut)
 
   const [racket, setRacket] = useState<Racket>();
-  console.log('racket', racket)
 
   //要素の表示などに使用するstate群
   const [makers, setMakers] = useState<Maker[]>();
@@ -52,25 +44,18 @@ const MyEquipmentEdit: NextPage = () => {
 
   // inputに関するstate
   const [inputMainGutGuage, setInputMainGutGuage] = useState<number>();
-  console.log('inputMainGutGuage', inputMainGutGuage)
 
   const [inputCrossGutGuage, setInputCrossGutGuage] = useState<number>();
-  console.log('inputCrossGutGuage', inputCrossGutGuage)
 
   const [inputMainGutTension, setInputMainGutTension] = useState<number>();
-  console.log('inputMainGutTension', inputMainGutTension)
 
   const [inputMainCrossTension, inputCrossGutTension] = useState<number>();
-  console.log('inputMainCrossTension', inputMainCrossTension)
 
   const [inputNewGutDate, setInputNewGutDate] = useState<string>();
-  console.log('inputNewGutDate', inputNewGutDate)
 
   const [inputChangeGutDate, setInputChangeGutDate] = useState<string | null | undefined>();
-  console.log('inputChangeGutDate', inputChangeGutDate)
 
   const [comment, setComment] = useState<string>('');
-  console.log('comment', comment)
 
   //モーダルの開閉に関するstate
   const [modalVisibilityClassName, setModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
@@ -93,12 +78,6 @@ const MyEquipmentEdit: NextPage = () => {
       })
     }
 
-    const getUserTennisProfile = async () => {
-      await axios.get(`api/tennis_profiles/${user.id}`).then(res => {
-        setUserTennisProfile(res.data);
-      })
-    }
-
     const getCurrentMyEquipment = async () => {
       await axios.get(`api/my_equipments/${currentMyEquipmentId}`).then(res => {
         const myEquipment: MyEquipment = res.data;
@@ -118,7 +97,6 @@ const MyEquipmentEdit: NextPage = () => {
     }
 
     getCurrentMyEquipment();
-    getUserTennisProfile();
     getMakerList();
   }, [])
 
@@ -574,7 +552,7 @@ const MyEquipmentEdit: NextPage = () => {
                         <div className="w-[100%] max-w-[176px] md:max-w-[216px] flex flex-col">
                           <p className="text-[14px] h-[16px] mb-[4px] leading-[16px] md:text-[16px] md:h-[18px]">選択中</p>
 
-                          <div className="border rounded py-[8px] mb-[16px] mb-auto">
+                          <div className="border rounded py-[8px] mb-[16px]">
                             <p className="text-[14px] pb-1 h-[16px] pl-[16px] leading-[16px] md:text-[16px] md:h-[18px] md:mb-[2px]">{racket ? racket.maker.name_en : ''}</p>
                             <p className="text-[16px] text-center h-[18px] leading-[18px] md:text-[18px] md:h-[20px]">{racket ? racket.name_ja : '未選択'}</p>
                           </div>
