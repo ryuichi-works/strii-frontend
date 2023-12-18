@@ -43,7 +43,7 @@ export type MyEquipment = {
   main_gut_tension: number,
   cross_gut_tension: number,
   new_gut_date: string,
-  change_gut_date: null,
+  change_gut_date: undefined | null | string,
   comment: string,
   created_at: string,
   updated_at: string,

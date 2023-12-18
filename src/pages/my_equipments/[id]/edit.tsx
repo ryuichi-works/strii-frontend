@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import type { Maker, Racket, TennisProfile } from "@/pages/users/[id]/profile";
 import type { Gut } from "@/pages/reviews"; 
+import type { MyEquipment } from "@/pages/reviews";
 
 import axios from "@/lib/axios";
 import Cookies from "js-cookie";
@@ -17,7 +18,13 @@ import { IoClose } from "react-icons/io5";
 import { getToday } from "@/modules/getToday";
 
 const MyEquipmentEdit: NextPage = () => {
+  
   const router = useRouter();
+  
+  const currentMyEquipmentId = router.query.id;
+
+  const [currentMyEquipment, setCurrentMyEquipment] = useState<MyEquipment>();
+  console.log('currentMyEquipment', currentMyEquipment)
 
   const { isAuth, user, isAuthAdmin } = useContext(AuthContext);
 
@@ -26,13 +33,17 @@ const MyEquipmentEdit: NextPage = () => {
   const [userTennisProfile, setUserTennisProfile] = useState<TennisProfile>();
 
   //my_equipmentの登録に使うstate群
-  const [stringingWay, setStringingWay] = useState<string>('single');
+  const [stringingWay, setStringingWay] = useState<string>('');
+  console.log('stringingWay', stringingWay)
 
   const [mainGut, setMainGut] = useState<Gut>();
+  console.log('mainGut', mainGut)
 
   const [crossGut, setCrossGut] = useState<Gut>();
+  console.log('crossGut', crossGut)
 
   const [racket, setRacket] = useState<Racket>();
+  console.log('racket', racket)
 
   //要素の表示などに使用するstate群
   const [makers, setMakers] = useState<Maker[]>();
@@ -40,19 +51,26 @@ const MyEquipmentEdit: NextPage = () => {
   const [witchSelectingGut, setWitchSelectingGut] = useState<string>('');
 
   // inputに関するstate
-  const [inputMainGutGuage, setInputMainGutGuage] = useState<number>(1.25);
+  const [inputMainGutGuage, setInputMainGutGuage] = useState<number>();
+  console.log('inputMainGutGuage', inputMainGutGuage)
 
-  const [inputCrossGutGuage, setInputCrossGutGuage] = useState<number>(1.25);
+  const [inputCrossGutGuage, setInputCrossGutGuage] = useState<number>();
+  console.log('inputCrossGutGuage', inputCrossGutGuage)
 
-  const [inputMainGutTension, setInputMainGutTension] = useState<number>(50);
+  const [inputMainGutTension, setInputMainGutTension] = useState<number>();
+  console.log('inputMainGutTension', inputMainGutTension)
 
-  const [inputMainCrossTension, setInputMainCrossTension] = useState<number>(50);
+  const [inputMainCrossTension, inputCrossGutTension] = useState<number>();
+  console.log('inputMainCrossTension', inputMainCrossTension)
 
-  const [inputNewGutDate, setInputNewGutDate] = useState<string>(today);
+  const [inputNewGutDate, setInputNewGutDate] = useState<string>();
+  console.log('inputNewGutDate', inputNewGutDate)
 
-  const [inputChangeGutDate, setInputChangeGutDate] = useState<string>();
+  const [inputChangeGutDate, setInputChangeGutDate] = useState<string | null | undefined>();
+  console.log('inputChangeGutDate', inputChangeGutDate)
 
   const [comment, setComment] = useState<string>('');
+  console.log('comment', comment)
 
   //モーダルの開閉に関するstate
   const [modalVisibilityClassName, setModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
@@ -81,6 +99,25 @@ const MyEquipmentEdit: NextPage = () => {
       })
     }
 
+    const getCurrentMyEquipment = async () => {
+      await axios.get(`api/my_equipments/${currentMyEquipmentId}`).then(res => {
+        const myEquipment: MyEquipment = res.data;
+        setCurrentMyEquipment(myEquipment);
+        setStringingWay(myEquipment.stringing_way);
+        setMainGut(myEquipment.main_gut);
+        setCrossGut(myEquipment.cross_gut);
+        setRacket(myEquipment.racket);
+        setInputMainGutGuage(myEquipment.main_gut_guage);
+        setInputCrossGutGuage(myEquipment.cross_gut_guage);
+        setInputMainGutTension(myEquipment.main_gut_tension);
+        inputCrossGutTension(myEquipment.cross_gut_tension);
+        setInputNewGutDate(myEquipment.new_gut_date);
+        setInputChangeGutDate(myEquipment.change_gut_date);
+        setComment(myEquipment.comment);
+      })
+    }
+
+    getCurrentMyEquipment();
     getUserTennisProfile();
     getMakerList();
   }, [])
@@ -412,7 +449,7 @@ const MyEquipmentEdit: NextPage = () => {
                             type="number"
                             name="main_gut_guage"
                             step={0.01}
-                            defaultValue={1.25}
+                            defaultValue={inputMainGutGuage?.toFixed(2)}
                             min="1.05"
                             max="1.50"
                             onChange={(e) => setInputMainGutGuage(Number(e.target.value))}
@@ -424,7 +461,7 @@ const MyEquipmentEdit: NextPage = () => {
                             type="number"
                             name="cross_gut_guage"
                             step={0.01}
-                            defaultValue={1.25}
+                            defaultValue={inputCrossGutGuage?.toFixed(2)}
                             min="1.05"
                             max="1.50"
                             onChange={(e) => setInputCrossGutGuage(Number(e.target.value))}
@@ -448,7 +485,7 @@ const MyEquipmentEdit: NextPage = () => {
                             type="number"
                             name="main_gut_guage"
                             step={1}
-                            defaultValue={50}
+                            defaultValue={inputMainGutTension}
                             min="1"
                             max="100"
                             onChange={(e) => setInputMainGutTension(Number(e.target.value))}
@@ -459,10 +496,10 @@ const MyEquipmentEdit: NextPage = () => {
                             type="number"
                             name="cross_gut_guage"
                             step={1}
-                            defaultValue={50}
+                            defaultValue={inputMainCrossTension}
                             min="1"
                             max="100"
-                            onChange={(e) => setInputMainCrossTension(Number(e.target.value))}
+                            onChange={(e) => inputCrossGutTension(Number(e.target.value))}
                             className="inline-block border border-gray-300 rounded w-[64px] h-10 p-2 focus:outline-sub-green mr-1"
                           />
                           <span className="inline-block text-[14px] h-[16px] leading-[16px] md:text-[16px] md:h-[18px]">ポンド</span>
@@ -483,7 +520,7 @@ const MyEquipmentEdit: NextPage = () => {
                             type="date"
                             name="new_gut_date"
                             id="new_gut_date"
-                            defaultValue={today}
+                            defaultValue={inputNewGutDate}
                             onChange={onChangeInputNewGutDate}
                             className="inline-block border border-gray-300 rounded w-[140px] h-10 p-2 focus:outline-sub-green mr-1"
                           />
@@ -502,6 +539,7 @@ const MyEquipmentEdit: NextPage = () => {
                             type="date"
                             name="change_gut_date"
                             id="change_gut_date"
+                            defaultValue={inputChangeGutDate ? inputChangeGutDate : ''}
                             onChange={onChangeInputChangeGutDate}
                             className="inline-block border border-gray-300 rounded w-[140px] h-10 p-2 focus:outline-sub-green mr-1"
                           />
@@ -557,6 +595,7 @@ const MyEquipmentEdit: NextPage = () => {
                       <textarea
                         name="comment"
                         id="comment"
+                        defaultValue={comment}
                         onChange={(e) => setComment(e.target.value)}
                         className="inline-block border border-gray-300 rounded w-[320px] min-h-[160px] p-2 focus:outline-sub-green md:w-[360px] md:min-h-[240px]"
                       />
