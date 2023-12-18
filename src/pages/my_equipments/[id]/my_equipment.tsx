@@ -7,6 +7,7 @@ import axios from "@/lib/axios";
 import AuthCheck from "@/components/AuthCheck";
 import SubHeading from "@/components/SubHeading";
 import TextUnderBar from "@/components/TextUnderBar";
+import Link from "next/link";
 
 const MyEquipment = () => {
   const router = useRouter();
@@ -154,6 +155,13 @@ const MyEquipment = () => {
                     <p className="w-[100%] max-w-[300px] min-h-[160px] border p-2 md:max-w-[360px] md:min-h-[267px]" >{myEquipment?.comment}</p>
                   </div>
                 </div>
+              </div>
+
+              <div className="flex justify-center w-[100%] max-w-[320px] mx-auto mt-[24px] md:justify-end md:max-w-[768px]">
+                <Link
+                  href={`/my_equipments/${myEquipmentId}/edit`}
+                  className="inline-block  text-[14px] text-white text-center leading-[32px] font-bold w-[80px] h-[32px] rounded  bg-sub-green md:text-[16px] md:w-[100px]"
+                >編集</Link>
               </div>
             </div>
           </div>
