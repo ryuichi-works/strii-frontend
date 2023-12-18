@@ -280,14 +280,14 @@ const MyEquipmentEdit: NextPage = () => {
   //gut登録処理関連
   const csrf = async () => await axios.get('/sanctum/csrf-cookie');
 
-  const registerGut = async (e: React.FormEvent<HTMLFormElement>) => {
+  const updateMyEquipment = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const registerData = {
-      user_id: user.id,
-      user_height: userTennisProfile?.height,
-      user_age: userTennisProfile?.age,
-      experience_period: userTennisProfile?.experience_period,
+    const updatedData = {
+      _method: 'PUT',
+      user_height: currentMyEquipment?.user_height,
+      user_age: currentMyEquipment?.user_age,
+      experience_period: currentMyEquipment?.experience_period,
       stringing_way: stringingWay,
       main_gut_id: mainGut?.id,
       cross_gut_id: stringingWay === 'hybrid' && crossGut ? crossGut.id : mainGut?.id,
@@ -303,20 +303,20 @@ const MyEquipmentEdit: NextPage = () => {
 
     await csrf();
 
-    await axios.post('api/my_equipments', registerData, {
+    await axios.post(`api/my_equipments/${currentMyEquipmentId}`, updatedData, {
       headers: {
         'X-Xsrf-Token': Cookies.get('XSRF-TOKEN'),
       }
     }).then(res => {
-      console.log('マイ装備を追加しました。');
+      console.log('マイ装備を更新しました。');
 
-      router.push('/my_equipments');
+      router.push(`/my_equipments/${currentMyEquipmentId}/my_equipment`);
     }).catch((e) => {
       const newErrors = { ...initialErrorVals, ...e.response.data.errors };
 
       setErrors(newErrors);
 
-      console.log('マイ装備の追加に失敗しました');
+      console.log('マイ装備の更新に失敗しました');
     })
   }
 
@@ -333,7 +333,7 @@ const MyEquipmentEdit: NextPage = () => {
               <div className="w-[100%] max-w-[320px] mx-auto md:max-w-[768px]">
 
                 <form
-                  onSubmit={registerGut}
+                  onSubmit={updateMyEquipment}
                   className="w-[100%] max-w-[320px] mx-auto md:max-w-[768px] md:flex md:justify-between"
                 >
 
@@ -609,7 +609,7 @@ const MyEquipmentEdit: NextPage = () => {
                       <button
                         type="submit"
                         className="text-white font-bold text-[14px] w-[200px] h-8 rounded  bg-sub-green md:text-[16px] md:w-[160px]"
-                      >追加する</button>
+                      >更新する</button>
                     </div>
                   </div>
 
