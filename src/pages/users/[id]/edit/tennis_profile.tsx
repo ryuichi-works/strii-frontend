@@ -1,12 +1,14 @@
 import type { NextPage } from "next";
 import type { User } from "@/context/AuthContext";
-import type { TennisProfile } from "../profile";
+import type { Maker, Racket, TennisProfile } from "../profile";
 import axios from "@/lib/axios";
 import Cookies from "js-cookie";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/context/AuthContext";
 import { useRouter } from "next/router";
 import AuthCheck from "@/components/AuthCheck";
+import { IoClose } from "react-icons/io5";
+import TextUnderBar from "@/components/TextUnderBar";
 
 //注意：文字列の数字は全角
 export type Frequency = '未設定' | '週１回' | '週２回' | '週３回' | '週４回' | '週５回' | '週６回' | '月１回' | '月２回' | '月３回' | '月４回' | '毎日';
@@ -26,12 +28,26 @@ const TennisProfileEdit: NextPage = () => {
 
   const [tennisProfile, setTennisProfile] = useState<TennisProfile>();
 
+  //要素の表示などに使用するstate群
+  const [makers, setMakers] = useState<Maker[]>();
+
+  const [racket, setRacket] = useState<Racket>();
+
+  //検索関連のstate
+  const [inputSearchWord, setInputSearchWord] = useState<string>('');
+
+  const [inputSearchMaker, setInputSearchMaker] = useState<number | null>();
+
+  const [searchedRackets, setSearchedRackets] = useState<Racket[]>();
+
+  //モーダルの開閉に関するstate
+  const [racketSearchModalVisibilityClassName, setRacketSearchModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
+
   useEffect(() => {
-    if(user.id) {
+    if (user.id) {
       const getTennisProfile = async () => {
         await axios.get(`api/tennis_profiles/${user.id}`).then(res => {
           setTennisProfile(res.data);
-          setMyRacketId(res.data.my_racket_id);
           setExperiencePeriod(res.data.experience_period);
           setFrequency(res.data.frequency);
           setPlayStyle(res.data.play_style);
@@ -42,19 +58,69 @@ const TennisProfileEdit: NextPage = () => {
           setGender(res.data.gender);
           setHeight(res.data.height);
           setPhysique(res.data.physique);
+          setRacket(res.data.racket)
         })
       }
-  
+
+      const getMakerList = async () => {
+        await axios.get('api/makers').then(res => {
+          setMakers(res.data);
+        })
+      }
+
       getTennisProfile();
+      getMakerList();
     } else {
       router.push('/users/login')
     }
   }, [])
 
+  const onChangeInputSearchMaker = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (e.target.value === '未選択') {
+      setInputSearchMaker(null);
+      return
+    };
+
+    setInputSearchMaker(Number(e.target.value));
+  }
+
+  // ラケット検索モーダルの開閉
+  const openRacketSearchModal = () => {
+    setRacketSearchModalVisibilityClassName('opacity-100 scale-100');
+  }
+
+  const closeRacketSearchModal = () => {
+    setRacketSearchModalVisibilityClassName('opacity-0 scale-0');
+  }
+
+  //racket検索
+  const searchRackets = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+    e.preventDefault();
+
+    try {
+      await axios.get('api/rackets/search', {
+        params: {
+          several_words: inputSearchWord,
+          maker: inputSearchMaker
+        }
+      }).then((res) => {
+        setSearchedRackets(res.data);
+      })
+
+      console.log('検索完了しました')
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  const selectRacket = (racket: Racket) => {
+    setRacket(racket)
+    closeRacketSearchModal();
+  }
+
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/'
 
 
-  const [myRacketId, setMyRacketId] = useState<number | undefined>();
   const [experiencePeriod, setExperiencePeriod] = useState<number | undefined>();
   const [frequency, setFrequency] = useState<Frequency | undefined>();
   const [playStyle, setPlayStyle] = useState<PlayStyle | undefined>();
@@ -203,7 +269,7 @@ const TennisProfileEdit: NextPage = () => {
 
     const updatedData = {
       _method: 'PUT',
-      my_racket_id: myRacketId,
+      my_racket_id: racket?.id,
       experience_period: experiencePeriod,
       frequency: frequency,
       play_style: playStyle,
@@ -233,6 +299,8 @@ const TennisProfileEdit: NextPage = () => {
     })
   }
 
+
+
   return (
     <>
       <AuthCheck>
@@ -244,23 +312,26 @@ const TennisProfileEdit: NextPage = () => {
                   <h2 className="text-xl">テニスプロフィール</h2>
                   <hr className=" border-sub-green mb-6" />
 
+                  {/* ラケット選択 */}
                   <div className="flex flex-wrap justify-between mb-8">
                     <p className="mb-2 basis-full">使用ラケット</p>
 
-                    <div className="w-28 h-40 bg-faint-green">
-                      <img src={`${baseImagePath}images/rackets/defalt_racket_image.jpg`} width="112px" alt="ラケット画像" />
+                    <div className="w-[100%] max-w-[120px] h-[160px] bg-faint-green">
+                      {racket && racket.racket_image.file_path
+                        ? <img src={`${baseImagePath}${racket.racket_image.file_path}`} alt="ラケット画像" className="w-[120px] h-[160px]" />
+                        : <img src={`${baseImagePath}images/rackets/default_racket_image.png`} alt="ラケット画像" className="w-[120px] h-[160px]" />
+                      }
                     </div>
 
                     <div className="w-44 md:w-[360px] flex flex-col">
                       <span>選択中</span>
                       <div className="h-12 border rounded md:w-[360px]">
-                        <span className="inline-block pl-2 text-xs ml-4 ">Babolat</span>
-                        <p className="pl-2 leading-[18px] text-center">ピュアアエロ</p>
+                        <span className="inline-block pl-2 text-xs ml-4 ">{racket ? racket.maker.name_en : ''}</span>
+                        <p className="pl-2 leading-[18px] text-center">{racket ? racket.name_ja : '未選択'}</p>
                       </div>
 
                       <div className="flex justify-end md:justify-start mt-auto">
-                        {/* 今後、ラケットを選ぶを押すとモーダルなどでラケットを選択でき、選択したらstateのラケットidにidを格納する処理を実装する */}
-                        <button className="text-white font-bold text-[14px] w-32 h-8 rounded  bg-sub-green">ラケットを選択</button>
+                        <button type="button" onClick={openRacketSearchModal} className="text-white font-bold text-[14px] w-32 h-8 rounded  bg-sub-green">ラケットを選択</button>
                       </div>
                     </div>
                   </div>
@@ -390,6 +461,62 @@ const TennisProfileEdit: NextPage = () => {
                     </div>
                   </form>
                 </div>
+
+                {/* racket検索モーダル */}
+                <div className={`bg-gray-300 w-screen min-h-screen absolute top-[64px] left-0 ${racketSearchModalVisibilityClassName} duration-[400ms] pt-[24px] overflow-y-auto`}>
+                  <div className="flex flex-col items-center w-[100%] max-w-[320px] mx-auto md:max-w-[768px]">
+                    <div onClick={closeRacketSearchModal} className="self-end hover:cursor-pointer md:mr-[39px]">
+                      <IoClose size={48} />
+                    </div>
+
+                    <form action="" onSubmit={searchRackets} className="mb-[24px] md:flex md:mb-[40px]">
+                      <div className="mb-6 md:mb-0 md:mr-[16px]">
+                        <label htmlFor="several_words" className="block mb-1 text-[14px] md:text-[16px] md:mb-2">ラケット　検索ワード</label>
+                        <input type="text" name="several_words" onChange={(e) => setInputSearchWord(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[300px] h-10 p-2 focus:outline-sub-green" />
+                      </div>
+
+                      <div className="mb-8 md:mb-0 md:mr-[24px]">
+                        <label htmlFor="maker" className="block text-[14px] mb-1 md:text-[16px] md:mb-2">メーカー</label>
+
+                        <select name="maker" id="maker" onChange={(e) => { onChangeInputSearchMaker(e) }} className="border border-gray-300 rounded w-80 md:w-[250px] h-10 p-2 focus:outline-sub-green">
+                          <option value="未選択" selected>未選択</option>
+                          {makers?.map((maker) => (<option key={maker.id} value={maker.id}>{maker.name_ja}</option>))}
+                        </select>
+                      </div>
+
+                      <div className="flex justify-end md:justify-start">
+                        <button type="submit" className="text-white font-bold text-[14px] w-[160px] h-8 rounded  bg-sub-green md:text-[16px] md:self-end md:h-[40px] md:w-[100px]">検索する</button>
+                      </div>
+                    </form>
+
+                    {/* 検索結果表示欄 */}
+                    <div className="w-[100%] max-w-[320px] md:max-w-[768px]">
+                      <p className="text-[14px] mb-[16px] md:text-[16px] md:max-w-[640px] md:mx-auto">検索結果</p>
+                      <div className="flex justify-between flex-wrap w-[100%] max-w-[320px] md:max-w-[768px] md:mx-auto">
+                        {/* ラケット */}
+                        {searchedRackets && searchedRackets.map(racket => (
+                          <>
+                            <div onClick={() => selectRacket(racket)} className="flex  mb-6 hover:opacity-80 hover:cursor-pointer w-[100%] max-w-[360px] bg-white rounded-lg md:w-[100%] md:max-w-[360px]">
+                              <div className="w-[120px] mr-6">
+                                {racket.racket_image.file_path
+                                  ? <img src={`${baseImagePath}${racket.racket_image.file_path}`} alt="ラケット画像" className="w-[120px] h-[160px]" />
+                                  : <img src={`${baseImagePath}images/rackets/defalt_racket_image.png`} alt="ラケット画像" className="w-[120px] h-[160px]" />
+                                }
+                              </div>
+
+                              <div className="w-[100%] max-w-[160px] md:max-w-[216px]">
+                                <p className="text-[14px] mb-2 md:text-[16px]">{racket.maker.name_ja}</p>
+                                <p className="text-[16px] mb-2 md:text-[18px]">{racket.name_ja}</p>
+                                <TextUnderBar className="w-[100%] max-w-[160px] md:max-w-[216px]" />
+                              </div>
+                            </div>
+                          </>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </div>
           </>
