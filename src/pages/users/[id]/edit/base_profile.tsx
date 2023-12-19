@@ -11,21 +11,37 @@ const BaseProfileEdit: NextPage = () => {
   const router = useRouter();
 
   const { isAuth, user, setUser, setIsAuth } = useContext(AuthContext);
-  
+
+  //基本プロフィール変更用state
   const [name, setName] = useState<string>(`${user.name}`);
   const [email, setEmail] = useState<string>(`${user.email}`);
   const [file, setFile] = useState<File | null>(null);
 
+  //password変更用state
+  const [currentPassword, setCurrentPassword] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [passwordConfirmation, setPasswordConfirmation] = useState<string>('');
+
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/'
 
+  //エラー表示関連
   type Errors = {
     name: string[],
     email: string[],
-    password: string[]
-    file: string[]
+    file: string[],
+    password: string[],
+    current_password: string[],
   }
 
-  const [errors, setErrors] = useState<Errors>({ name: [], email: [], password: [], file: [] });
+  const initialErrors: Errors = {
+    name: [],
+    email: [],
+    file: [],
+    password: [],
+    current_password: [],
+  }
+
+  const [errors, setErrors] = useState<Errors>(initialErrors);
 
   const onChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
@@ -37,6 +53,7 @@ const BaseProfileEdit: NextPage = () => {
 
   const csrf = async () => await axios.get('/sanctum/csrf-cookie');
 
+  // 基本プロフィール更新処理
   const updateBaseProfile = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -67,10 +84,40 @@ const BaseProfileEdit: NextPage = () => {
       })
     }).catch((e) => {
       console.log(e);
-      const newErrors = {name: [], email: [], password: [], file: [], ...e.response.data.errors };
+      const newErrors = { ...initialErrors, ...e.response.data.errors };
       setErrors(newErrors);
 
       console.log('基本プロフィール更新に失敗しました。');
+    })
+  }
+
+  // password更新処理
+  const passwordUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const updatedData = {
+      _method: 'PUT',
+      current_password: currentPassword,
+      password: password,
+      password_confirmation: passwordConfirmation
+    }
+
+    await csrf();
+
+    await axios.post('users/password-update', updatedData, {
+      headers: {
+        'X-Xsrf-Token': Cookies.get('XSRF-TOKEN'),
+      }
+    }).then(async (res) => {
+      console.log('パスワードを更新しました。');
+
+      router.push(`/users/${user.id}/profile`);
+    }).catch((e) => {
+      console.log(e);
+      const newErrors = { ...initialErrors, ...e.response.data.errors };
+      setErrors(newErrors);
+
+      console.log('パスワード更新に失敗しました。');
     })
   }
 
@@ -106,7 +153,7 @@ const BaseProfileEdit: NextPage = () => {
                     <div className="mb-6">
                       <label htmlFor="name" className="block">アカウント名</label>
                       <input type="text" name="name" defaultValue={user.name} onChange={(e) => setName(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green" />
-                      {errors.name.length !== 0 &&
+                      {errors.name && errors.name.length !== 0 &&
                         errors.name.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                       }
                     </div>
@@ -129,24 +176,63 @@ const BaseProfileEdit: NextPage = () => {
                   <h2 className="text-xl">パスワード変更</h2>
                   <hr className=" border-sub-green mb-6" />
 
-                  <form action="">
+                  <form action="" onSubmit={passwordUpdate}>
                     <div className="mb-6">
-                      <label htmlFor="current_password" className="block">現在のパスワード</label>
-                      <input type="password" name="current_password" className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green" />
+                      <label
+                        htmlFor="current_password"
+                        className="block"
+                      >現在のパスワード</label>
+
+                      <input
+                        type="password"
+                        name="current_password"
+                        id="current_password"
+                        onChange={(e) => setCurrentPassword(e.target.value)}
+                        className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green"
+                      />
+                      {errors.current_password.length !== 0 &&
+                        errors.current_password.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                      }
+                    </div>
+
+                    <div className="mb-6">
+                      <label
+                        htmlFor="password"
+                        className="block"
+                      >新しいパスワード</label>
+
+                      <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green"
+                      />
+                      {errors.password.length !== 0 &&
+                        errors.password.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                      }
                     </div>
 
                     <div>
-                      <label htmlFor="password" className="block">新しいパスワード</label>
-                      <input type="password" name="password" className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green mb-8" />
-                    </div>
+                      <label
+                        htmlFor="password_confirmation"
+                        className="block"
+                      >新しいパスワード確認</label>
 
-                    <div>
-                      <label htmlFor="password_confirmation" className="block">新しいパスワード確認</label>
-                      <input type="password" name="password_confirmation" className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green mb-8" />
+                      <input
+                        type="password"
+                        name="password_confirmation"
+                        id="password_confirmation"
+                        onChange={(e) => setPasswordConfirmation(e.target.value)}
+                        className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green mb-8"
+                      />
                     </div>
 
                     <div className="flex justify-end md:justify-start">
-                      <button className="text-white text-[14px] w-[160px] h-8 rounded  bg-sub-green">パスワードを変更する</button>
+                      <button
+                        type="submit"
+                        className="text-white text-[14px] w-[160px] h-8 rounded  bg-sub-green"
+                      >パスワードを変更する</button>
                     </div>
                   </form>
                 </div>
