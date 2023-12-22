@@ -1,5 +1,8 @@
-import type { Racket } from "../users/[id]/profile";
+import type { Maker, Racket } from "../users/[id]/profile";
+
 import axios from "@/lib/axios";
+import { firstLetterToUpperCase } from "@/modules/firstLetterToUpperCase";
+
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/context/AuthContext";
 import { useRouter } from "next/router";
@@ -8,8 +11,8 @@ import Link from "next/link";
 import AuthCheck from "@/components/AuthCheck";
 import PrimaryHeading from "@/components/PrimaryHeading";
 import TextUnderBar from "@/components/TextUnderBar";
+import { IoClose } from "react-icons/io5";
 
-import { firstLetterToUpperCase } from "@/modules/firstLetterToUpperCase";
 
 const RacketList = () => {
   const router = useRouter();
@@ -17,6 +20,16 @@ const RacketList = () => {
   const { isAuth, user, isAuthAdmin } = useContext(AuthContext);
 
   const [rackets, setRackets] = useState<Racket[]>();
+
+  const [makers, setMakers] = useState<Maker[]>();
+
+  //検索関連のstate
+  const [inputSearchWord, setInputSearchWord] = useState<string>('');
+
+  const [inputSearchMaker, setInputSearchMaker] = useState<number | null>();
+
+  //モーダルの開閉に関するstate
+  const [modalVisibilityClassName, setModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
 
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/';
 
@@ -27,21 +40,121 @@ const RacketList = () => {
       })
     }
 
+    const getMakerList = async () => {
+      await axios.get('api/makers').then(res => {
+        setMakers(res.data);
+      })
+    }
+
+    getMakerList();
+
     getAllRackets();
   }, [])
+
+  const onChangeInputSearchMaker = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (e.target.value === '未選択') {
+      setInputSearchMaker(null);
+      return
+    };
+
+    setInputSearchMaker(Number(e.target.value));
+  }
+
+  //モーダルの開閉
+  const closeModal = () => {
+    setModalVisibilityClassName('opacity-0 scale-0')
+  }
+
+  const openModal = () => {
+    setModalVisibilityClassName('opacity-100 scale-100')
+  }
+
+  //racket検索
+  const searchRackets = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    await axios.get('api/rackets/search', {
+      params: {
+        several_words: inputSearchWord,
+        maker: inputSearchMaker
+      }
+    }).then((res) => {
+      closeModal();
+
+      setRackets(res.data);
+
+      console.log('検索完了しました');
+    }).catch(e => {
+      console.log(e);
+    })
+
+  }
 
   return (
     <>
       <AuthCheck>
         {(isAuth || isAuthAdmin) && (
           <>
-            <div className="container mx-auto">
-              <div className="text-center mb-6">
+            <div className="container mx-auto mt-[24px] md:mt-[32px]">
+              <div className="text-center mb-6 md:mb-[32px]">
                 <PrimaryHeading text="Rackets" className="text-[18px] h-[20px] md:text-[20px] md:h-[22px]" />
               </div>
-
+              
+              {/* 検索 */}
               <div className="flex justify-center mb-6 md:justify-end md:w-[100%] md:max-w-[768px] md:mx-auto">
-                <button className="text-white text-[14px] w-[264px] h-8 rounded  bg-sub-green md:w-[80px] md:h-[32px]">検索</button>
+                <button
+                  onClick={openModal}
+                  className="text-white text-[14px] w-[264px] h-8 rounded  bg-sub-green md:w-[80px] md:h-[32px] md:hidden"
+                >検索</button>
+
+                {/* 検索欄pcサイズ */}
+                <div className={'hidden md:block bg-gray-300 w-[100%] max-w-[768px] h-[100px] rounded-lg'}>
+                  <div className="flex flex-col items-center justify-center w-[100%] mx-auto max-w-[768px] h-[100%]">
+                    <form
+                      onSubmit={searchRackets}
+                      className=" flex"
+                    >
+                      <div className="mb-6 md:mb-0 md:mr-[16px]">
+                        <label
+                          htmlFor="name_ja"
+                          className="block text-[16px] mb-2 pl-1 h-[18px]"
+                        >ラケット検索ワード</label>
+
+                        <input
+                          type="text"
+                          name="name_ja"
+                          onChange={(e) => setInputSearchWord(e.target.value)}
+                          className="border border-gray-300 rounded w-80 md:w-[300px] h-10 p-2 focus:outline-sub-green"
+                        />
+                      </div>
+
+                      <div className="mb-8 md:mb-0 md:mr-[24px]">
+                        <label
+                          htmlFor="maker"
+                          className="block text-[16px] mb-2 pl-1  h-[18px]"
+                        >メーカー</label>
+
+                        <select
+                          name="maker"
+                          id="maker"
+                          value={inputSearchMaker ? inputSearchMaker : '未選択'}
+                          onChange={(e) => { onChangeInputSearchMaker(e) }}
+                          className="border border-gray-300 rounded w-80 md:w-[250px] h-10 p-2 focus:outline-sub-green"
+                        >
+                          <option value="未選択">未選択</option>
+                          {makers?.map((maker) => (<option key={maker.id} value={maker.id}>{maker.name_ja}</option>))}
+                        </select>
+                      </div>
+
+                      <div className="flex justify-end md:justify-start">
+                        <button
+                          type="submit"
+                          className="text-white font-bold text-[14px] w-[160px] h-8 rounded  bg-sub-green md:text-[16px] md:self-end md:h-[40px] md:w-[100px]"
+                        >検索する</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
               </div>
 
               {/* ラケットセクション */}
@@ -65,6 +178,61 @@ const RacketList = () => {
                       </div>
                     </Link>
                   ))}
+                </div>
+              </div>
+
+              {/* 検索モーダル */}
+              <div className={`bg-gray-300 w-screen min-h-[100%] absolute top-[64px] left-0 ${modalVisibilityClassName} duration-[400ms] pt-[24px] overflow-y-auto md:hidden`}>
+                <div className="flex flex-col items-center w-[100%] max-w-[320px] mx-auto md:max-w-[768px]">
+                  <div
+                    onClick={closeModal}
+                    className="self-end hover:cursor-pointer md:mr-[39px]"
+                  >
+                    <IoClose size={48} />
+                  </div>
+
+                  <form
+                    onSubmit={searchRackets}
+                    className="mb-[24px] md:flex md:mb-[40px]"
+                  >
+                    <div className="mb-6 md:mb-0 md:mr-[16px]">
+                      <label
+                        htmlFor="name_ja"
+                        className="block mb-1 text-[14px] md:text-[16px] md:mb-2"
+                      >ストリング検索ワード</label>
+
+                      <input
+                        type="text" name="name_ja"
+                        onChange={(e) => setInputSearchWord(e.target.value)}
+                        className="border border-gray-300 rounded w-80 md:w-[300px] h-10 p-2 focus:outline-sub-green"
+                      />
+                    </div>
+
+                    <div className="mb-8 md:mb-0 md:mr-[24px]">
+                      <label
+                        htmlFor="maker"
+                        className="block text-[14px] mb-1 md:text-[16px] md:mb-2"
+                      >メーカー</label>
+
+                      <select
+                        name="maker"
+                        id="maker"
+                        value={inputSearchMaker ? inputSearchMaker : '未選択'}
+                        onChange={(e) => { onChangeInputSearchMaker(e) }}
+                        className="border border-gray-300 rounded w-80 md:w-[250px] h-10 p-2 focus:outline-sub-green"
+                      >
+                        <option value="未選択">未選択</option>
+                        {makers?.map((maker) => (<option key={maker.id} value={maker.id}>{maker.name_ja}</option>))}
+                      </select>
+                    </div>
+
+                    <div className="flex justify-end md:justify-start">
+                      <button
+                        type="submit"
+                        className="text-white font-bold text-[14px] w-[160px] h-8 rounded  bg-sub-green md:text-[16px] md:self-end md:h-[40px] md:w-[100px]"
+                      >検索する</button>
+                    </div>
+                  </form>
                 </div>
               </div>
             </div>
