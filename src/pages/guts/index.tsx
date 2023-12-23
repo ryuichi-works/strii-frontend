@@ -12,12 +12,37 @@ import PrimaryHeading from "@/components/PrimaryHeading";
 import { Adamina } from "next/font/google";
 import { IoClose } from "react-icons/io5";
 
+type PaginationLinkData = {
+  url: string | null,
+  label: string,
+  active: boolean
+}
+
+type Paginator<T> = {
+  current_page: number,
+  data: T[],
+  first_page_url: string,
+  from: number,
+  last_page: number,
+  last_page_url: string,
+  links: PaginationLinkData[],
+  next_page_url: string,
+  path: string,
+  per_page: number,
+  prev_page_url: string | null,
+  to: number,
+  total: number
+}
+
 const GutList = () => {
   const router = useRouter();
-  
+
   const { isAuth, user, setUser, setIsAuth, admin, isAuthAdmin } = useContext(AuthContext);
-  
+
+  const [gutsPaginator, setGutsPaginator] = useState<Paginator<Gut>>();
+
   const [guts, setGuts] = useState<Gut[]>();
+  console.log('guts', guts)
 
   const [makers, setMakers] = useState<Maker[]>();
 
@@ -31,14 +56,17 @@ const GutList = () => {
   //モーダルの開閉に関するstate
   const [modalVisibilityClassName, setModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
 
+  //ページネーションを考慮したgut一覧データの取得関数
+  const getGutsList = async (url: string = 'api/guts') => {
+    await axios.get(url).then(res => {
+      console.log('res', res.data)
+      setGutsPaginator(res.data)
+      setGuts(res.data.data);
+    })
+  }
+
   useEffect(() => {
     if (user.id || admin.id) {
-      const getAllGuts = async () => {
-        await axios.get('api/guts').then(res => {
-          setGuts(res.data);
-        })
-      }
-
       const getMakerList = async () => {
         await axios.get('api/makers').then(res => {
           setMakers(res.data);
@@ -47,7 +75,7 @@ const GutList = () => {
 
       getMakerList();
 
-      getAllGuts();
+      getGutsList();
     } else {
       router.push('/users/login');
     }
@@ -75,21 +103,41 @@ const GutList = () => {
   const searchGuts = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-      await axios.get('api/guts/search', {
-        params: {
-          several_words: inputSearchWord,
-          maker: inputSearchMaker
-        }
-      }).then((res) => {
-        closeModal();
+    await axios.get('api/guts/search', {
+      params: {
+        several_words: inputSearchWord,
+        maker: inputSearchMaker
+      }
+    }).then((res) => {
+      closeModal();
 
-        setGuts(res.data);
+      setGutsPaginator(res.data)
 
-        console.log('検索完了しました');
-      }).catch(e => {
-        console.log(e);
-      })
+      setGuts(res.data.data);
 
+      console.log('検索完了しました');
+    }).catch(e => {
+      console.log(e);
+    })
+
+  }
+
+  const paginateHandler = (url?: string) => {
+    console.log('url', url)
+    if (url) {
+      getGutsList(url);
+    }
+  }
+
+  //fullUrlをaxiosでbaseUrlを設定しているときなどに必要な部分のみ返すため
+  const removeBaseUrl = (fullUrl?: string): string | undefined => {
+    const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL
+
+    if (fullUrl && baseUrl) {
+      return fullUrl.replace(baseUrl, "");
+    }
+
+    return undefined
   }
 
   return (
@@ -184,6 +232,87 @@ const GutList = () => {
                   </div>
                 </form>
               </div>
+            </div>
+
+            {/* ページネーション */}
+            <div className="w-[100%] max-w-[320px] mx-auto">
+              <ul className="flex flex-wrap justify-center w-[100%] max-w-[320px] mx-auto">
+                <div className="order-2 flex w-[100%] max-w-[96px]">
+                  <li className="inline-block w-[48px] text-center grow-1 border rounded-l-sm">
+                    <a
+                      onClick={() => paginateHandler(removeBaseUrl(gutsPaginator?.first_page_url))}
+                      className="inline-block cursor-pointer w-[100%] max-w-[48px]"
+                      aria-disabled={gutsPaginator?.current_page === 1}
+                    >
+                      最初
+                    </a>
+                  </li>
+
+                  <li className="inline-block w-[48px] text-center border-y border-r">
+                    <a
+                      onClick={() => {
+                        if (gutsPaginator?.prev_page_url) {
+                          const url = removeBaseUrl(gutsPaginator?.prev_page_url);
+                          paginateHandler(url)
+                        }
+                      }}
+                      className={`inline-block cursor-pointer w-[100%] max-w-[48px] ${gutsPaginator?.prev_page_url ?? 'opacity-30 !cursor-default'}`}
+                      aria-disabled={!(gutsPaginator?.prev_page_url)}
+                    >
+                      前へ
+                    </a>
+                  </li>
+                </div>
+
+                <div className="flex justify-center order-1 w-[100%] max-w-[320px] mb-[8px]">
+                  {gutsPaginator?.links.map((link, index) => {
+                    //前へと次へは表示の関係上、別でリンクを用意する
+                    if (index === 0 || index === gutsPaginator.links.length - 1) return;
+
+                    return (
+                      <>
+                        <li className="inline-block w-[24px] h-[24px] text-center border-y border-l  [&:last-child]:border-r [&:first-child]:rounded-l-sm [&:last-child]:rounded-r-sm">
+                          <a
+                            type="button"
+                            onClick={() => paginateHandler(removeBaseUrl(link.url ? link.url : undefined))}
+                            className={`cursor-pointer w-[100%] h-[100%] text-center ${link.active && 'text-sub-green bg-faint-green'}`}
+                            aria-disabled={link.active}
+                          >
+                            {link.label}
+                          </a>
+                        </li>
+                      </>
+                    )
+                  })}
+                </div>
+
+                <div className="order-4 flex">
+                  <li className="inline-block w-[48px] text-center border">
+                    <a
+                      onClick={() => paginateHandler(removeBaseUrl(gutsPaginator?.next_page_url))}
+                      className={`inline-block cursor-pointer w-[100%] max-w-[48px] ${gutsPaginator?.next_page_url ?? 'opacity-30 !cursor-default'}`}
+                      aria-disabled={!(gutsPaginator?.next_page_url)}
+                    >
+                      次へ
+                    </a>
+                  </li>
+
+                  <li className="inline-block w-[48px] text-center border-y border-r rounded-r-sm">
+                    <a
+                      onClick={() => paginateHandler(removeBaseUrl(gutsPaginator?.last_page_url))}
+                      className="inline-block cursor-pointer w-[100%] max-w-[48px]"
+                      aria-disabled={gutsPaginator?.current_page === gutsPaginator?.last_page}
+                    >
+                      最後
+                    </a>
+                  </li>
+                </div>
+
+                <span className="order-3 w-[100%] max-w-[120px] text-center border-y">
+                  {gutsPaginator?.current_page} / {gutsPaginator?.last_page}
+                </span>
+
+              </ul>
             </div>
           </div>
         )}
