@@ -12,12 +12,15 @@ import AuthCheck from "@/components/AuthCheck";
 import PrimaryHeading from "@/components/PrimaryHeading";
 import TextUnderBar from "@/components/TextUnderBar";
 import { IoClose } from "react-icons/io5";
+import Pagination, { type Paginator } from "@/components/Pagination";
 
 
 const RacketList = () => {
   const router = useRouter();
 
   const { isAuth, user, isAuthAdmin } = useContext(AuthContext);
+
+  const [racketsPaginator, setRacketsPaginator] = useState<Paginator<Racket>>();
 
   const [rackets, setRackets] = useState<Racket[]>();
 
@@ -33,13 +36,16 @@ const RacketList = () => {
 
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/';
 
-  useEffect(() => {
-    const getAllRackets = async () => {
-      await axios.get('api/rackets').then(res => {
-        setRackets(res.data);
-      })
-    }
+  //ページネーションを考慮したracket一覧データの取得関数
+  const getRacketsList = async (url: string = 'api/rackets') => {
+    await axios.get(url).then(res => {
+      console.log('res', res.data)
+      setRacketsPaginator(res.data)
+      setRackets(res.data.data);
+    })
+  }
 
+  useEffect(() => {
     const getMakerList = async () => {
       await axios.get('api/makers').then(res => {
         setMakers(res.data);
@@ -48,7 +54,7 @@ const RacketList = () => {
 
     getMakerList();
 
-    getAllRackets();
+    getRacketsList();
   }, [])
 
   const onChangeInputSearchMaker = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -81,7 +87,9 @@ const RacketList = () => {
     }).then((res) => {
       closeModal();
 
-      setRackets(res.data);
+      setRacketsPaginator(res.data)
+
+      setRackets(res.data.data);
 
       console.log('検索完了しました');
     }).catch(e => {
@@ -99,7 +107,7 @@ const RacketList = () => {
               <div className="text-center mb-6 md:mb-[32px]">
                 <PrimaryHeading text="Rackets" className="text-[18px] h-[20px] md:text-[20px] md:h-[22px]" />
               </div>
-              
+
               {/* 検索 */}
               <div className="flex justify-center mb-6 md:justify-end md:w-[100%] md:max-w-[768px] md:mx-auto">
                 <button
@@ -235,6 +243,13 @@ const RacketList = () => {
                   </form>
                 </div>
               </div>
+
+              {/* ページネーション */}
+              <Pagination
+                paginator={racketsPaginator}
+                paginate={getRacketsList}
+                className="mt-[32px] md:mt-[48px]"
+              />
             </div>
           </>
         )}
