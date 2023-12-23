@@ -53,7 +53,6 @@ const Pagination: React.FC<PaginationProps> = ({ paginator, paginate, className 
 
   return (
     <>
-      {/* <div className={`w-[100%] max-w-[320px] mx-auto md:max-w-[768px] ${className} mt-[24px] md:mt-[48px] `}> */}
       <div className={`w-[100%] max-w-[320px] mx-auto md:max-w-[768px] ${className}`}>
         <ul className="flex flex-wrap justify-center w-[100%] max-w-[320px] mx-auto md:max-w-[768px] md:flex-nowrap">
           <div className="order-2 flex w-[100%] max-w-[96px] h-[24px] md:order-1 md:h-[32px]">
