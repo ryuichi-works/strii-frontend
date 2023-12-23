@@ -11,13 +11,17 @@ import TextUnderBar from "@/components/TextUnderBar";
 import PrimaryHeading from "@/components/PrimaryHeading";
 import { Adamina } from "next/font/google";
 import { IoClose } from "react-icons/io5";
+import Pagination, {type Paginator } from "@/components/Pagination";
 
 const GutList = () => {
   const router = useRouter();
-  
+
   const { isAuth, user, setUser, setIsAuth, admin, isAuthAdmin } = useContext(AuthContext);
-  
+
+  const [gutsPaginator, setGutsPaginator] = useState<Paginator<Gut>>();
+
   const [guts, setGuts] = useState<Gut[]>();
+  console.log('guts', guts)
 
   const [makers, setMakers] = useState<Maker[]>();
 
@@ -31,14 +35,17 @@ const GutList = () => {
   //モーダルの開閉に関するstate
   const [modalVisibilityClassName, setModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
 
+  //ページネーションを考慮したgut一覧データの取得関数
+  const getGutsList = async (url: string = 'api/guts') => {
+    await axios.get(url).then(res => {
+      console.log('res', res.data)
+      setGutsPaginator(res.data)
+      setGuts(res.data.data);
+    })
+  }
+
   useEffect(() => {
     if (user.id || admin.id) {
-      const getAllGuts = async () => {
-        await axios.get('api/guts').then(res => {
-          setGuts(res.data);
-        })
-      }
-
       const getMakerList = async () => {
         await axios.get('api/makers').then(res => {
           setMakers(res.data);
@@ -47,7 +54,7 @@ const GutList = () => {
 
       getMakerList();
 
-      getAllGuts();
+      getGutsList();
     } else {
       router.push('/users/login');
     }
@@ -75,20 +82,22 @@ const GutList = () => {
   const searchGuts = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-      await axios.get('api/guts/search', {
-        params: {
-          several_words: inputSearchWord,
-          maker: inputSearchMaker
-        }
-      }).then((res) => {
-        closeModal();
+    await axios.get('api/guts/search', {
+      params: {
+        several_words: inputSearchWord,
+        maker: inputSearchMaker
+      }
+    }).then((res) => {
+      closeModal();
 
-        setGuts(res.data);
+      setGutsPaginator(res.data)
 
-        console.log('検索完了しました');
-      }).catch(e => {
-        console.log(e);
-      })
+      setGuts(res.data.data);
+
+      console.log('検索完了しました');
+    }).catch(e => {
+      console.log(e);
+    })
 
   }
 
@@ -185,6 +194,13 @@ const GutList = () => {
                 </form>
               </div>
             </div>
+
+            {/* ページネーション */}
+            <Pagination
+              paginator={gutsPaginator}
+              paginate={getGutsList}
+              className="mt-[32px] md:mt-[48px]"
+            />
           </div>
         )}
       </AuthCheck>
