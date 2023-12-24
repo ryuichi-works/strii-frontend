@@ -41,6 +41,16 @@ const GutImageRegister: NextPage = () => {
     }
   }
 
+  const onChangeSelectMaker = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if(e.target.value === '未選択') {
+      setSelectedMakerId(undefined);
+
+      return 
+    }
+
+    setSelectedMakerId(Number(e.target.value));
+  }
+
   useEffect(() => {
     const getMakerList = async () => {
       await axios.get('api/makers').then(res => {
@@ -153,7 +163,7 @@ const GutImageRegister: NextPage = () => {
                       <select
                         name="maker"
                         id="maker"
-                        onChange={(e) => { setSelectedMakerId(Number(e.target.value)) }}
+                        onChange={onChangeSelectMaker}
                         className="border border-gray-300 rounded w-[160px] md:w-[250px] h-10 p-2 focus:outline-sub-green"
                       >
                         <option value="未選択" selected>未選択</option>
