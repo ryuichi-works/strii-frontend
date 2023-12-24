@@ -268,7 +268,7 @@ const RacketRegister: NextPage = () => {
                           {/* ラケット画像情報カード */}
                           <div key={racketImage.id} onClick={() => selectImage(racketImage)} className="bg-white p-2 rounded-lg w-[100%] max-w-[136px] hover:opacity-80 mb-6 hover:cursor-pointer md:[&:not(:last-child)]:mr-[24px]">
                             <div className="w-[120px] mb-2">
-                              {racketImage.file_path && <img src={`${baseImagePath}${racketImage.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px]" />}
+                              {racketImage.file_path && <img src={`${baseImagePath}${racketImage.file_path}`} alt="ストリング画像" className="w-[120px] h-[160px]" />}
                             </div>
 
                             <p className="text-[14px] mb-1 md:text-[16px]">{racketImage.maker.name_ja}</p>
