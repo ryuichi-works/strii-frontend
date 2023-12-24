@@ -5,12 +5,13 @@ import Cookies from "js-cookie";
 import Cropper, { type Point, Area } from "react-easy-crop";
 import getCroppedImg, { CropedImageInfo } from "@/modules/cropImage";
 
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { AuthContext } from "@/context/AuthContext";
 
 import AuthCheck from "@/components/AuthCheck";
 import PrimaryHeading from "@/components/PrimaryHeading";
+import { type Maker } from "../users/[id]/profile";
 
 const GutImageRegister: NextPage = () => {
   const router = useRouter();
@@ -20,6 +21,11 @@ const GutImageRegister: NextPage = () => {
   const [title, setTitle] = useState<string>('');
 
   const [imageFileUrl, setImageFileUrl] = useState<string>('');
+
+  const [makers, setMakers] = useState<Maker[]>();
+
+  const [selectedMakerId, setSelectedMakerId] = useState<number>();
+  console.log('selectedMakerId', selectedMakerId)
 
   const onChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
@@ -34,6 +40,16 @@ const GutImageRegister: NextPage = () => {
       reader.readAsDataURL(files[0]);
     }
   }
+
+  useEffect(() => {
+    const getMakerList = async () => {
+      await axios.get('api/makers').then(res => {
+        setMakers(res.data);
+      })
+    }
+
+    getMakerList();
+  }, [])
 
   const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
   const [rotation, setRotation] = useState(0)
@@ -72,10 +88,11 @@ const GutImageRegister: NextPage = () => {
 
   type Errors = {
     title: string[],
-    file: string[]
+    file: string[],
+    maker_id: string[]
   }
 
-  const [errors, setErrors] = useState<Errors>({ title: [], file: [] });
+  const [errors, setErrors] = useState<Errors>({ title: [], file: [], maker_id: [] });
 
 
   const csrf = async () => await axios.get('/sanctum/csrf-cookie');
@@ -86,6 +103,7 @@ const GutImageRegister: NextPage = () => {
     const registerData = {
       file: croppedImage,
       title: title,
+      maker_id: selectedMakerId
     }
 
     await csrf();
@@ -101,7 +119,7 @@ const GutImageRegister: NextPage = () => {
       router.push('/racket_images');
     }).catch((e) => {
       console.log(e);
-      const newErrors = { title: [], file: [], ...e.response.data.errors };
+      const newErrors = { title: [], file: [], maker_id: [], ...e.response.data.errors };
       setErrors(newErrors);
 
       console.log('ラケット画像登録に失敗しました。');
@@ -126,6 +144,23 @@ const GutImageRegister: NextPage = () => {
                       <input type="text" name="title" onChange={(e) => setTitle(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green" />
                       {errors.title.length !== 0 &&
                         errors.title.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                      }
+                    </div>
+
+                    <div className="mb-8 md:mb-6 md:mr-[24px]">
+                      <label htmlFor="maker" className="block text-[14px] mb-1 md:text-[16px] md:mb-2">メーカー</label>
+
+                      <select
+                        name="maker"
+                        id="maker"
+                        onChange={(e) => { setSelectedMakerId(Number(e.target.value)) }}
+                        className="border border-gray-300 rounded w-[160px] md:w-[250px] h-10 p-2 focus:outline-sub-green"
+                      >
+                        <option value="未選択" selected>未選択</option>
+                        {makers?.map((maker) => (<option key={maker.id} value={maker.id}>{maker.name_ja}</option>))}
+                      </select>
+                      {errors.maker_id.length !== 0 &&
+                        errors.maker_id.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                       }
                     </div>
 
@@ -220,7 +255,10 @@ const GutImageRegister: NextPage = () => {
                                 errors.title.map((message, i) => <p key={i} className="text-red-400 mt-2">{message}</p>)
                               }
                               {errors.file.length !== 0 &&
-                                errors.file.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                                errors.file.map((message, i) => <p key={i} className="text-red-400 mt-2">{message}</p>)
+                              }
+                              {errors.maker_id.length !== 0 &&
+                                errors.maker_id.map((message, i) => <p key={i} className="text-red-400 mt-2">{message}</p>)
                               }
                             </div>
                           </>
