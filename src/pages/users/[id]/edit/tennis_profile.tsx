@@ -104,7 +104,7 @@ const TennisProfileEdit: NextPage = () => {
           maker: inputSearchMaker
         }
       }).then((res) => {
-        setSearchedRackets(res.data.data);
+        setSearchedRackets(res.data);
       })
 
       console.log('検索完了しました')
