@@ -50,6 +50,7 @@ export type Racket = {
 }
 
 export type TennisProfile = {
+  id: number,
   user_id: number,
   my_racket_id?: number,
   experience_period: number,
@@ -78,7 +79,7 @@ const UserProfile: NextPage = () => {
   useEffect(() => {
     if (user.id) {
       const getTennisProfile = async () => {
-        await axios.get(`api/tennis_profiles/${user.id}`).then(res => {
+        await axios.get(`api/tennis_profiles/user/${user.id}`).then(res => {
           setTennisProfile(res.data);
         })
       }
@@ -128,14 +129,14 @@ const UserProfile: NextPage = () => {
 
                   <div className="flex flex-wrap justify-between mb-8">
                     <p className="mb-2 basis-full">使用ラケット</p>
+
                     <div className="w-28 h-40 bg-faint-green">
-                      {/* {racket && racket.racket_image.file_path */}
-                      { tennisProfile?.racket.racket_image.file_path
+                      { tennisProfile?.racket?.racket_image.file_path
                         ? <img src={`${baseImagePath}${tennisProfile.racket.racket_image.file_path}`} alt="ラケット画像" className="w-[120px] h-[160px]" />
                         : <img src={`${baseImagePath}images/rackets/default_racket_image.png`} alt="ラケット画像" className="w-[120px] h-[160px]" />
                       }
-                      {/* <img src={`${baseImagePath}images/rackets/defalt_racket_image.jpg`} width="112px" alt="ラケット画像" /> */}
                     </div>
+                    
                     <div className="w-44 flex flex-col">
                       <span className="inline-block pl-2 text-xs mb-2">{tennisProfile?.racket ? tennisProfile?.racket.maker.name_en : ''}</span>
                       <p className="pl-2 leading-[18px] mb-4">{tennisProfile?.racket ? tennisProfile?.racket.name_ja : '未選択'}</p>
