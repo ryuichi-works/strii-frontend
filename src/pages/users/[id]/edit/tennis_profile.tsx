@@ -46,7 +46,7 @@ const TennisProfileEdit: NextPage = () => {
   useEffect(() => {
     if (user.id) {
       const getTennisProfile = async () => {
-        await axios.get(`api/tennis_profiles/${user.id}`).then(res => {
+        await axios.get(`api/tennis_profiles/user/${user.id}`).then(res => {
           setTennisProfile(res.data);
           setExperiencePeriod(res.data.experience_period);
           setFrequency(res.data.frequency);
@@ -284,7 +284,7 @@ const TennisProfileEdit: NextPage = () => {
 
     await csrf();
 
-    await axios.post(`/api/tennis_profiles/${user.id}`, updatedData, {
+    await axios.post(`/api/tennis_profiles/${tennisProfile?.id}`, updatedData, {
       headers: {
         'X-Xsrf-Token': Cookies.get('XSRF-TOKEN'),
       }
