@@ -76,7 +76,7 @@ const MyEquipmentRegister: NextPage = () => {
     }
 
     const getUserTennisProfile = async () => {
-      await axios.get(`api/tennis_profiles/${user.id}`).then(res => {
+      await axios.get(`api/tennis_profiles/user/${user.id}`).then(res => {
         setUserTennisProfile(res.data);
       })
     }
