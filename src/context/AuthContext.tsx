@@ -79,12 +79,10 @@ const AuthContextProvidor: React.FC<AuthContextProvidorProps> = ({ children }) =
     }
   }
 
-  useLayoutEffect(() => {
-    if (router.pathname.startsWith('/users')) {
-      checkAuth('user', setUser, setIsAuth);
-    } else if (router.pathname.startsWith('/admins')) {
-      checkAuth('admin', setAdmin, setIsAuthAdmin);
-    }
+  useEffect(() => {
+    checkAuth('user', setUser, setIsAuth);
+    
+    checkAuth('admin', setAdmin, setIsAuthAdmin);
   }, []);
 
   const providorVal = {
