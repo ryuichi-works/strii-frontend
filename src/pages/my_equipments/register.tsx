@@ -14,6 +14,7 @@ import PrimaryHeading from "@/components/PrimaryHeading";
 import SubHeading from "@/components/SubHeading";
 import TextUnderBar from "@/components/TextUnderBar";
 import { IoClose } from "react-icons/io5";
+import Pagination, { Paginator } from "@/components/Pagination";
 import { getToday } from "@/modules/getToday";
 
 const MyEquipmentRegister: NextPage = () => {
@@ -67,6 +68,8 @@ const MyEquipmentRegister: NextPage = () => {
   const [searchedGuts, setSearchedGuts] = useState<Gut[]>();
 
   const [searchedRackets, setSearchedRackets] = useState<Racket[]>();
+
+  const [racketsPaginator, setRacketsPaginator] = useState<Paginator<Racket>>();
 
   useEffect(() => {
     const getMakerList = async () => {
@@ -168,19 +171,21 @@ const MyEquipmentRegister: NextPage = () => {
     }
   }
 
+  //ページネーションを考慮した検索後racket一覧データの取得関数
+  const getSearchedRacketsList = async (url: string = `api/rackets/search?several_words=${inputSearchWord}&maker=${inputSearchMaker ? inputSearchMaker : ''}`) => {
+    await axios.get(url).then((res) => {
+      setRacketsPaginator(res.data);
+
+      setSearchedRackets(res.data.data);
+    })
+  }
+
   //racket検索
   const searchRackets = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
 
     try {
-      await axios.get('api/rackets/search', {
-        params: {
-          several_words: inputSearchWord,
-          maker: inputSearchMaker
-        }
-      }).then((res) => {
-        setSearchedRackets(res.data);
-      })
+      getSearchedRacketsList();
 
       console.log('検索完了しました')
     } catch (e) {
@@ -684,6 +689,12 @@ const MyEquipmentRegister: NextPage = () => {
                           </>
                         ))}
                       </div>
+
+                      <Pagination
+                        paginator={racketsPaginator}
+                        paginate={getSearchedRacketsList}
+                        className="mt-[32px] mb-[32px] md:mt-[48px] md:mb-[48px]"
+                      />
                     </div>
                   </div>
                 </div>
