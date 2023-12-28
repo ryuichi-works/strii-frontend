@@ -59,7 +59,11 @@ const MyEquipmentEdit: NextPage = () => {
   const [comment, setComment] = useState<string>('');
 
   //モーダルの開閉に関するstate
+  const [modalVisibility, setModalVisibility] = useState<boolean>(false);
+
   const [modalVisibilityClassName, setModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
+
+  const [racketSearchModalVisibility, setRacketSearchModalVisibility] = useState<boolean>(false);
 
   const [racketSearchModalVisibilityClassName, setRacketSearchModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
 
@@ -106,6 +110,42 @@ const MyEquipmentEdit: NextPage = () => {
     getMakerList();
   }, [])
 
+  // gut検索モーダル開閉とその時の縦スクロールの挙動を考慮している
+  useEffect(() => {
+    if (modalVisibility) {
+      setModalVisibilityClassName('opacity-100 scale-100')
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+    } else {
+      setModalVisibilityClassName('opacity-0 scale-0');
+      document.body.style.overflow = 'auto';
+      document.documentElement.style.overflow = 'auto';
+    }
+
+    return () => {
+      document.body.style.overflow = 'auto';
+      document.documentElement.style.overflow = 'auto';
+    }
+  }, [modalVisibility])
+
+  // racket検索モーダル開閉とその時の縦スクロールの挙動を考慮している
+  useEffect(() => {
+    if (racketSearchModalVisibility) {
+      setRacketSearchModalVisibilityClassName('opacity-100 scale-100')
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+    } else {
+      setRacketSearchModalVisibilityClassName('opacity-0 scale-0');
+      document.body.style.overflow = 'auto';
+      document.documentElement.style.overflow = 'auto';
+    }
+
+    return () => {
+      document.body.style.overflow = 'auto';
+      document.documentElement.style.overflow = 'auto';
+    }
+  }, [racketSearchModalVisibility])
+
   //inputの制御関数群
   const onChangeInputStringingWay = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setStringingWay(e.target.value);
@@ -139,6 +179,7 @@ const MyEquipmentEdit: NextPage = () => {
 
   //モーダルの開閉
   const closeModal = () => {
+    setModalVisibility(false);
     setModalVisibilityClassName('opacity-0 scale-0')
     setWitchSelectingGut('');
   }
@@ -149,21 +190,25 @@ const MyEquipmentEdit: NextPage = () => {
 
   //gutを選んだ際、mainGut,crossGutで分けて値をstateにセットさせたかったためopenModalを分けてある
   const openMainGutSearchModal = () => {
+    setModalVisibility(true);
     openModal();
     setWitchSelectingGut('main');
   }
 
   const openCrossGutSearchModal = () => {
+    setModalVisibility(true);
     openModal();
     setWitchSelectingGut('cross');
   }
 
   //gutとは別でracket検索のモーダルが必要であり開閉の処理をgut検索のモーダルとは分離しておく必要があった
   const openRacketSearchModal = () => {
+    setRacketSearchModalVisibility(true);
     setRacketSearchModalVisibilityClassName('opacity-100 scale-100');
   }
 
   const closeRacketSearchModal = () => {
+    setRacketSearchModalVisibility(false)
     setRacketSearchModalVisibilityClassName('opacity-0 scale-0');
   }
 
@@ -199,7 +244,7 @@ const MyEquipmentEdit: NextPage = () => {
       setSearchedRackets(res.data.data);
     })
   }
-  
+
   //racket検索
   const searchRackets = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
@@ -604,7 +649,7 @@ const MyEquipmentEdit: NextPage = () => {
                 </form>
 
                 {/* gut検索モーダル */}
-                <div className={`bg-gray-300 w-screen min-h-screen absolute top-[64px] left-0 ${modalVisibilityClassName} duration-[400ms] pt-[24px] overflow-y-auto`}>
+                <div className={`bg-gray-300 w-screen h-screen fixed top-0 left-0 ${modalVisibilityClassName} duration-[400ms] pt-[24px] overflow-y-scroll`}>
                   <div className="flex flex-col items-center w-[100%] max-w-[320px] mx-auto md:max-w-[768px]">
                     <div onClick={closeModal} className="self-end hover:cursor-pointer md:mr-[39px]">
                       <IoClose size={48} />
@@ -666,7 +711,7 @@ const MyEquipmentEdit: NextPage = () => {
                 </div>
 
                 {/* racket検索モーダル */}
-                <div className={`bg-gray-300 w-screen min-h-screen absolute top-[64px] left-0 ${racketSearchModalVisibilityClassName} duration-[400ms] pt-[24px] overflow-y-auto`}>
+                <div className={`bg-gray-300 w-screen h-screen fixed top-0 left-0 ${racketSearchModalVisibilityClassName} duration-[400ms] pt-[24px] overflow-y-scroll`}>
                   <div className="flex flex-col items-center w-[100%] max-w-[320px] mx-auto md:max-w-[768px]">
                     <div onClick={closeRacketSearchModal} className="self-end hover:cursor-pointer md:mr-[39px]">
                       <IoClose size={48} />
@@ -716,7 +761,7 @@ const MyEquipmentEdit: NextPage = () => {
                           </>
                         ))}
                       </div>
-                      
+
                       <Pagination
                         paginator={racketsPaginator}
                         paginate={getSearchedRacketsList}
