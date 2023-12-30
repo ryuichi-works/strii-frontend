@@ -358,8 +358,8 @@ const MyEquipmentEdit: NextPage = () => {
       <AuthCheck>
         {(isAuth || isAuthAdmin) && (
           <>
-            <div className="container mx-auto mt-[24px] md:mt-[48px]">
-              <div className="text-center mb-6 md:mb-[48px]">
+            <div className="container mx-auto">
+              <div className="text-center my-6 md:my-[32px]">
                 <PrimaryHeading text="マイ装備追加" className="text-[18px] h-[20px] md:text-[20px] md:h-[22px]" />
               </div>
 
