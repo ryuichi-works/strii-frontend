@@ -34,8 +34,8 @@ const Review = () => {
       <AuthCheck>
         {isAuth && (
           <>
-            <h1 className="text-center mb-6 md:text-[24px]">Review</h1>
             <div className="container mx-auto">
+              <h1 className="text-center my-[24px] italic md:my-[32px] md:text-[24px]">Review</h1>
               <div className="flex flex-col items-center flex-wrap">
                 <div className="md:flex md:justify-center md:mb-[32px]">
                   {/* メインガット */}
