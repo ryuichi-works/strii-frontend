@@ -11,6 +11,7 @@ import { AuthContext } from "@/context/AuthContext";
 import AuthAdminCheck from "@/components/AuthAdminCheck";
 import PrimaryHeading from "@/components/PrimaryHeading";
 import { IoClose } from "react-icons/io5";
+import Pagination, { Paginator } from "@/components/Pagination";
 
 export type GutImage = {
   id: number,
@@ -50,6 +51,9 @@ const GutEdit: NextPage = () => {
   const [inputSearchMaker, setInputSearchMaker] = useState<number | null>();
 
   const [searchedGutImages, setSearchedGutImages] = useState<GutImage[]>();
+
+  const [gutImagesPaginator, setgutImagesPaginator] = useState<Paginator<GutImage>>();
+
 
   //モーダルの開閉に関するstate
   const [modalVisibilityClassName, setModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
@@ -121,26 +125,27 @@ const GutEdit: NextPage = () => {
 
   const [errors, setErrors] = useState<Errors>(initialErrorVals);
 
+  //ページネーションを考慮した検索後gutImage一覧データの取得関数
+  const getSearchedGutImagesList = async (url: string = `api/gut_images/search?several_words=${inputSearchWord}&maker=${inputSearchMaker ? inputSearchMaker : ''}`) => {
+    await axios.get(url).then((res) => {
+      setgutImagesPaginator(res.data);
+
+      setSearchedGutImages(res.data.data);
+    })
+  }
+
   //gutImage検索
   const searchGutImages = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
-      await axios.get('api/gut_images/search', {
-        params: {
-          several_words: inputSearchWord,
-          maker: inputSearchMaker
-        }
-      }).then((res) => {
-        setSearchedGutImages(res.data);
-      })
+      getSearchedGutImagesList();
 
       console.log('検索完了しました')
     } catch (e) {
       console.log(e);
     }
   }
-
 
   const selectImage = (gutImage: GutImage) => {
     setSelectedGutImage(gutImage);
@@ -302,6 +307,11 @@ const GutEdit: NextPage = () => {
                       ))}
                     </div>
 
+                    <Pagination
+                      paginator={gutImagesPaginator}
+                      paginate={getSearchedGutImagesList}
+                      className="mt-[32px] mb-[32px] md:mt-[48px] md:mb-[48px]"
+                    />
                   </div>
                 </div>
               </div>
