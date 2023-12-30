@@ -50,8 +50,8 @@ const RacketShow = () => {
       <AuthCheck>
         {(isAuth || isAuthAdmin) && (
           <div className="container mx-auto">
-            <div className="text-center mb-6 md:mb-[48px]">
-              <PrimaryHeading text="Rackets" className="text-[18px] h-[20px] md:text-[20px] md:h-[22px]" />
+            <div className="text-center my-6  md:my-[32px]">
+              <PrimaryHeading text="Racket" className="text-[18px] italic h-[20px] md:text-[20px] md:h-[22px]" />
             </div>
 
             {/* ラケットセクション */}

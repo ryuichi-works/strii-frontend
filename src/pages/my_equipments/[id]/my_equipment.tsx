@@ -8,6 +8,7 @@ import AuthCheck from "@/components/AuthCheck";
 import SubHeading from "@/components/SubHeading";
 import TextUnderBar from "@/components/TextUnderBar";
 import Link from "next/link";
+import PrimaryHeading from "@/components/PrimaryHeading";
 
 const MyEquipment = () => {
   const router = useRouter();
@@ -41,8 +42,8 @@ const MyEquipment = () => {
           // <h1>マイ装備詳細</h1>
           <div className="container mb-8 mx-auto">
             <div className=" w-[100%] max-w-[320px] mx-auto md:max-w-[768px]">
-              <div className="mb-6">
-                <h1 className="text-[18px] text-center">Equipment</h1>
+              <div className="text-center my-6 md:mb-[32px]">
+                <PrimaryHeading text="Equipment" className="text-[18px] italic h-[20px] md:text-[20px] md:h-[22px]" />
               </div>
 
               <div className="md:flex md:flex-col md:max-h-[700px] md:flex-wrap">

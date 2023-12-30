@@ -105,9 +105,9 @@ const GutList = () => {
     <>
       <AuthCheck>
         {(isAuth || isAuthAdmin) && (
-          <div className="container mx-auto md:mt-[32px]">
-            <div className="text-center mb-6 md:mb-[32px]">
-              <PrimaryHeading text="Strings" className="text-[18px] h-[20px] md:text-[20px] md:h-[22px]" />
+          <div className="container mx-auto">
+            <div className="text-center my-6 md:my-[32px]">
+              <PrimaryHeading text="Strings" className="text-[18px] italic h-[20px] md:text-[20px] md:h-[22px]" />
             </div>
 
             <div className="flex justify-center mb-[48px] md:justify-end w-[100%] max-w-[768px] mx-auto">

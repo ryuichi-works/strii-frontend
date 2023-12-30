@@ -5,6 +5,7 @@ import axios from "@/lib/axios";
 import { AuthContext } from "@/context/AuthContext";
 import Link from "next/link";
 import AuthCheck from "@/components/AuthCheck";
+import PrimaryHeading from "@/components/PrimaryHeading";
 
 const MyEquipmentList = () => {
   const router = useRouter();
@@ -35,8 +36,8 @@ const MyEquipmentList = () => {
         {isAuth && (
           <>
             <div className="container mx-auto px-2">
-              <div className="mb-4">
-                <h1 className="text-center text-[20px] md:text-[32px]">Equipments</h1>
+              <div className="text-center my-6 md:my-[32px]">
+                <PrimaryHeading text="Equipments" className="text-[18px] italic h-[20px] md:text-[20px] md:h-[22px]" />
               </div>
 
               <div className="flex justify-center mb-6 md:w-[784px] md:mx-auto md:justify-end">

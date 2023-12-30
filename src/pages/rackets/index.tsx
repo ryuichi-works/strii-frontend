@@ -105,7 +105,7 @@ const RacketList = () => {
           <>
             <div className="container mx-auto mt-[24px] md:mt-[32px]">
               <div className="text-center mb-6 md:mb-[32px]">
-                <PrimaryHeading text="Rackets" className="text-[18px] h-[20px] md:text-[20px] md:h-[22px]" />
+                <PrimaryHeading text="Rackets" className="text-[18px] italic h-[20px] md:text-[20px] md:h-[22px]" />
               </div>
 
               {/* 検索 */}

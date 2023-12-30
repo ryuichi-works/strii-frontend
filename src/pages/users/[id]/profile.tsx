@@ -97,7 +97,7 @@ const UserProfile: NextPage = () => {
           <>
             {/* <h1>プロフィールページ</h1> */}
             <div className="container mx-auto">
-              <div className="w-80 md:w-[704px] mx-auto flex flex-col md:flex-row md:justify-center">
+              <div className="w-80 mt-6  mx-auto flex flex-col md:flex-row md:justify-center md:mt-[48px] md:w-[704px]">
                 <div className="w-[320px] md:mr-[32px]">
                   <h2 className="text-xl">基本プロフィール</h2>
                   <hr className=" border-sub-green mb-6" />

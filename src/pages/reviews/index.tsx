@@ -95,7 +95,7 @@ const ReviewList = () => {
         {isAuth && (
           <>
             <div className="container mx-auto">
-              <div className="mb-4">
+              <div className="mb-6 mt-6 italic md:mb-[32px] md:mt-[32px]">
                 <h1 className="text-center text-[20px] md:text-[32px]">Reviews</h1>
               </div>
 
