@@ -1,6 +1,6 @@
 import type { GutImage } from "@/pages/guts/register";
 import type { Gut } from "@/pages/reviews";
-import type { Racket } from "@/pages/users/[id]/profile";
+import type { Racket, RacketImage } from "@/pages/users/[id]/profile";
 import React from "react";
 
 type PaginationLinkData = {
@@ -27,7 +27,7 @@ export type Paginator<T> = {
 
 type PaginationProps = {
   // ページネーションさせたい項目分だけpaginatorの型を増やして使う
-  paginator?: Paginator<Gut> | Paginator<Racket> | Paginator<GutImage>,
+  paginator?: Paginator<Gut> | Paginator<Racket> | Paginator<GutImage> | Paginator<RacketImage>,
   //ページネイトリンクをクリックした時にデータをfetchするための関数が渡ってくる
   paginate: (url?: string) => Promise<void>,
   className?: string
