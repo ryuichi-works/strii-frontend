@@ -142,7 +142,7 @@ const GutImageRegister: NextPage = () => {
         {(isAuth || isAuthAdmin) && (
           <>
             <div className="container mx-auto mb-[48px]">
-              <div className="text-center mb-6 md:mb-[48px]">
+              <div className="text-center my-6 md:my-[32px]">
                 <PrimaryHeading text="ラケット画像登録" className="text-[18px] h-[20px] md:text-[20px] md:h-[22px]" />
               </div>
 
