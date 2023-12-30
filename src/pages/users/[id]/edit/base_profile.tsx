@@ -128,7 +128,7 @@ const BaseProfileEdit: NextPage = () => {
           <>
             {/* <h1>プロフィールページ</h1> */}
             <div className="container mx-auto">
-              <div className="w-80 md:w-[500px] mx-auto flex flex-col md:justify-center">
+              <div className="w-80 mt-[24px] md:w-[500px] mx-auto flex flex-col md:justify-center md:mt-[48px]">
                 <div className="w-[320px] md:w-[500px] mb-16">
                   <h2 className="text-xl">基本プロフィール</h2>
                   <hr className=" border-sub-green mb-6" />
