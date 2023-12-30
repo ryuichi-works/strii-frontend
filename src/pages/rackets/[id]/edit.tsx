@@ -184,9 +184,9 @@ const RacketEdit: NextPage = () => {
         {isAuthAdmin && (
           <>
 
-            <div className="container mx-auto mb-8 w-screen pt-[24px] overflow-y-auto">
+            <div className="container mx-auto mb-8 w-screen overflow-y-auto">
 
-              <div className="text-center mb-6">
+              <div className="text-center my-6 md:my-[32px]">
                 <PrimaryHeading text="ラケット情報更新" className="text-[18px] h-[20px] md:text-[20px] md:h-[22px]" />
               </div>
 
