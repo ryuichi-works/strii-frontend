@@ -11,6 +11,7 @@ import { AuthContext } from "@/context/AuthContext";
 import AuthAdminCheck from "@/components/AuthAdminCheck";
 import PrimaryHeading from "@/components/PrimaryHeading";
 import { IoClose } from "react-icons/io5";
+import Pagination, { Paginator } from "@/components/Pagination";
 
 const RacketEdit: NextPage = () => {
   const router = useRouter();
@@ -33,6 +34,9 @@ const RacketEdit: NextPage = () => {
   const [makers, setMakers] = useState<Maker[]>();
 
   const [selectedRacketImage, setSelectedRacketImage] = useState<RacketImage>();
+
+  const [racketImagesPaginator, setRacketImagesPaginator] = useState<Paginator<RacketImage>>();
+
 
   //検索関連のstate
   const [inputSearchWord, setInputSearchWord] = useState<string>('');
@@ -111,19 +115,21 @@ const RacketEdit: NextPage = () => {
 
   const [errors, setErrors] = useState<Errors>(initialErrorVals);
 
+  //ページネーションを考慮した検索後racketImage一覧データの取得関数
+  const getSearchedRacketImagesList = async (url: string = `api/racket_images/search?several_words=${inputSearchWord}&maker=${inputSearchMaker ? inputSearchMaker : ''}`) => {
+    await axios.get(url).then((res) => {
+      setRacketImagesPaginator(res.data);
+
+      setSearchedRacketImages(res.data.data);
+    })
+  }
+
   //racketImage検索
   const searchRacketImages = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
-      await axios.get('api/racket_images/search', {
-        params: {
-          several_words: inputSearchWord,
-          maker: inputSearchMaker
-        }
-      }).then((res) => {
-        setSearchedRacketImages(res.data);
-      })
+      getSearchedRacketImagesList();
 
       console.log('検索完了しました')
     } catch (e) {
@@ -292,6 +298,11 @@ const RacketEdit: NextPage = () => {
                       ))}
                     </div>
 
+                    <Pagination
+                      paginator={racketImagesPaginator}
+                      paginate={getSearchedRacketImagesList}
+                      className="mt-[32px] mb-[32px] md:mt-[48px] md:mb-[48px]"
+                    />
                   </div>
                 </div>
               </div>

@@ -1,6 +1,7 @@
 import type { Maker } from "../users/[id]/profile";
 
 import AuthAdminCheck from "@/components/AuthAdminCheck";
+import Pagination, { type Paginator } from "@/components/Pagination";
 import PrimaryHeading from "@/components/PrimaryHeading";
 import { AuthContext } from "@/context/AuthContext";
 import axios from "@/lib/axios";
@@ -38,13 +39,16 @@ const GutRegister: NextPage = () => {
 
   const [selectedGutImage, setSelectedGutImage] = useState<GutImage>();
 
-``
+
   //検索関連のstate
   const [inputSearchWord, setInputSearchWord] = useState<string>('');
 
   const [inputSearchMaker, setInputSearchMaker] = useState<number | null>();
 
   const [searchedGutImages, setSearchedGutImages] = useState<GutImage[]>();
+
+  const [gutImagesPaginator, setgutImagesPaginator] = useState<Paginator<GutImage>>();
+
 
   //モーダルの開閉に関するstate
   const [modalVisibilityClassName, setModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
@@ -102,19 +106,21 @@ const GutRegister: NextPage = () => {
 
   const [errors, setErrors] = useState<Errors>(initialErrorVals);
 
+  //ページネーションを考慮した検索後gutImage一覧データの取得関数
+  const getSearchedGutImagesList = async (url: string = `api/gut_images/search?several_words=${inputSearchWord}&maker=${inputSearchMaker ? inputSearchMaker : ''}`) => {
+    await axios.get(url).then((res) => {
+      setgutImagesPaginator(res.data);
+
+      setSearchedGutImages(res.data.data);
+    })
+  }
+
   //gutImage検索
   const searchGutImages = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
-      await axios.get('api/gut_images/search', {
-        params: {
-          several_words: inputSearchWord,
-          maker: inputSearchMaker
-        }
-      }).then((res) => {
-        setSearchedGutImages(res.data);
-      })
+      getSearchedGutImagesList();
 
       console.log('検索完了しました')
     } catch (e) {
@@ -207,7 +213,7 @@ const GutRegister: NextPage = () => {
 
                   <div className="mb-6">
                     <label htmlFor="need_posting_image" className="text-[14px] mr-1 md:text-[16px]">画像提供受付</label>
-                    <input type="checkbox" name="need_posting_image" id="need_posting_image" defaultChecked={needPostingImage} onChange={(e) => setNeedPostingImage(prev => !prev)} className="align-middle"/>
+                    <input type="checkbox" name="need_posting_image" id="need_posting_image" defaultChecked={needPostingImage} onChange={(e) => setNeedPostingImage(prev => !prev)} className="align-middle" />
                   </div>
 
                   {/* 画像選択 */}
@@ -284,6 +290,11 @@ const GutRegister: NextPage = () => {
                       ))}
                     </div>
 
+                    <Pagination
+                      paginator={gutImagesPaginator}
+                      paginate={getSearchedGutImagesList}
+                      className="mt-[32px] mb-[32px] md:mt-[48px] md:mb-[48px]"
+                    />
                   </div>
                 </div>
               </div>
