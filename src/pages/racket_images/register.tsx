@@ -5,13 +5,14 @@ import Cookies from "js-cookie";
 import Cropper, { type Point, Area } from "react-easy-crop";
 import getCroppedImg, { CropedImageInfo } from "@/modules/cropImage";
 
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { AuthContext } from "@/context/AuthContext";
 
 import AuthCheck from "@/components/AuthCheck";
 import PrimaryHeading from "@/components/PrimaryHeading";
 import { type Maker } from "../users/[id]/profile";
+import FlashMessage from "@/components/FlashMessage";
 
 const GutImageRegister: NextPage = () => {
   const router = useRouter();
@@ -26,6 +27,35 @@ const GutImageRegister: NextPage = () => {
 
   const [selectedMakerId, setSelectedMakerId] = useState<number>();
   console.log('selectedMakerId', selectedMakerId)
+
+  const inputFileRef = useRef<HTMLInputElement>(null);
+
+  // flassメッセージの表示関連stateとuseEffect
+  const [showingFlashMessage, setShowingFlashMessage] = useState<boolean>(false);
+  const [showingFlashMessageStyle, setShowingFlashMessageStyle] = useState<string>('bottom-[-100%]')
+
+  // 下記の2つのuseEffectによりflashメッセージを表示切り替え
+  // 依存配列のstateを同じuseEffect内で書き換えるこのができないため2つのuseEffectを使用して実装
+  useEffect(() => {
+    let timeOutId: NodeJS.Timeout | null = null;
+
+    if (showingFlashMessage) {
+      timeOutId = setTimeout(() => {
+        setShowingFlashMessageStyle('bottom-[-100%]');
+
+      }, 3500);
+    }
+
+    return () => {
+      if (timeOutId) clearTimeout(timeOutId);
+    }
+  }, [showingFlashMessage])
+
+  useEffect(() => {
+    if (showingFlashMessageStyle === 'bottom-[-100%]') {
+      setShowingFlashMessage(false);
+    }
+  }, [showingFlashMessageStyle])
 
   const onChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
@@ -42,10 +72,10 @@ const GutImageRegister: NextPage = () => {
   }
 
   const onChangeSelectMaker = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if(e.target.value === '未選択') {
+    if (e.target.value === '未選択') {
       setSelectedMakerId(undefined);
 
-      return 
+      return
     }
 
     setSelectedMakerId(Number(e.target.value));
@@ -104,6 +134,21 @@ const GutImageRegister: NextPage = () => {
 
   const [errors, setErrors] = useState<Errors>({ title: [], file: [], maker_id: [] });
 
+  // 登録処理データの初期化関数
+  const resetData = () => {
+    setTitle('')
+    setImageFileUrl('')
+    if (inputFileRef.current) {
+      inputFileRef.current.value = '';
+    }
+    setSelectedMakerId(undefined)
+    setCrop({ x: 0, y: 0 })
+    setRotation(0)
+    setZoom(1)
+    setCroppedAreaPixels(undefined)
+    setCroppedImage(undefined)
+    setCroppedImageUrl(undefined)
+  }
 
   const csrf = async () => await axios.get('/sanctum/csrf-cookie');
 
@@ -126,7 +171,11 @@ const GutImageRegister: NextPage = () => {
     }).then(async (res) => {
       console.log('ラケット画像を登録しました');
 
-      router.push('/racket_images');
+      resetData();
+
+      setShowingFlashMessage(true)
+
+      setShowingFlashMessageStyle('bottom-0')
     }).catch((e) => {
       console.log(e);
       const newErrors = { title: [], file: [], maker_id: [], ...e.response.data.errors };
@@ -142,6 +191,12 @@ const GutImageRegister: NextPage = () => {
         {(isAuth || isAuthAdmin) && (
           <>
             <div className="container mx-auto mb-[48px]">
+              <FlashMessage
+                flashMessage={'画像提供受付ました、ご協力ありがとうございます。'}
+                flashType="success"
+                className={`fixed ${showingFlashMessageStyle} left-[50%] translate-x-[-50%] mb-2 duration-1000`}
+              />
+
               <div className="text-center my-6 md:my-[32px]">
                 <PrimaryHeading text="ラケット画像登録" className="text-[18px] h-[20px] md:text-[20px] md:h-[22px]" />
               </div>
@@ -151,7 +206,7 @@ const GutImageRegister: NextPage = () => {
                   <form action="" onSubmit={uploadGutImage}>
                     <div className="mb-6">
                       <label htmlFor="title" className="block mb-1 text-[14px] md:text-[16px] md:mb-2">画像タイトル</label>
-                      <input type="text" name="title" onChange={(e) => setTitle(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green" />
+                      <input type="text" name="title" onChange={(e) => setTitle(e.target.value)} value={title} className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green" />
                       {errors.title.length !== 0 &&
                         errors.title.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                       }
@@ -164,6 +219,7 @@ const GutImageRegister: NextPage = () => {
                         name="maker"
                         id="maker"
                         onChange={onChangeSelectMaker}
+                        value={String(selectedMakerId)}
                         className="border border-gray-300 rounded w-[160px] md:w-[250px] h-10 p-2 focus:outline-sub-green"
                       >
                         <option value="未選択" selected>未選択</option>
@@ -176,7 +232,7 @@ const GutImageRegister: NextPage = () => {
 
                     <div className="flex flex-col mb-6">
                       <label htmlFor="gut_image_file" className="text-[14px] mb-1 md:text-[16px] md:mb-2">画像ファイル</label>
-                      <input type="file" name="gut_image_file" accept=".jpg, .jpeg, .png" onChange={onChangeFile} className="h-8" />
+                      <input type="file" name="gut_image_file" accept=".jpg, .jpeg, .png" onChange={onChangeFile} ref={inputFileRef} className="h-8" />
                       {errors.file.length !== 0 &&
                         errors.file.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                       }
