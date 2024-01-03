@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import AuthCheck from "@/components/AuthCheck";
 import { IoClose } from "react-icons/io5";
 import TextUnderBar from "@/components/TextUnderBar";
+import Pagination, { Paginator } from "@/components/Pagination";
 
 //注意：文字列の数字は全角
 export type Frequency = '未設定' | '週１回' | '週２回' | '週３回' | '週４回' | '週５回' | '週６回' | '月１回' | '月２回' | '月３回' | '月４回' | '毎日';
@@ -32,6 +33,8 @@ const TennisProfileEdit: NextPage = () => {
   const [makers, setMakers] = useState<Maker[]>();
 
   const [racket, setRacket] = useState<Racket>();
+
+  const [racketsPaginator, setRacketsPaginator] = useState<Paginator<Racket>>();
 
   //検索関連のstate
   const [inputSearchWord, setInputSearchWord] = useState<string>('');
@@ -93,19 +96,21 @@ const TennisProfileEdit: NextPage = () => {
     setRacketSearchModalVisibilityClassName('opacity-0 scale-0');
   }
 
+  //ページネーションを考慮した検索後racket一覧データの取得関数
+  const getSearchedRacketsList = async (url: string = `api/rackets/search?several_words=${inputSearchWord}&maker=${inputSearchMaker ? inputSearchMaker : ''}`) => {
+    await axios.get(url).then((res) => {
+      setRacketsPaginator(res.data);
+
+      setSearchedRackets(res.data.data);
+    })
+  }
+
   //racket検索
   const searchRackets = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
 
     try {
-      await axios.get('api/rackets/search', {
-        params: {
-          several_words: inputSearchWord,
-          maker: inputSearchMaker
-        }
-      }).then((res) => {
-        setSearchedRackets(res.data);
-      })
+      getSearchedRacketsList();
 
       console.log('検索完了しました')
     } catch (e) {
@@ -162,6 +167,7 @@ const TennisProfileEdit: NextPage = () => {
 
     return
   }
+
   const onChangeGripForm = (e: React.ChangeEvent<HTMLSelectElement>) => {
     gripForms.forEach(gripForm => {
       if (e.target.value === gripForm) {
@@ -298,8 +304,6 @@ const TennisProfileEdit: NextPage = () => {
       console.log('基本プロフィール更新に失敗しました。');
     })
   }
-
-
 
   return (
     <>
@@ -513,6 +517,12 @@ const TennisProfileEdit: NextPage = () => {
                           </>
                         ))}
                       </div>
+
+                      <Pagination
+                        paginator={racketsPaginator}
+                        paginate={getSearchedRacketsList}
+                        className="mt-[32px] mb-[32px] md:mt-[48px] md:mb-[48px]"
+                      />
                     </div>
                   </div>
                 </div>
