@@ -4,6 +4,8 @@ import React, { useContext, useState } from "react";
 import { AuthContext } from "@/context/AuthContext";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import HeaderNavLink from "../HeaderNavLink";
+import UserHeaderNav from "../UserHeaderNav";
 
 const Header: React.FC = () => {
   const router = useRouter();
@@ -75,8 +77,11 @@ const Header: React.FC = () => {
 
           <nav className="hidden md:block">
             <ul className="flex text-white ">
-
-              <li><Link href="/" className="mr-4">HOME</Link></li>
+              <HeaderNavLink
+                linkText="HOME"
+                className="h-[64] mr-4"
+                href="/"
+              />
 
               {(!user.id && !admin.id) && (
                 <>
@@ -85,24 +90,7 @@ const Header: React.FC = () => {
                 </>
               )}
 
-              {user.id && (
-                <>
-                  <li><Link href={'/reviews'} className="mr-4">レビュー</Link></li>
-                  <li><Link href={'/my_equipments'} className="mr-4">マイ装備</Link></li>
-                  <li><Link href={'/my_equipments/register'} className="mr-4">マイ装備追加</Link></li>
-                  <li><Link href={'/guts'} className="mr-4">ストリング</Link></li>
-                  <li><Link href={'/rackets'} className="mr-4">ラケット</Link></li>
-                  <li><Link href={'/gut_images/register'} className="mr-4">ストリング画像提供</Link></li>
-                  <li><Link href={'/racket_images/register'} className="mr-4">ラケット画像提供</Link></li>
-                  <li><Link href={`/users/${user.id}/profile`} className="mr-4">マイページ</Link></li>
-
-                  <li>
-                    <form onSubmit={(e) => logout(e, 'users')} className="inline-block">
-                      <button type='submit' className="inline-block">ログアウト</button>
-                    </form>
-                  </li>
-                </>
-              )}
+              {user.id && <UserHeaderNav logoutHandler={logout} />}
 
               {admin.id && (
                 <>
@@ -124,7 +112,6 @@ const Header: React.FC = () => {
 
             </ul>
           </nav>
-
         </div>
 
         <div className="md:hidden absolute bottom-[50%] translate-y-2/4 right-4">
