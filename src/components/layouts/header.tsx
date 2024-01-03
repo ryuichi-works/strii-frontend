@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import HeaderNavLink from "../HeaderNavLink";
 import UserHeaderNav from "../UserHeaderNav";
+import AdminHeaderNav from "../AdminHeaderNav";
 
 const Header: React.FC = () => {
   const router = useRouter();
@@ -89,27 +90,12 @@ const Header: React.FC = () => {
                   <li><Link href="/users/register">会員登録</Link></li>
                 </>
               )}
-
+              
+              {/* userでログイン中の表示 */}
               {user.id && <UserHeaderNav logoutHandler={logout} />}
-
-              {admin.id && (
-                <>
-                  <li><Link href={`/admins/${admin.id}/dashboard`} className="mr-4">dashboard</Link></li>
-                  <li><Link href={'/guts'} className="mr-4">ストリング</Link></li>
-                  <li><Link href={'/guts/register'} className="mr-4">ストリング登録</Link></li>
-                  <li><Link href={'/gut_images/register'} className="mr-4">ストリング画像提供</Link></li>
-                  <li><Link href={'/rackets'} className="mr-4">ラケット</Link></li>
-                  <li><Link href={'/rackets/register'} className="mr-4">ラケット登録</Link></li>
-                  <li><Link href={'/racket_images/register'} className="mr-4">ラケット画像提供</Link></li>
-
-                  <li>
-                    <form onSubmit={(e) => logout(e, 'admins')} className="inline-block">
-                      <button type='submit' className="inline-block">ログアウト</button>
-                    </form>
-                  </li>
-                </>
-              )}
-
+              
+              {/* adminでログイン中の表示 */}
+              {admin.id && <AdminHeaderNav logoutHandler={logout} />}
             </ul>
           </nav>
         </div>
