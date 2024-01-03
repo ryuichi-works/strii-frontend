@@ -44,6 +44,8 @@ const TennisProfileEdit: NextPage = () => {
   const [searchedRackets, setSearchedRackets] = useState<Racket[]>();
 
   //モーダルの開閉に関するstate
+  const [racketSearchModalVisibility, setRacketSearchModalVisibility] = useState<boolean>(false);
+
   const [racketSearchModalVisibilityClassName, setRacketSearchModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
 
   useEffect(() => {
@@ -78,6 +80,24 @@ const TennisProfileEdit: NextPage = () => {
     }
   }, [])
 
+  // racket検索モーダル開閉とその時の背景の縦スクロールの挙動を考慮している
+  useEffect(() => {
+    if (racketSearchModalVisibility) {
+      setRacketSearchModalVisibilityClassName('opacity-100 scale-100')
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+    } else {
+      setRacketSearchModalVisibilityClassName('opacity-0 scale-0');
+      document.body.style.overflow = 'auto';
+      document.documentElement.style.overflow = 'auto';
+    }
+
+    return () => {
+      document.body.style.overflow = 'auto';
+      document.documentElement.style.overflow = 'auto';
+    }
+  }, [racketSearchModalVisibility])
+
   const onChangeInputSearchMaker = (e: React.ChangeEvent<HTMLSelectElement>) => {
     if (e.target.value === '未選択') {
       setInputSearchMaker(null);
@@ -89,10 +109,12 @@ const TennisProfileEdit: NextPage = () => {
 
   // ラケット検索モーダルの開閉
   const openRacketSearchModal = () => {
+    setRacketSearchModalVisibility(true);
     setRacketSearchModalVisibilityClassName('opacity-100 scale-100');
   }
 
   const closeRacketSearchModal = () => {
+    setRacketSearchModalVisibility(false);
     setRacketSearchModalVisibilityClassName('opacity-0 scale-0');
   }
 
@@ -467,7 +489,7 @@ const TennisProfileEdit: NextPage = () => {
                 </div>
 
                 {/* racket検索モーダル */}
-                <div className={`bg-gray-300 w-screen min-h-screen absolute top-[64px] left-0 ${racketSearchModalVisibilityClassName} duration-[400ms] pt-[24px] overflow-y-auto`}>
+                <div className={`bg-gray-300 w-screen h-screen fixed top-0 left-0 ${racketSearchModalVisibilityClassName} duration-[400ms] pt-[24px] overflow-y-scroll`}>
                   <div className="flex flex-col items-center w-[100%] max-w-[320px] mx-auto md:max-w-[768px]">
                     <div onClick={closeRacketSearchModal} className="self-end hover:cursor-pointer md:mr-[39px]">
                       <IoClose size={48} />
