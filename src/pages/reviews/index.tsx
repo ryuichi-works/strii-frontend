@@ -6,6 +6,7 @@ import AuthCheck from "@/components/AuthCheck";
 import axios from "@/lib/axios";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import Pagination, { Paginator } from "@/components/Pagination";
 
 type GutImage = {
   id: number,
@@ -73,17 +74,22 @@ const ReviewList = () => {
   const [reviews, setReviews] = useState<Review[]>();
   console.log(reviews);
 
+  const [reviewsPaginator, setReviewsPaginator] = useState<Paginator<Review>>();
+
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/'
 
+  //ページネーションを考慮したreview一覧データの取得関数
+  const getReviewsList = async (url: string = 'api/gut_reviews') => {
+    await axios.get(url).then(res => {
+      console.log('res', res.data)
+      setReviewsPaginator(res.data)
+      setReviews(res.data.data);
+    })
+  }
+  
   useEffect(() => {
     if (user.id) {
-      const getAllReviews = async () => {
-        await axios.get('api/gut_reviews').then(res => {
-          setReviews(res.data);
-        })
-      }
-
-      getAllReviews();
+      getReviewsList();
     } else {
       router.push('/users/login');
     }
@@ -110,6 +116,7 @@ const ReviewList = () => {
                       <>
                         <Link href={`/reviews/${review.id}/review`}>
                           <div key={review.id} className="w-[360px] h-[280px] border border-gray-400 rounded mb-6 flex flex-col justify-around py-4 hover:cursor-pointer">
+                            {/* 単張りのカード */}
                             {review.my_equipment.stringing_way === "single" && (
                               <>
                                 <div className=" flex justify-center mb-8">
@@ -158,6 +165,7 @@ const ReviewList = () => {
                               </>
                             )}
 
+                            {/* ハイブリッド張りのカード */}
                             {review.my_equipment.stringing_way === "hybrid" && (
                               <>
                                 <div className=" flex justify-center mb-8">
@@ -241,6 +249,13 @@ const ReviewList = () => {
                   })
                 )}
               </div>
+
+              {/* ページネーション */}
+              <Pagination
+                paginator={reviewsPaginator}
+                paginate={getReviewsList}
+                className="mt-[32px] md:mt-[48px]"
+              />
             </div>
           </>
         )}
