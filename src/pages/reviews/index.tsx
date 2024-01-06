@@ -90,13 +90,6 @@ const ReviewList = () => {
   useEffect(() => {
     if (user.id) {
       getReviewsList();
-      // const getAllReviews = async () => {
-      //   await axios.get('api/gut_reviews').then(res => {
-      //     setReviews(res.data);
-      //   })
-      // }
-
-      // getAllReviews();
     } else {
       router.push('/users/login');
     }
