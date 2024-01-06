@@ -6,6 +6,7 @@ import { AuthContext } from "@/context/AuthContext";
 import Link from "next/link";
 import AuthCheck from "@/components/AuthCheck";
 import PrimaryHeading from "@/components/PrimaryHeading";
+import Pagination, { Paginator } from "@/components/Pagination";
 
 const MyEquipmentList = () => {
   const router = useRouter();
@@ -14,17 +15,22 @@ const MyEquipmentList = () => {
 
   const [myEquipments, setMyEquipments] = useState<MyEquipment[]>();
 
+  const [myEquipmentsPaginator, setMyEquipmentsPaginator] = useState<Paginator<MyEquipment>>();
+
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/'
 
+  //ページネーションを考慮したmyEquipment一覧データの取得関数
+  const getMyEquipmentListOfUser = async (url: string = `api/my_equipments/user/${user.id}`) => {
+    await axios.get(url).then(res => {
+      console.log('res', res.data)
+      setMyEquipmentsPaginator(res.data)
+      setMyEquipments(res.data.data);
+    })
+  }
+  
   useEffect(() => {
     if (user.id) {
-      const getAllMyEquipmentOfUser = async () => {
-        await axios.get(`api/my_equipments/user/${user.id}`).then(res => {
-          setMyEquipments(res.data);
-        })
-      }
-
-      getAllMyEquipmentOfUser();
+      getMyEquipmentListOfUser();
     } else {
       router.push('/users/login');
     }
@@ -166,6 +172,13 @@ const MyEquipmentList = () => {
                   })
                 )}
               </div>
+
+              {/* ページネーション */}
+              <Pagination
+                paginator={myEquipmentsPaginator}
+                paginate={getMyEquipmentListOfUser}
+                className="mt-[32px] md:mt-[48px]"
+              />
             </div>
           </>
 
