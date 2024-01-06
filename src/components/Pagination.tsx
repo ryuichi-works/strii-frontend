@@ -27,7 +27,7 @@ export type Paginator<T> = {
 
 type PaginationProps = {
   // ページネーションさせたい項目分だけpaginatorの型を増やして使う
-  paginator?: Paginator<Gut> | Paginator<Racket> | Paginator<GutImage> | Paginator<Review>,
+  paginator?: Paginator<Gut> | Paginator<Racket> | Paginator<GutImage>| Paginator<RacketImage> | Paginator<Review>,
   //ページネイトリンクをクリックした時にデータをfetchするための関数が渡ってくる
   paginate: (url?: string) => Promise<void>,
   className?: string
