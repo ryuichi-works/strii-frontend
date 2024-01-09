@@ -1,3 +1,4 @@
+import BarGraph, { EvaluationVal } from "@/components/BarGraph";
 import type { Review } from "..";
 import AuthCheck from "@/components/AuthCheck"
 import { AuthContext } from "@/context/AuthContext";
@@ -129,20 +130,56 @@ const Review = () => {
                   <hr className="w-[360px] border-t-sub-green md:hidden" />
                 </div>
 
-
                 {/* 評価値 */}
                 {/* <div className="w-[320px] mb-6"> */}
-                <div className="md:flex ">
-                  <div className="mb-6 md:w-[320px] md:mr-[32px] md:mb-0 md:pt-[24px]">
-                    <ReviewBarGraph title="自分に合っているか" data={review?.match_rate} />
-                    <ReviewBarGraph title="切れにくさ" data={review?.pysical_durability} />
-                    <ReviewBarGraph title="打球感の持続力" data={review?.performance_durability} />
+                <div className="w-[320px] md:flex md:justify-between md:w-[768px] ">
+                  <div className="mb-6 w-[320px] md:w-[360px]  md:mb-0 md:pt-[24px]">
+                    <div className="flex justify-end mb-2">
+                      <span className="text-[14px] h-[16px] leading-[16px] pr-1 md:text-[16px] md:h-[18px] md:leading-[18px]">自分に合っているか</span>
+                      {review && (
+                          <BarGraph
+                            evaluationVal={review.match_rate as EvaluationVal}
+                            areaSize="md"
+                            graphHeight="h-[16px] md:h-[18px]"
+                          />
+                      )}
+                      <span className="inline-block border-r-2 border-sub-green ml-2 mr-1"></span>
+                      <span className="inline-block text-[14px] text-center h-[16px] w-6 leading-[16px] md:text-[16px] md:h-[18px] md:leading-[18px]">{review?.match_rate}</span>
+                    </div>
+
+                    <div className="flex justify-end mb-2">
+                      <span className="text-[14px] h-[16px] leading-[16px] pr-1 md:text-[16px] md:h-[18px] md:leading-[18px]">切れにくさ</span>
+                      {review && (
+                          <BarGraph
+                            evaluationVal={review.pysical_durability as EvaluationVal}
+                            areaSize="md"
+                            graphHeight="h-[16px] md:h-[18px]"
+                          />
+                      )}
+                      <span className="inline-block border-r-2 border-sub-green ml-2 mr-1"></span>
+                      <span className="inline-block text-[14px] text-center h-[16px] w-6 leading-[16px] md:text-[16px] md:h-[18px] md:leading-[18px]">{review?.pysical_durability}</span>
+                    </div>
+
+                    <div className="flex justify-end mb-2">
+                      <span className="text-[14px] h-[16px] leading-[16px] pr-1 md:text-[16px] md:h-[18px] md:leading-[18px]">打球感の持続力</span>
+                      {review && (
+                          <BarGraph
+                            evaluationVal={review.performance_durability as EvaluationVal}
+                            areaSize="md"
+                            graphHeight="h-[16px] md:h-[18px]"
+                          />
+                      )}
+                      <span className="inline-block border-r-2 border-sub-green ml-2 mr-1"></span>
+                      <span className="inline-block text-[14px] text-center h-[16px] w-6 leading-[16px] md:text-[16px] md:h-[18px] md:leading-[18px]">{review?.performance_durability}</span>
+                    </div>
+
+                    <p className="text-[14px] text-gray-500 text-end">max 5.0</p>
                   </div>
 
                   {/* レビューコメント */}
                   <div className="mb-10">
                     <span className="block">レビュー</span>
-                    <p className="border min-h-[120px] w-[280px] p-1 md:w-[400px]">{review?.review}</p>
+                    <p className="border min-h-[120px] w-[320px] p-1 md:w-[360px]">{review?.review}</p>
                   </div>
 
                 </div>
@@ -155,17 +192,6 @@ const Review = () => {
         )}
       </AuthCheck>
     </>
-  );
-}
-
-export const ReviewBarGraph = ({ title, data }: { title: string, data?: number }) => {
-  return (
-    <div className="flex justify-end mb-2">
-      <span className="text-[14px] pr-1 md:text-[16px]">{title}</span>
-      <span className="inline-block w-[104px] h-[20px] border mr-2 md:h-[24px] md:w-[120px]"></span>
-      <span className="inline-block border-r-2 border-sub-green mr-1"></span>
-      <span className="inline-block text-[14px] w-4 md:text-[16px]">{data}</span>
-    </div>
   );
 }
 
