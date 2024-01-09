@@ -7,6 +7,7 @@ import axios from "@/lib/axios";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Pagination, { Paginator } from "@/components/Pagination";
+import BarGraph, { EvaluationVal } from "@/components/BarGraph";
 
 type GutImage = {
   id: number,
@@ -86,7 +87,7 @@ const ReviewList = () => {
       setReviews(res.data.data);
     })
   }
-  
+
   useEffect(() => {
     if (user.id) {
       getReviewsList();
@@ -238,9 +239,15 @@ const ReviewList = () => {
                             <hr className="w-[320px] border-sub-green mb-2 mx-auto" />
                             <div className="flex justify-end mr-6">
                               <span className="text-[10px] pr-1">自分に合っているか</span>
-                              <span className="inline-block w-[104px] h-4 border mr-2"></span>
-                              <span className="inline-block border-r-2 border-sub-green mr-1"></span>
-                              <span className="text-[10px]">4.5</span>
+
+                              <BarGraph
+                                evaluationVal={review.match_rate as EvaluationVal}
+                                areaSize="sp"
+                                graphHeight="h-[16px] md:h-[18px]"
+                              />
+
+                              <span className="inline-block border-r-2 border-sub-green mr-1 ml-2"></span>
+                              <span className="text-[10px]">{review.match_rate}</span>
                             </div>
                           </div>
                         </Link>
