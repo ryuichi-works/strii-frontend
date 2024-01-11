@@ -15,6 +15,7 @@ import SubHeading from "@/components/SubHeading";
 import TextUnderBar from "@/components/TextUnderBar";
 import { IoClose } from "react-icons/io5";
 import Pagination, { Paginator } from "@/components/Pagination";
+import EvaluationRangeItem from "@/components/EvaluationRangeItem";
 import { getToday } from "@/modules/getToday";
 
 const GutReviewRegister: NextPage = () => {
@@ -76,6 +77,14 @@ const GutReviewRegister: NextPage = () => {
   const [gutsPaginator, setGutsPaginator] = useState<Paginator<Gut>>();
 
   const [racketsPaginator, setRacketsPaginator] = useState<Paginator<Racket>>();
+
+  // 評価に関するstate
+  const [matchRate, setMatchRate] = useState<number>(3);
+  console.log('matchRate', matchRate)
+  const [pysicalDurability, setPysicalDurability] = useState<number>(3);
+  console.log('pysicalDurability', pysicalDurability)
+  const [performanceDurability, setPerformanceDurability] = useState<number>(3);
+  console.log('performanceDurability', performanceDurability)
 
   useEffect(() => {
     const getMakerList = async () => {
@@ -342,7 +351,7 @@ const GutReviewRegister: NextPage = () => {
       <AuthCheck>
         {(isAuth || isAuthAdmin) && (
           <>
-            <div className="container mx-auto">
+            <div className="container mx-auto mb-6">
               <div className="text-center my-6 md:mb-[32px]">
                 <PrimaryHeading text="Post Review" className="text-[18px] italic h-[20px] md:text-[20px] md:h-[22px]" />
               </div>
@@ -617,27 +626,63 @@ const GutReviewRegister: NextPage = () => {
 
                   {/* section-two */}
                   <div className="md:w-[100%] md:max-w-[360px]">
+                    <div className="w-[100%] max-w-[320px] mb-6 md:max-w-[360px]">
+                      <SubHeading text='評価' className="text-[16px] md:text-[18px] md:mb-2" />
+                      <TextUnderBar className="w-[100%] max-w-[320px] md:max-w-[360px]" />
+                    </div>
 
-                    {/* <div className="mb-[48px] md:flex md:flex-col md:mb-[64px]">
-                      <label htmlFor="comment">コメント</label>
-                      <textarea
-                        name="comment"
-                        id="comment"
-                        onChange={(e) => setComment(e.target.value)}
-                        className="inline-block border border-gray-300 rounded w-[320px] min-h-[160px] p-2 focus:outline-sub-green md:w-[360px] md:min-h-[240px]"
+                    <div>
+                      <EvaluationRangeItem
+                        labelText="自分に合っているか"
+                        scale={true}
+                        onChangeInputRangeHnadler={(e) => { setMatchRate(Number(e.target.value)) }}
+                        valueState={matchRate}
+                        className="mb-6 md:mb-2"
+                      />
+                      
+                      <EvaluationRangeItem
+                        labelText="切れにくさ"
+                        scale={false}
+                        onChangeInputRangeHnadler={(e) => { setPysicalDurability(Number(e.target.value)) }}
+                        valueState={pysicalDurability}
+                        className="mb-[41px] md:mb-[36px]"
                       />
 
-                      {errors.comment.length !== 0 &&
-                        errors.comment.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                      }
-                    </div> */}
+                      <EvaluationRangeItem
+                        labelText="打球感の持続"
+                        scale={false}
+                        onChangeInputRangeHnadler={(e) => { setPerformanceDurability(Number(e.target.value)) }}
+                        valueState={performanceDurability}
+                        className="mb-10"
+                      />
 
-                    {/* <div className="flex justify-center md:justify-end">
+                      <div className="mb-[16px] md:flex md:flex-col">
+                        <label
+                          htmlFor="comment"
+                          className="text-[14px] md:text-[16px] mb-1 md:mb-2"
+                        >コメント</label>
+
+                        <textarea
+                          name="comment"
+                          id="comment"
+                          onChange={(e) => setComment(e.target.value)}
+                          className="inline-block border border-gray-300 rounded w-[320px] min-h-[160px] p-2 focus:outline-sub-green md:w-[360px] md:min-h-[240px]"
+                        />
+
+                        {errors.comment.length !== 0 &&
+                          errors.comment.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                        }
+                      </div>
+                    </div>
+
+                    <p className="text-[14px] md:text-[16px] mb-6 md:mb-4 md:mb-4">※ 装備構成を直接入力した場合は、その構成のマイ装備も作成されます</p>
+
+                    <div className="flex justify-center md:justify-end">
                       <button
                         type="submit"
                         className="text-white font-bold text-[14px] w-[200px] h-8 rounded  bg-sub-green md:text-[16px] md:w-[160px]"
-                      >追加する</button>
-                    </div> */}
+                      >投稿する</button>
+                    </div>
                   </div>
 
                 </form>
