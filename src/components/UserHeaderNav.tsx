@@ -14,12 +14,27 @@ const UserHeaderNav: React.FC<UserHeaderNavProps> = ({
 
   return (
     <>
-      <HeaderNavLink
-        linkText="レビュー"
-        className="mr-4"
-        href="/reviews"
-      />
+      <DropDownMenu
+        dropDownTitle="レビュー"
+        listClassName="pr-4 h-[64px]"
+        dropDownAreaWidth="w-[160px]"
+      >
+        <hr />
 
+        <HeaderNavLink
+          linkText="投稿一覧"
+          className="p-2"
+          href="/reviews"
+        />
+
+        <hr />
+
+        <HeaderNavLink
+          linkText="レビュー投稿"
+          className="p-2"
+          href="/reviews/register"
+        />
+      </DropDownMenu>
 
       <DropDownMenu
         dropDownTitle="マイ装備"
