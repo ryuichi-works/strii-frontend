@@ -344,7 +344,7 @@ const GutReviewRegister: NextPage = () => {
           <>
             <div className="container mx-auto">
               <div className="text-center my-6 md:mb-[32px]">
-                <PrimaryHeading text="マイ装備追加" className="text-[18px] h-[20px] md:text-[20px] md:h-[22px]" />
+                <PrimaryHeading text="Post Review" className="text-[18px] italic h-[20px] md:text-[20px] md:h-[22px]" />
               </div>
 
               <div className="w-[100%] max-w-[320px] mx-auto md:max-w-[768px]">
@@ -356,11 +356,22 @@ const GutReviewRegister: NextPage = () => {
 
                   {/* //section-one */}
                   <div className="md:w-[100%] md:max-w-[360px]">
+                    <div className="w-[100%] max-w-[320px] mb-4 md:max-w-[360px]">
+                      <SubHeading text='装備構成' className="text-[16px] md:text-[18px] md:mb-2" />
+                      <TextUnderBar className="w-[100%] max-w-[320px] md:max-w-[360px]" />
+                    </div>
+
+                    <div className="flex justify-end">
+                      {/* <button type="button" onClick={openRacketSearchModal} className="text-white font-bold text-[14px] w-[128px] h-[32px] rounded ml-auto  bg-sub-green md:text-[16px]">マイ装備から選択</button> */}
+                      <button type="button" className="text-white font-bold text-[14px] w-[128px] h-[32px] rounded ml-auto  bg-sub-green md:text-[16px]">マイ装備から選択</button>
+                      {/* <button type="button" className="text-white font-bold text-[14px] w-[128px] h-[32px] rounded ml-auto  bg-sub-green md:text-[16px]">リセット</button> */}
+                    </div>
+
                     {/* ストリング関連 */}
                     <div>
                       <div className="w-[100%] max-w-[320px] mb-4 md:max-w-[360px]">
                         <SubHeading text='ストリング' className="text-[16px] md:text-[18px] md:mb-2" />
-                        <TextUnderBar className="w-[100%] max-w-[320px] md:max-w-[360px]" />
+                        <TextUnderBar className="w-[100%] max-w-[84px] md:max-w-[96px]" />
                       </div>
 
                       {/* 張り方選択 */}
@@ -530,7 +541,7 @@ const GutReviewRegister: NextPage = () => {
                       </div>
 
                       {/* gutを新調日 */}
-                      <div className=" mb-6">
+                      {/* <div className=" mb-6">
                         <div className="flex flex-col">
                           <label htmlFor="new_gut_date" className="text-[14px] h-[16px] mb-1 md:text-[16px] md:h-[18px] md:mb-[8px]">張った日</label>
                           <input
@@ -546,10 +557,10 @@ const GutReviewRegister: NextPage = () => {
                         {errors.new_gut_date.length !== 0 &&
                           errors.new_gut_date.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                         }
-                      </div>
+                      </div> */}
 
                       {/* gut交換日 */}
-                      <div className="mb-[40px]">
+                      {/* <div className="mb-[40px]">
                         <div className="flex flex-col">
                           <label htmlFor="change_gut_date" className="text-[14px] h-[16px] mb-1 md:text-[16px] md:h-[18px] md:mb-[8px]">張り替え・ストリングが切れた日</label>
                           <input
@@ -564,17 +575,14 @@ const GutReviewRegister: NextPage = () => {
                         {errors.change_gut_date.length !== 0 &&
                           errors.change_gut_date.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                         }
-                      </div>
+                      </div> */}
                     </div>
-                  </div>
 
-                  {/* section-two */}
-                  <div className="md:w-[100%] md:max-w-[360px]">
                     {/* ラケット関連 */}
                     <div className="mb-[40px]">
                       <div className="w-[100%] max-w-[320px] mb-4 md:max-w-[360px]">
                         <SubHeading text='ラケット' className="text-[16px] md:text-[18px] md:mb-2" />
-                        <TextUnderBar className="w-[100%] max-w-[320px] md:max-w-[360px]" />
+                        <TextUnderBar className="w-[100%] max-w-[64px] md:max-w-[72px]" />
                       </div>
 
                       <p className="text-[14px] h-[16px] mb-[8px] leading-[16px] md:text-[16px] md:h-[18px]">使用ラケット</p>
@@ -605,8 +613,12 @@ const GutReviewRegister: NextPage = () => {
                         errors.racket_id.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                       }
                     </div>
+                  </div>
 
-                    <div className="mb-[48px] md:flex md:flex-col md:mb-[64px]">
+                  {/* section-two */}
+                  <div className="md:w-[100%] md:max-w-[360px]">
+
+                    {/* <div className="mb-[48px] md:flex md:flex-col md:mb-[64px]">
                       <label htmlFor="comment">コメント</label>
                       <textarea
                         name="comment"
@@ -618,14 +630,14 @@ const GutReviewRegister: NextPage = () => {
                       {errors.comment.length !== 0 &&
                         errors.comment.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                       }
-                    </div>
+                    </div> */}
 
-                    <div className="flex justify-center md:justify-end">
+                    {/* <div className="flex justify-center md:justify-end">
                       <button
                         type="submit"
                         className="text-white font-bold text-[14px] w-[200px] h-8 rounded  bg-sub-green md:text-[16px] md:w-[160px]"
                       >追加する</button>
-                    </div>
+                    </div> */}
                   </div>
 
                 </form>
