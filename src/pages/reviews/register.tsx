@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import type { Maker, Racket, TennisProfile } from "../users/[id]/profile";
-import type { Gut } from "../reviews";
+import type { Gut, MyEquipment } from "../reviews";
 
 import axios from "@/lib/axios";
 import Cookies from "js-cookie";
@@ -16,6 +16,7 @@ import TextUnderBar from "@/components/TextUnderBar";
 import { IoClose } from "react-icons/io5";
 import Pagination, { Paginator } from "@/components/Pagination";
 import EvaluationRangeItem from "@/components/EvaluationRangeItem";
+import MyEquipmentCard from "@/components/MyEquipmentCard";
 import { getToday } from "@/modules/getToday";
 
 const GutReviewRegister: NextPage = () => {
@@ -37,6 +38,9 @@ const GutReviewRegister: NextPage = () => {
   const [racket, setRacket] = useState<Racket>();
 
   //要素の表示などに使用するstate群
+  const [myEquipment, setMyEquipment] = useState<MyEquipment>();
+  console.log('myEquipment', myEquipment)
+
   const [makers, setMakers] = useState<Maker[]>();
 
   const [witchSelectingGut, setWitchSelectingGut] = useState<string>('');
@@ -65,6 +69,10 @@ const GutReviewRegister: NextPage = () => {
 
   const [racketSearchModalVisibilityClassName, setRacketSearchModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
 
+  const [myEquipmentSearchModalVisibility, setMyEquipmentModalVisibility] = useState<boolean>(false);
+
+  const [myEquipmentSearchModalVisibilityClassName, setMyEquipmentSearchModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
+
   //検索関連のstate
   const [inputSearchWord, setInputSearchWord] = useState<string>('');
 
@@ -77,6 +85,22 @@ const GutReviewRegister: NextPage = () => {
   const [gutsPaginator, setGutsPaginator] = useState<Paginator<Gut>>();
 
   const [racketsPaginator, setRacketsPaginator] = useState<Paginator<Racket>>();
+
+  const [searchedMyEquipments, setSearchedEquipments] = useState<MyEquipment[]>();
+  console.log('searchedMyEquipments', searchedMyEquipments)
+  const [myEquipmentsPaginator, setMyEquipmentsPaginator] = useState<Paginator<MyEquipment>>();
+  console.log('myEquipmentsPaginator', myEquipmentsPaginator)
+
+  // myEquipment検索state群
+  const [inputMyEquipmentSearchWord, setInputMyEquipmentSearchWord] = useState<string>('');
+  console.log('inputMyEquipmentSearchWord', inputMyEquipmentSearchWord)
+  const [inputMyEquipmentSearchStringingWay, setInputMyEquipmentSearchStringingWay] = useState<string>('');
+  console.log('inputMyEquipmentSearchStringingWay', inputMyEquipmentSearchStringingWay)
+  const [inputMyEquipmentSearchDate, setInputMyEquipmentSearchDate] = useState<string>(today);
+  console.log('inputMyEquipmentSearchDate', inputMyEquipmentSearchDate)
+  const [inputMyEquipmentSearchDateRangeType, setInputMyEquipmentSearchDateRangeType] = useState<string>('or_less');
+  console.log('inputMyEquipmentSearchDateRangeType', inputMyEquipmentSearchDateRangeType)
+
 
   // 評価に関するstate
   const [matchRate, setMatchRate] = useState<number>(3);
@@ -138,6 +162,24 @@ const GutReviewRegister: NextPage = () => {
       document.documentElement.style.overflow = 'auto';
     }
   }, [racketSearchModalVisibility])
+
+  // myEquipment検索モーダル開閉とその時の縦スクロールの挙動を考慮している
+  useEffect(() => {
+    if (myEquipmentSearchModalVisibility) {
+      setMyEquipmentSearchModalVisibilityClassName('opacity-100 scale-100')
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+    } else {
+      setMyEquipmentSearchModalVisibilityClassName('opacity-0 scale-0');
+      document.body.style.overflow = 'auto';
+      document.documentElement.style.overflow = 'auto';
+    }
+
+    return () => {
+      document.body.style.overflow = 'auto';
+      document.documentElement.style.overflow = 'auto';
+    }
+  }, [myEquipmentSearchModalVisibility])
 
   //inputの制御関数群
   const onChangeInputStringingWay = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -205,6 +247,17 @@ const GutReviewRegister: NextPage = () => {
     setRacketSearchModalVisibilityClassName('opacity-0 scale-0');
   }
 
+  // my_equipment検索モーダル開閉
+  const openMyEquipmentSearchModal = () => {
+    setMyEquipmentModalVisibility(true);
+    setMyEquipmentSearchModalVisibilityClassName('opacity-100 scale-100');
+  }
+
+  const closeMyEquipmentSearchModal = () => {
+    setMyEquipmentModalVisibility(false)
+    setMyEquipmentSearchModalVisibilityClassName('opacity-0 scale-0');
+  }
+
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/'
 
   //ページネーションを考慮した検索後racket一覧データの取得関数
@@ -251,6 +304,29 @@ const GutReviewRegister: NextPage = () => {
     }
   }
 
+  //ページネーションを考慮した検索後myEquipment一覧データの取得
+  const initialMyEquipmentSearchUrl = `api/my_equipments/user/${user.id}/search?several_words=${inputMyEquipmentSearchWord}&stringing_way=${inputMyEquipmentSearchStringingWay}&search_date=${inputMyEquipmentSearchDate}&date_range_type=${inputMyEquipmentSearchDateRangeType}`;
+  const getSearchedMyEquipmentsList = async (url: string = initialMyEquipmentSearchUrl) => {
+    await axios.get(url).then((res) => {
+      setMyEquipmentsPaginator(res.data);
+
+      setSearchedEquipments(res.data.data);
+    })
+  }
+
+  //myEquipment検索
+  const searchMyEquipments = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+    e.preventDefault();
+
+    try {
+      getSearchedMyEquipmentsList();
+
+      console.log('検索完了しました')
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   const selectGut = (gut: Gut) => {
     if (witchSelectingGut === 'main') {
       setMainGut(gut);
@@ -260,6 +336,7 @@ const GutReviewRegister: NextPage = () => {
 
     closeModal();
   }
+
   const selectRacket = (racket: Racket) => {
     setRacket(racket)
     closeRacketSearchModal();
@@ -372,7 +449,7 @@ const GutReviewRegister: NextPage = () => {
 
                     <div className="flex justify-end">
                       {/* <button type="button" onClick={openRacketSearchModal} className="text-white font-bold text-[14px] w-[128px] h-[32px] rounded ml-auto  bg-sub-green md:text-[16px]">マイ装備から選択</button> */}
-                      <button type="button" className="text-white font-bold text-[14px] w-[128px] h-[32px] rounded ml-auto  bg-sub-green md:text-[16px]">マイ装備から選択</button>
+                      <button type="button" onClick={openMyEquipmentSearchModal} className="text-white font-bold text-[14px] w-[160px] h-[32px] rounded ml-auto  bg-sub-green md:text-[16px]">マイ装備から選択</button>
                       {/* <button type="button" className="text-white font-bold text-[14px] w-[128px] h-[32px] rounded ml-auto  bg-sub-green md:text-[16px]">リセット</button> */}
                     </div>
 
@@ -639,7 +716,7 @@ const GutReviewRegister: NextPage = () => {
                         valueState={matchRate}
                         className="mb-6 md:mb-2"
                       />
-                      
+
                       <EvaluationRangeItem
                         labelText="切れにくさ"
                         scale={false}
@@ -805,6 +882,105 @@ const GutReviewRegister: NextPage = () => {
                       <Pagination
                         paginator={racketsPaginator}
                         paginate={getSearchedRacketsList}
+                        className="mt-[32px] mb-[32px] md:mt-[48px] md:mb-[48px]"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* my_equipment検索モーダル */}
+                <div className={`bg-gray-300 w-screen h-screen fixed top-0 left-0 ${myEquipmentSearchModalVisibilityClassName} duration-[400ms] pt-[24px] overflow-y-scroll`}>
+                  <div className="flex flex-col items-center w-[100%] max-w-[360px] mx-auto md:max-w-[768px]">
+                    <div onClick={closeMyEquipmentSearchModal} className="self-end hover:cursor-pointer md:mr-[39px]">
+                      <IoClose size={48} />
+                    </div>
+
+                    <form action="" onSubmit={searchMyEquipments} className="mb-[24px] md:flex md:flex-wrap md:justify-center md:mb-[40px]">
+                      {/* キーワード検索 */}
+                      <div className="mb-6 md:mb-0 md:mr-[16px]">
+                        <label htmlFor="several_words" className="block mb-1 text-[14px] md:text-[16px] md:mb-2">検索ワード</label>
+                        <input type="text" name="several_words" onChange={(e) => setInputMyEquipmentSearchWord(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[300px] h-10 p-2 focus:outline-sub-green" />
+                      </div>
+
+                      {/* 張り方 */}
+                      <div className="w-[100%] max-w-[320px] mb-8 md:max-w-[160px] md:mb-0 md:mr-4">
+                        <label htmlFor="stringing_way" className="block mb-1 text-[14px] md:text-[16px] md:mb-2">ストリングの張り方</label>
+
+                        <select
+                          name="stringing_way"
+                          id="stringing_way"
+                          value={inputMyEquipmentSearchStringingWay}
+                          onChange={(e) => setInputMyEquipmentSearchStringingWay(e.target.value)}
+                          className="border border-gray-300 rounded w-[160px] h-10 p-2 focus:outline-sub-green"
+                        >
+                          <option value="" >未選択</option>
+                          <option value="single" >単張り</option>
+                          <option value="hybrid" >ハイブリッド</option>
+                        </select>
+
+                        {/* {errors.stringing_way.length !== 0 &&
+                          errors.stringing_way.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                        } */}
+                      </div>
+
+                      {/* gutを新調日 */}
+                      <div className="mb-6 md:w-[240px] md:mb-0">
+                        <div className="flex flex-wrap ">
+                          <label
+                            htmlFor="search_date"
+                            className="text-[14px] mb-1 basis-[320px] md:basis-[160px] md:text-[16px]  md:mb-[8px]"
+                          >張った日</label>
+
+                          <input
+                            type="date"
+                            name="search_date"
+                            id="search_date"
+                            defaultValue={today}
+                            onChange={(e) => setInputMyEquipmentSearchDate(e.target.value)}
+                            className="inline-block border border-gray-300 rounded w-[140px] h-10 p-2 focus:outline-sub-green mr-1"
+                          />
+
+                          <select
+                            name="date_range_type"
+                            id="date_range_type"
+                            // value={stringingWay}
+                            onChange={(e) => setInputMyEquipmentSearchDateRangeType(e.target.value)}
+                            className="border border-gray-300 rounded w-[80px] h-10 p-2 focus:outline-sub-green"
+                          >
+                            <option value="or_more" >以降</option>
+                            <option value="or_less" >以前</option>
+                          </select>
+                        </div>
+
+                        {errors.new_gut_date.length !== 0 &&
+                          errors.new_gut_date.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                        }
+                      </div>
+
+                      <div className="flex justify-end md:justify-end basis-[100%] md:mr-[34px] md:mt-4">
+                        <button type="submit" className="text-white font-bold text-[14px] w-[160px] h-8 rounded  bg-sub-green md:text-[16px] md:self-end md:h-[40px] md:w-[100px]">検索する</button>
+                      </div>
+                    </form>
+
+                    {/* 検索結果表示欄 */}
+                    <div className="w-[100%] max-w-[360px] md:max-w-[768px]">
+                      <p className="text-[14px] mb-[16px] md:text-[16px] md:max-w-[640px] md:mx-auto">検索結果</p>
+                      {/* <div className="flex justify-between flex-wrap w-[100%] max-w-[320px] md:max-w-[768px] md:mx-auto"> */}
+                      <div className="flex justify-between flex-wrap gap-[48px] w-[100%] max-w-[360px] md:max-w-[768px] md:mx-auto">
+                        {searchedMyEquipments && (
+                          searchedMyEquipments.map(myEquipment => {
+                            return (
+                              <>
+                                <MyEquipmentCard myEquipment={myEquipment} />
+                              </>
+                            );
+                          })
+                        )}
+                      </div>
+
+                      <Pagination
+                        paginator={myEquipmentsPaginator}
+                        paginate={getSearchedMyEquipmentsList}
                         className="mt-[32px] mb-[32px] md:mt-[48px] md:mb-[48px]"
                       />
                     </div>
