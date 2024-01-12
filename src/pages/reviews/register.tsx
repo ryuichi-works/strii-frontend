@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import type { Maker, Racket, TennisProfile } from "../users/[id]/profile";
-import type { Gut, MyEquipment } from "../reviews";
+import type { Gut, MyEquipment, Review } from "../reviews";
+import type { Age, Height } from "../users/[id]/edit/tennis_profile";
 
 import axios from "@/lib/axios";
 import Cookies from "js-cookie";
@@ -18,6 +19,31 @@ import Pagination, { Paginator } from "@/components/Pagination";
 import EvaluationRangeItem from "@/components/EvaluationRangeItem";
 import MyEquipmentCard from "@/components/MyEquipmentCard";
 import { getToday } from "@/modules/getToday";
+
+type PostingGutReviewData = {
+  match_rate: number | undefined,
+  pysical_durability: number,
+  performance_durability: number,
+  review: string,
+  equipment_id: number | null,
+  need_creating_my_equipment: boolean,
+  
+  user_id?: number,
+  user_height?: Height,
+  user_age?: Age,
+  experience_period?: number,
+  stringing_way?: string,
+  main_gut_id?: number,
+  cross_gut_id?: number,
+  main_gut_guage?: number,
+  cross_gut_guage?: number,
+  main_gut_tension?: number,
+  cross_gut_tension?: number,
+  racket_id?: number,
+  new_gut_date?: string,
+  change_gut_date?: string | null,
+  comment?: string,
+}
 
 const GutReviewRegister: NextPage = () => {
   const router = useRouter();
@@ -55,10 +81,6 @@ const GutReviewRegister: NextPage = () => {
   const [inputMainCrossTension, setInputMainCrossTension] = useState<number>(50);
 
   const [inputNewGutDate, setInputNewGutDate] = useState<string>(today);
-
-  const [inputChangeGutDate, setInputChangeGutDate] = useState<string>();
-
-  const [comment, setComment] = useState<string>('');
 
   //モーダルの開閉に関するstate
   const [modalVisibility, setModalVisibility] = useState<boolean>(false);
@@ -109,6 +131,8 @@ const GutReviewRegister: NextPage = () => {
   console.log('pysicalDurability', pysicalDurability)
   const [performanceDurability, setPerformanceDurability] = useState<number>(3);
   console.log('performanceDurability', performanceDurability)
+  const [reviewComment, setReviewComment] = useState<string>('');
+  console.log('reviewComment', reviewComment)
 
   useEffect(() => {
     const getMakerList = async () => {
@@ -196,22 +220,6 @@ const GutReviewRegister: NextPage = () => {
     setInputSearchMaker(Number(e.target.value));
   }
 
-  const onChangeInputNewGutDate = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const todayRegex: RegExp = /\d{4}-\d{2}-\d{2}$/;
-
-    if (todayRegex.test(e.target.value)) {
-      setInputNewGutDate(e.target.value);
-    }
-  }
-
-  const onChangeInputChangeGutDate = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const todayRegex: RegExp = /\d{4}-\d{2}-\d{2}$/;
-
-    if (todayRegex.test(e.target.value)) {
-      setInputChangeGutDate(e.target.value);
-    }
-  }
-
   //モーダルの開閉
   const closeModal = () => {
     setModalVisibility(false);
@@ -260,7 +268,7 @@ const GutReviewRegister: NextPage = () => {
 
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/'
 
-  //ページネーションを考慮した検索後racket一覧データの取得関数
+  //ページネーションを考慮した検索後gut一覧データの取得関数
   const getSearchedGutsList = async (url: string = `api/guts/search?several_words=${inputSearchWord}&maker=${inputSearchMaker ? inputSearchMaker : ''}`) => {
     await axios.get(url).then((res) => {
       setGutsPaginator(res.data);
@@ -342,6 +350,21 @@ const GutReviewRegister: NextPage = () => {
     closeRacketSearchModal();
   }
 
+  const selectMyEquipment = (myEquipment: MyEquipment) => {
+    // 一つのmyEquipmentを選び、各stateに値をセット
+    setMyEquipment(myEquipment)
+    setStringingWay(myEquipment.stringing_way)
+    setMainGut(myEquipment.main_gut)
+    setCrossGut(myEquipment.cross_gut)
+    setRacket(myEquipment.racket)
+    setInputMainGutGuage(myEquipment.main_gut_guage)
+    setInputCrossGutGuage(myEquipment.cross_gut_guage)
+    setInputMainGutTension(myEquipment.main_gut_tension)
+    setInputMainCrossTension(myEquipment.cross_gut_tension)
+
+    closeMyEquipmentSearchModal();
+  }
+
   type Errors = {
     user_id: string[],
     user_height: string[],
@@ -380,47 +403,71 @@ const GutReviewRegister: NextPage = () => {
 
   const [errors, setErrors] = useState<Errors>(initialErrorVals);
 
-  //gut登録処理関連
+  //review登録処理関連
   const csrf = async () => await axios.get('/sanctum/csrf-cookie');
 
-  const registerGut = async (e: React.FormEvent<HTMLFormElement>) => {
+  const postGutReview = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const registerData = {
-      user_id: user.id,
-      user_height: userTennisProfile?.height,
-      user_age: userTennisProfile?.age,
-      experience_period: userTennisProfile?.experience_period,
-      stringing_way: stringingWay,
-      main_gut_id: mainGut?.id,
-      cross_gut_id: stringingWay === 'hybrid' && crossGut ? crossGut.id : mainGut?.id,
-      main_gut_guage: inputMainGutGuage,
-      cross_gut_guage: inputCrossGutGuage,
-      main_gut_tension: inputMainGutTension,
-      cross_gut_tension: inputMainCrossTension,
-      racket_id: racket?.id,
-      new_gut_date: inputNewGutDate,
-      change_gut_date: inputChangeGutDate ? inputChangeGutDate : null,
-      comment: comment,
+    let postingData: PostingGutReviewData = {
+      match_rate: matchRate,
+      pysical_durability: pysicalDurability,
+      performance_durability: performanceDurability,
+      review: reviewComment,
+      equipment_id: myEquipment ? myEquipment.id : null,
+      need_creating_my_equipment: myEquipment ? false : true,
     }
+
+    // 新規でmyEquipmentの登録が必要な場合にpostingDataに必要項目を追加
+    if(!myEquipment) {
+      postingData.user_id = user.id;
+      postingData.user_height = userTennisProfile?.height;
+      postingData.user_age = userTennisProfile?.age;
+      postingData.experience_period = userTennisProfile?.experience_period;
+      postingData.stringing_way = stringingWay;
+      postingData.main_gut_id = mainGut?.id;
+      postingData.cross_gut_id = stringingWay === 'hybrid' && crossGut ? crossGut.id : mainGut?.id;
+      postingData.main_gut_guage = inputMainGutGuage;
+      postingData.cross_gut_guage = inputCrossGutGuage;
+      postingData.main_gut_tension = inputMainGutTension;
+      postingData.cross_gut_tension = inputMainCrossTension;
+      postingData.racket_id = racket?.id;
+      postingData.new_gut_date = inputNewGutDate;
+      postingData.change_gut_date =  null;
+      postingData.comment = '';
+    }
+    
+    console.log('postingData', postingData)
 
     await csrf();
 
-    await axios.post('api/my_equipments', registerData, {
+    await axios.post('api/gut_reviews', postingData, {
       headers: {
         'X-Xsrf-Token': Cookies.get('XSRF-TOKEN'),
       }
     }).then(res => {
-      console.log('マイ装備を追加しました。');
+      console.log('レビューを投稿しました。');
 
-      router.push('/my_equipments');
+      router.push('/reviews');
     }).catch((e) => {
       const newErrors = { ...initialErrorVals, ...e.response.data.errors };
 
       setErrors(newErrors);
 
-      console.log('マイ装備の追加に失敗しました');
+      console.log('レビューを投稿に失敗しました');
     })
+  }
+
+  const resetState = () => {
+    setMyEquipment(undefined);
+    setStringingWay('single')
+    setMainGut(undefined)
+    setCrossGut(undefined)
+    setRacket(undefined)
+    setInputMainGutGuage(1.25)
+    setInputCrossGutGuage(1.25)
+    setInputMainGutTension(50)
+    setInputMainCrossTension(50)
   }
 
   return (
@@ -436,7 +483,7 @@ const GutReviewRegister: NextPage = () => {
               <div className="w-[100%] max-w-[320px] mx-auto md:max-w-[768px]">
 
                 <form
-                  onSubmit={registerGut}
+                  onSubmit={postGutReview}
                   className="w-[100%] max-w-[320px] mx-auto md:max-w-[768px] md:flex md:justify-between"
                 >
 
@@ -448,9 +495,10 @@ const GutReviewRegister: NextPage = () => {
                     </div>
 
                     <div className="flex justify-end">
-                      {/* <button type="button" onClick={openRacketSearchModal} className="text-white font-bold text-[14px] w-[128px] h-[32px] rounded ml-auto  bg-sub-green md:text-[16px]">マイ装備から選択</button> */}
-                      <button type="button" onClick={openMyEquipmentSearchModal} className="text-white font-bold text-[14px] w-[160px] h-[32px] rounded ml-auto  bg-sub-green md:text-[16px]">マイ装備から選択</button>
-                      {/* <button type="button" className="text-white font-bold text-[14px] w-[128px] h-[32px] rounded ml-auto  bg-sub-green md:text-[16px]">リセット</button> */}
+                      {myEquipment
+                        ? <button type="button" onClick={resetState} className="text-white font-bold text-[14px] w-[128px] h-[32px] rounded ml-auto  bg-sub-green md:text-[16px]">リセット</button>
+                        : <button type="button" onClick={openMyEquipmentSearchModal} className="text-white font-bold text-[14px] w-[160px] h-[32px] rounded ml-auto  bg-sub-green md:text-[16px]">マイ装備から選択</button>
+                      }
                     </div>
 
                     {/* ストリング関連 */}
@@ -469,6 +517,7 @@ const GutReviewRegister: NextPage = () => {
                           id="stringing_way"
                           value={stringingWay}
                           onChange={onChangeInputStringingWay}
+                          disabled={!!myEquipment}
                           className="border border-gray-300 rounded w-[160px] h-10 p-2 focus:outline-sub-green"
                         >
                           <option value="single" >単張り</option>
@@ -506,9 +555,13 @@ const GutReviewRegister: NextPage = () => {
                                 <p className="text-[16px] text-center h-[18px] leading-[18px] md:text-[18px] md:h-[20px]">{mainGut ? mainGut.name_ja : '未選択'}</p>
                               </div>
 
-                              <div className="flex justify-end">
-                                <button type="button" onClick={openMainGutSearchModal} className="text-white font-bold text-[14px] w-[80px] h-[32px] rounded ml-auto  bg-sub-green md:text-[16px]">変更</button>
-                              </div>
+                              {!myEquipment && (
+                                <>
+                                  <div className="flex justify-end">
+                                    <button type="button" onClick={openMainGutSearchModal} className="text-white font-bold text-[14px] w-[80px] h-[32px] rounded ml-auto  bg-sub-green md:text-[16px]">変更</button>
+                                  </div>
+                                </>
+                              )}
                             </div>
                           </div>
 
@@ -540,9 +593,13 @@ const GutReviewRegister: NextPage = () => {
                                     <p className="text-[16px] text-center h-[18px] leading-[18px] md:text-[18px] md:h-[20px]">{crossGut ? crossGut.name_ja : '未選択'}</p>
                                   </div>
 
-                                  <div className="flex justify-end">
-                                    <button type="button" onClick={openCrossGutSearchModal} className="text-white font-bold text-[14px] w-[80px] h-[32px] rounded ml-auto  bg-sub-green  md:text-[16px]">変更</button>
-                                  </div>
+                                  {!myEquipment && (
+                                    <>
+                                      <div className="flex justify-end">
+                                        <button type="button" onClick={openCrossGutSearchModal} className="text-white font-bold text-[14px] w-[80px] h-[32px] rounded ml-auto  bg-sub-green  md:text-[16px]">変更</button>
+                                      </div>
+                                    </>
+                                  )}
                                 </div>
                               </div>
 
@@ -563,9 +620,10 @@ const GutReviewRegister: NextPage = () => {
                             type="number"
                             name="main_gut_guage"
                             step={0.01}
-                            defaultValue={1.25}
+                            value={inputMainGutGuage}
                             min="1.05"
                             max="1.50"
+                            disabled={!!myEquipment}
                             onChange={(e) => setInputMainGutGuage(Number(e.target.value))}
                             className="inline-block border border-gray-300 rounded w-[72px] h-10 p-2 focus:outline-sub-green mr-1"
                           />
@@ -575,9 +633,10 @@ const GutReviewRegister: NextPage = () => {
                             type="number"
                             name="cross_gut_guage"
                             step={0.01}
-                            defaultValue={1.25}
+                            value={inputCrossGutGuage}
                             min="1.05"
                             max="1.50"
+                            disabled={!!myEquipment}
                             onChange={(e) => setInputCrossGutGuage(Number(e.target.value))}
                             className="inline-block border border-gray-300 rounded w-[72px] h-10 p-2 focus:outline-sub-green mr-1"
                           />
@@ -599,9 +658,10 @@ const GutReviewRegister: NextPage = () => {
                             type="number"
                             name="main_gut_guage"
                             step={1}
-                            defaultValue={50}
+                            value={inputMainGutTension}
                             min="1"
                             max="100"
+                            disabled={!!myEquipment}
                             onChange={(e) => setInputMainGutTension(Number(e.target.value))}
                             className="inline-block border border-gray-300 rounded w-[64px] h-10 p-2 focus:outline-sub-green mr-1"
                           />
@@ -610,9 +670,10 @@ const GutReviewRegister: NextPage = () => {
                             type="number"
                             name="cross_gut_guage"
                             step={1}
-                            defaultValue={50}
+                            value={inputMainCrossTension}
                             min="1"
                             max="100"
+                            disabled={!!myEquipment}
                             onChange={(e) => setInputMainCrossTension(Number(e.target.value))}
                             className="inline-block border border-gray-300 rounded w-[64px] h-10 p-2 focus:outline-sub-green mr-1"
                           />
@@ -625,43 +686,6 @@ const GutReviewRegister: NextPage = () => {
                           errors.cross_gut_tension.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                         }
                       </div>
-
-                      {/* gutを新調日 */}
-                      {/* <div className=" mb-6">
-                        <div className="flex flex-col">
-                          <label htmlFor="new_gut_date" className="text-[14px] h-[16px] mb-1 md:text-[16px] md:h-[18px] md:mb-[8px]">張った日</label>
-                          <input
-                            type="date"
-                            name="new_gut_date"
-                            id="new_gut_date"
-                            defaultValue={today}
-                            onChange={onChangeInputNewGutDate}
-                            className="inline-block border border-gray-300 rounded w-[140px] h-10 p-2 focus:outline-sub-green mr-1"
-                          />
-                        </div>
-
-                        {errors.new_gut_date.length !== 0 &&
-                          errors.new_gut_date.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                        }
-                      </div> */}
-
-                      {/* gut交換日 */}
-                      {/* <div className="mb-[40px]">
-                        <div className="flex flex-col">
-                          <label htmlFor="change_gut_date" className="text-[14px] h-[16px] mb-1 md:text-[16px] md:h-[18px] md:mb-[8px]">張り替え・ストリングが切れた日</label>
-                          <input
-                            type="date"
-                            name="change_gut_date"
-                            id="change_gut_date"
-                            onChange={onChangeInputChangeGutDate}
-                            className="inline-block border border-gray-300 rounded w-[140px] h-10 p-2 focus:outline-sub-green mr-1"
-                          />
-                        </div>
-
-                        {errors.change_gut_date.length !== 0 &&
-                          errors.change_gut_date.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                        }
-                      </div> */}
                     </div>
 
                     {/* ラケット関連 */}
@@ -689,9 +713,13 @@ const GutReviewRegister: NextPage = () => {
                             <p className="text-[16px] text-center h-[18px] leading-[18px] md:text-[18px] md:h-[20px]">{racket ? racket.name_ja : '未選択'}</p>
                           </div>
 
-                          <div className="flex justify-end">
-                            <button type="button" onClick={openRacketSearchModal} className="text-white font-bold text-[14px] w-[128px] h-[32px] rounded ml-auto  bg-sub-green md:text-[16px]">ラケットを選択</button>
-                          </div>
+                          {!myEquipment && (
+                            <>
+                              <div className="flex justify-end">
+                                <button type="button" onClick={openRacketSearchModal} className="text-white font-bold text-[14px] w-[128px] h-[32px] rounded ml-auto  bg-sub-green md:text-[16px]">ラケットを選択</button>
+                              </div>
+                            </>
+                          )}
                         </div>
                       </div>
 
@@ -742,7 +770,7 @@ const GutReviewRegister: NextPage = () => {
                         <textarea
                           name="comment"
                           id="comment"
-                          onChange={(e) => setComment(e.target.value)}
+                          onChange={(e) => setReviewComment(e.target.value)}
                           className="inline-block border border-gray-300 rounded w-[320px] min-h-[160px] p-2 focus:outline-sub-green md:w-[360px] md:min-h-[240px]"
                         />
 
@@ -943,7 +971,7 @@ const GutReviewRegister: NextPage = () => {
                           <select
                             name="date_range_type"
                             id="date_range_type"
-                            // value={stringingWay}
+                            value={inputMyEquipmentSearchDateRangeType}
                             onChange={(e) => setInputMyEquipmentSearchDateRangeType(e.target.value)}
                             className="border border-gray-300 rounded w-[80px] h-10 p-2 focus:outline-sub-green"
                           >
@@ -965,13 +993,15 @@ const GutReviewRegister: NextPage = () => {
                     {/* 検索結果表示欄 */}
                     <div className="w-[100%] max-w-[360px] md:max-w-[768px]">
                       <p className="text-[14px] mb-[16px] md:text-[16px] md:max-w-[640px] md:mx-auto">検索結果</p>
-                      {/* <div className="flex justify-between flex-wrap w-[100%] max-w-[320px] md:max-w-[768px] md:mx-auto"> */}
                       <div className="flex justify-between flex-wrap gap-[48px] w-[100%] max-w-[360px] md:max-w-[768px] md:mx-auto">
                         {searchedMyEquipments && (
                           searchedMyEquipments.map(myEquipment => {
                             return (
                               <>
-                                <MyEquipmentCard myEquipment={myEquipment} />
+                                <MyEquipmentCard
+                                  myEquipment={myEquipment}
+                                  clickHandler={() => selectMyEquipment(myEquipment)}
+                                />
                               </>
                             );
                           })

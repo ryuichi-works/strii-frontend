@@ -2,7 +2,7 @@ import { MyEquipment } from "@/pages/reviews";
 
 type MyEquipmentCardProps = {
   myEquipment: MyEquipment
-  clickHandler?: () => {}
+  clickHandler?: any
 }
 
 const MyEquipmentCard: React.FC<MyEquipmentCardProps> = ({
