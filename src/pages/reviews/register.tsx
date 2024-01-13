@@ -27,7 +27,7 @@ type PostingGutReviewData = {
   review: string,
   equipment_id: number | null,
   need_creating_my_equipment: boolean,
-  
+
   user_id?: number,
   user_height?: Height,
   user_age?: Age,
@@ -379,8 +379,9 @@ const GutReviewRegister: NextPage = () => {
     cross_gut_tension: string[],
     racket_id: string[],
     new_gut_date: string[],
-    change_gut_date: string[],
-    comment: string[],
+    // change_gut_date: string[],
+    // comment: string[],
+    review: string[]
   }
 
   const initialErrorVals = {
@@ -397,8 +398,9 @@ const GutReviewRegister: NextPage = () => {
     cross_gut_tension: [],
     racket_id: [],
     new_gut_date: [],
-    change_gut_date: [],
-    comment: [],
+    // change_gut_date: [],
+    // comment: [],
+    review: [],
   }
 
   const [errors, setErrors] = useState<Errors>(initialErrorVals);
@@ -419,7 +421,7 @@ const GutReviewRegister: NextPage = () => {
     }
 
     // 新規でmyEquipmentの登録が必要な場合にpostingDataに必要項目を追加
-    if(!myEquipment) {
+    if (!myEquipment) {
       postingData.user_id = user.id;
       postingData.user_height = userTennisProfile?.height;
       postingData.user_age = userTennisProfile?.age;
@@ -433,10 +435,10 @@ const GutReviewRegister: NextPage = () => {
       postingData.cross_gut_tension = inputMainCrossTension;
       postingData.racket_id = racket?.id;
       postingData.new_gut_date = inputNewGutDate;
-      postingData.change_gut_date =  null;
+      postingData.change_gut_date = null;
       postingData.comment = '';
     }
-    
+
     console.log('postingData', postingData)
 
     await csrf();
@@ -763,19 +765,19 @@ const GutReviewRegister: NextPage = () => {
 
                       <div className="mb-[16px] md:flex md:flex-col">
                         <label
-                          htmlFor="comment"
+                          htmlFor="review"
                           className="text-[14px] md:text-[16px] mb-1 md:mb-2"
                         >コメント</label>
 
                         <textarea
-                          name="comment"
-                          id="comment"
+                          name="review"
+                          id="review"
                           onChange={(e) => setReviewComment(e.target.value)}
                           className="inline-block border border-gray-300 rounded w-[320px] min-h-[160px] p-2 focus:outline-sub-green md:w-[360px] md:min-h-[240px]"
                         />
 
-                        {errors.comment.length !== 0 &&
-                          errors.comment.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                        {errors.review.length !== 0 &&
+                          errors.review.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                         }
                       </div>
                     </div>
@@ -788,6 +790,18 @@ const GutReviewRegister: NextPage = () => {
                         className="text-white font-bold text-[14px] w-[200px] h-8 rounded  bg-sub-green md:text-[16px] md:w-[160px]"
                       >投稿する</button>
                     </div>
+                    {errors.main_gut_id.length !== 0 &&
+                      errors.main_gut_id.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                    }
+                    {errors.cross_gut_id.length !== 0 &&
+                      errors.cross_gut_id.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                    }
+                    {errors.racket_id.length !== 0 &&
+                      errors.racket_id.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                    }
+                    {errors.review.length !== 0 &&
+                      errors.review.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                    }
                   </div>
 
                 </form>
