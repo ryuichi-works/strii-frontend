@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
-import type { Maker, Racket, TennisProfile } from "@/pages/users/[id]/profile"; 
+import type { Maker, Racket, TennisProfile } from "@/pages/users/[id]/profile";
 import type { Gut, MyEquipment, Review } from "..";
-import type { Age, Height } from "@/pages/users/[id]/edit/tennis_profile"; 
+import type { Age, Height } from "@/pages/users/[id]/edit/tennis_profile";
 
 import axios from "@/lib/axios";
 import Cookies from "js-cookie";
@@ -133,6 +133,9 @@ const GutReviewEdit: NextPage = () => {
   console.log('performanceDurability', performanceDurability)
   const [reviewComment, setReviewComment] = useState<string>('');
   console.log('reviewComment', reviewComment)
+
+  // 装備構成のmyEquipment情報を編集するかどうかの識別値
+  const [needEditingMyEquipment, setNeedEditingMyEquipment] = useState<boolean>(false);
 
   useEffect(() => {
     const getMakerList = async () => {
@@ -461,15 +464,27 @@ const GutReviewEdit: NextPage = () => {
   }
 
   const resetState = () => {
-    setMyEquipment(undefined);
-    setStringingWay('single')
-    setMainGut(undefined)
-    setCrossGut(undefined)
-    setRacket(undefined)
-    setInputMainGutGuage(1.25)
-    setInputCrossGutGuage(1.25)
-    setInputMainGutTension(50)
-    setInputMainCrossTension(50)
+    // setMyEquipment(undefined);
+    // setStringingWay('single')
+    // setMainGut(undefined)
+    // setCrossGut(undefined)
+    // setRacket(undefined)
+    // setInputMainGutGuage(1.25)
+    // setInputCrossGutGuage(1.25)
+    // setInputMainGutTension(50)
+    // setInputMainCrossTension(50)
+
+    inactivateEdittingMyEquipment();
+  }
+
+  
+  // myEquipment編集可否の状態変更
+  const activateEdittingMyEquipment = () => {
+    setNeedEditingMyEquipment(true);
+  }
+
+  const inactivateEdittingMyEquipment = () => {
+    setNeedEditingMyEquipment(false);
   }
 
   return (
@@ -497,9 +512,9 @@ const GutReviewEdit: NextPage = () => {
                     </div>
 
                     <div className="flex justify-end">
-                      {myEquipment
+                      {needEditingMyEquipment
                         ? <button type="button" onClick={resetState} className="text-white font-bold text-[14px] w-[128px] h-[32px] rounded ml-auto  bg-sub-green md:text-[16px]">リセット</button>
-                        : <button type="button" onClick={openMyEquipmentSearchModal} className="text-white font-bold text-[14px] w-[160px] h-[32px] rounded ml-auto  bg-sub-green md:text-[16px]">マイ装備から選択</button>
+                        : <button type="button" onClick={activateEdittingMyEquipment} className="text-white font-bold text-[14px] w-[160px] h-[32px] rounded ml-auto  bg-sub-green md:text-[16px]">マイ装備を編集</button>
                       }
                     </div>
 
@@ -519,7 +534,7 @@ const GutReviewEdit: NextPage = () => {
                           id="stringing_way"
                           value={stringingWay}
                           onChange={onChangeInputStringingWay}
-                          disabled={!!myEquipment}
+                          disabled={!needEditingMyEquipment}
                           className="border border-gray-300 rounded w-[160px] h-10 p-2 focus:outline-sub-green"
                         >
                           <option value="single" >単張り</option>
@@ -557,7 +572,7 @@ const GutReviewEdit: NextPage = () => {
                                 <p className="text-[16px] text-center h-[18px] leading-[18px] md:text-[18px] md:h-[20px]">{mainGut ? mainGut.name_ja : '未選択'}</p>
                               </div>
 
-                              {!myEquipment && (
+                              {needEditingMyEquipment && (
                                 <>
                                   <div className="flex justify-end">
                                     <button type="button" onClick={openMainGutSearchModal} className="text-white font-bold text-[14px] w-[80px] h-[32px] rounded ml-auto  bg-sub-green md:text-[16px]">変更</button>
@@ -572,7 +587,6 @@ const GutReviewEdit: NextPage = () => {
                           }
                         </div>
 
-                        {/* ハイブリッド張りの時crossGutを表示 */}
                         {stringingWay === 'hybrid' && (
                           <>
                             <div className=" mb-6">
@@ -595,7 +609,7 @@ const GutReviewEdit: NextPage = () => {
                                     <p className="text-[16px] text-center h-[18px] leading-[18px] md:text-[18px] md:h-[20px]">{crossGut ? crossGut.name_ja : '未選択'}</p>
                                   </div>
 
-                                  {!myEquipment && (
+                                  {needEditingMyEquipment && (
                                     <>
                                       <div className="flex justify-end">
                                         <button type="button" onClick={openCrossGutSearchModal} className="text-white font-bold text-[14px] w-[80px] h-[32px] rounded ml-auto  bg-sub-green  md:text-[16px]">変更</button>
@@ -625,7 +639,7 @@ const GutReviewEdit: NextPage = () => {
                             value={inputMainGutGuage}
                             min="1.05"
                             max="1.50"
-                            disabled={!!myEquipment}
+                            disabled={!needEditingMyEquipment}
                             onChange={(e) => setInputMainGutGuage(Number(e.target.value))}
                             className="inline-block border border-gray-300 rounded w-[72px] h-10 p-2 focus:outline-sub-green mr-1"
                           />
@@ -638,7 +652,7 @@ const GutReviewEdit: NextPage = () => {
                             value={inputCrossGutGuage}
                             min="1.05"
                             max="1.50"
-                            disabled={!!myEquipment}
+                            disabled={!needEditingMyEquipment}
                             onChange={(e) => setInputCrossGutGuage(Number(e.target.value))}
                             className="inline-block border border-gray-300 rounded w-[72px] h-10 p-2 focus:outline-sub-green mr-1"
                           />
@@ -663,7 +677,7 @@ const GutReviewEdit: NextPage = () => {
                             value={inputMainGutTension}
                             min="1"
                             max="100"
-                            disabled={!!myEquipment}
+                            disabled={!needEditingMyEquipment}
                             onChange={(e) => setInputMainGutTension(Number(e.target.value))}
                             className="inline-block border border-gray-300 rounded w-[64px] h-10 p-2 focus:outline-sub-green mr-1"
                           />
@@ -675,7 +689,7 @@ const GutReviewEdit: NextPage = () => {
                             value={inputMainCrossTension}
                             min="1"
                             max="100"
-                            disabled={!!myEquipment}
+                            disabled={!needEditingMyEquipment}
                             onChange={(e) => setInputMainCrossTension(Number(e.target.value))}
                             className="inline-block border border-gray-300 rounded w-[64px] h-10 p-2 focus:outline-sub-green mr-1"
                           />
@@ -715,7 +729,7 @@ const GutReviewEdit: NextPage = () => {
                             <p className="text-[16px] text-center h-[18px] leading-[18px] md:text-[18px] md:h-[20px]">{racket ? racket.name_ja : '未選択'}</p>
                           </div>
 
-                          {!myEquipment && (
+                          {needEditingMyEquipment && (
                             <>
                               <div className="flex justify-end">
                                 <button type="button" onClick={openRacketSearchModal} className="text-white font-bold text-[14px] w-[128px] h-[32px] rounded ml-auto  bg-sub-green md:text-[16px]">ラケットを選択</button>
@@ -930,106 +944,6 @@ const GutReviewEdit: NextPage = () => {
                   </div>
                 </div>
 
-                {/* my_equipment検索モーダル */}
-                <div className={`bg-gray-300 w-screen h-screen fixed top-0 left-0 ${myEquipmentSearchModalVisibilityClassName} duration-[400ms] pt-[24px] overflow-y-scroll`}>
-                  <div className="flex flex-col items-center w-[100%] max-w-[360px] mx-auto md:max-w-[768px]">
-                    <div onClick={closeMyEquipmentSearchModal} className="self-end hover:cursor-pointer md:mr-[39px]">
-                      <IoClose size={48} />
-                    </div>
-
-                    <form action="" onSubmit={searchMyEquipments} className="mb-[24px] md:flex md:flex-wrap md:justify-center md:mb-[40px]">
-                      {/* キーワード検索 */}
-                      <div className="mb-6 md:mb-0 md:mr-[16px]">
-                        <label htmlFor="several_words" className="block mb-1 text-[14px] md:text-[16px] md:mb-2">検索ワード</label>
-                        <input type="text" name="several_words" onChange={(e) => setInputMyEquipmentSearchWord(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[300px] h-10 p-2 focus:outline-sub-green" />
-                      </div>
-
-                      {/* 張り方 */}
-                      <div className="w-[100%] max-w-[320px] mb-8 md:max-w-[160px] md:mb-0 md:mr-4">
-                        <label htmlFor="stringing_way" className="block mb-1 text-[14px] md:text-[16px] md:mb-2">ストリングの張り方</label>
-
-                        <select
-                          name="stringing_way"
-                          id="stringing_way"
-                          value={inputMyEquipmentSearchStringingWay}
-                          onChange={(e) => setInputMyEquipmentSearchStringingWay(e.target.value)}
-                          className="border border-gray-300 rounded w-[160px] h-10 p-2 focus:outline-sub-green"
-                        >
-                          <option value="" >未選択</option>
-                          <option value="single" >単張り</option>
-                          <option value="hybrid" >ハイブリッド</option>
-                        </select>
-
-                        {/* {errors.stringing_way.length !== 0 &&
-                          errors.stringing_way.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                        } */}
-                      </div>
-
-                      {/* gutを新調日 */}
-                      <div className="mb-6 md:w-[240px] md:mb-0">
-                        <div className="flex flex-wrap ">
-                          <label
-                            htmlFor="search_date"
-                            className="text-[14px] mb-1 basis-[320px] md:basis-[160px] md:text-[16px]  md:mb-[8px]"
-                          >張った日</label>
-
-                          <input
-                            type="date"
-                            name="search_date"
-                            id="search_date"
-                            defaultValue={today}
-                            onChange={(e) => setInputMyEquipmentSearchDate(e.target.value)}
-                            className="inline-block border border-gray-300 rounded w-[140px] h-10 p-2 focus:outline-sub-green mr-1"
-                          />
-
-                          <select
-                            name="date_range_type"
-                            id="date_range_type"
-                            value={inputMyEquipmentSearchDateRangeType}
-                            onChange={(e) => setInputMyEquipmentSearchDateRangeType(e.target.value)}
-                            className="border border-gray-300 rounded w-[80px] h-10 p-2 focus:outline-sub-green"
-                          >
-                            <option value="or_more" >以降</option>
-                            <option value="or_less" >以前</option>
-                          </select>
-                        </div>
-
-                        {errors.new_gut_date.length !== 0 &&
-                          errors.new_gut_date.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                        }
-                      </div>
-
-                      <div className="flex justify-end md:justify-end basis-[100%] md:mr-[34px] md:mt-4">
-                        <button type="submit" className="text-white font-bold text-[14px] w-[160px] h-8 rounded  bg-sub-green md:text-[16px] md:self-end md:h-[40px] md:w-[100px]">検索する</button>
-                      </div>
-                    </form>
-
-                    {/* 検索結果表示欄 */}
-                    <div className="w-[100%] max-w-[360px] md:max-w-[768px]">
-                      <p className="text-[14px] mb-[16px] md:text-[16px] md:max-w-[640px] md:mx-auto">検索結果</p>
-                      <div className="flex justify-between flex-wrap gap-[48px] w-[100%] max-w-[360px] md:max-w-[768px] md:mx-auto">
-                        {searchedMyEquipments && (
-                          searchedMyEquipments.map(myEquipment => {
-                            return (
-                              <>
-                                <MyEquipmentCard
-                                  myEquipment={myEquipment}
-                                  clickHandler={() => selectMyEquipment(myEquipment)}
-                                />
-                              </>
-                            );
-                          })
-                        )}
-                      </div>
-
-                      <Pagination
-                        paginator={myEquipmentsPaginator}
-                        paginate={getSearchedMyEquipmentsList}
-                        className="mt-[32px] mb-[32px] md:mt-[48px] md:mb-[48px]"
-                      />
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </>
