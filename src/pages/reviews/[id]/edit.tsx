@@ -48,11 +48,16 @@ type PostingGutReviewData = {
 const GutReviewEdit: NextPage = () => {
   const router = useRouter();
 
+  const reviewId = router.query.id;
+
   const { isAuth, user, isAuthAdmin } = useContext(AuthContext);
 
   const today: string = getToday();
 
   const [userTennisProfile, setUserTennisProfile] = useState<TennisProfile>();
+
+  const [review, setReview] = useState<Review>();
+  console.log('review', review)
 
   //my_equipmentの登録に使うstate群
   const [stringingWay, setStringingWay] = useState<string>('single');
@@ -65,7 +70,7 @@ const GutReviewEdit: NextPage = () => {
 
   //要素の表示などに使用するstate群
   const [myEquipment, setMyEquipment] = useState<MyEquipment>();
-  console.log('myEquipment', myEquipment)
+  console.log('myEquipmentOfUser', myEquipment)
 
   const [makers, setMakers] = useState<Maker[]>();
 
@@ -78,7 +83,7 @@ const GutReviewEdit: NextPage = () => {
 
   const [inputMainGutTension, setInputMainGutTension] = useState<number>(50);
 
-  const [inputMainCrossTension, setInputMainCrossTension] = useState<number>(50);
+  const [inputMainCrossTension, setInputCrossGutTension] = useState<number>(50);
 
   const [inputNewGutDate, setInputNewGutDate] = useState<string>(today);
 
@@ -150,8 +155,38 @@ const GutReviewEdit: NextPage = () => {
       })
     }
 
+    const getReview = async () => {
+      const response = await axios.get(`api/gut_reviews/${reviewId}`);
+      const _review: Review = response.data;
+
+      return _review;
+    }
+
+    // 各データの初期値をセット
+    const setInitialStates = async () => {
+      const _review: Review = await getReview();
+      
+      setReview(_review);
+      setMyEquipment(_review.my_equipment);
+      setStringingWay(_review.my_equipment.stringing_way)
+      setMainGut(_review.my_equipment.main_gut)
+      setCrossGut(_review.my_equipment.cross_gut)
+      setInputMainGutGuage(_review.my_equipment.main_gut_guage)
+      setInputCrossGutGuage(_review.my_equipment.cross_gut_guage)
+      setInputMainGutTension(_review.my_equipment.main_gut_tension);
+      setInputCrossGutTension(_review.my_equipment.cross_gut_tension)
+      setRacket(_review.my_equipment.racket);
+      setMatchRate(_review.match_rate);
+      setPysicalDurability(_review.pysical_durability)
+      setPerformanceDurability(_review.performance_durability)
+      setReviewComment(_review.review)
+    }
+
+
     getUserTennisProfile();
     getMakerList();
+    // getReview();
+    setInitialStates();
   }, [])
 
   // gut検索モーダル開閉とその時の縦スクロールの挙動を考慮している
@@ -363,7 +398,7 @@ const GutReviewEdit: NextPage = () => {
     setInputMainGutGuage(myEquipment.main_gut_guage)
     setInputCrossGutGuage(myEquipment.cross_gut_guage)
     setInputMainGutTension(myEquipment.main_gut_tension)
-    setInputMainCrossTension(myEquipment.cross_gut_tension)
+    setInputCrossGutTension(myEquipment.cross_gut_tension)
 
     closeMyEquipmentSearchModal();
   }
@@ -463,21 +498,31 @@ const GutReviewEdit: NextPage = () => {
     })
   }
 
-  const resetState = () => {
-    // setMyEquipment(undefined);
-    // setStringingWay('single')
-    // setMainGut(undefined)
-    // setCrossGut(undefined)
-    // setRacket(undefined)
-    // setInputMainGutGuage(1.25)
-    // setInputCrossGutGuage(1.25)
-    // setInputMainGutTension(50)
-    // setInputMainCrossTension(50)
+  const resetMyEquipmentState = () => {
+    if(myEquipment) {
+      setStringingWay(myEquipment?.stringing_way)
+      setMainGut(myEquipment.main_gut)
+      setCrossGut(myEquipment.cross_gut)
+      setInputMainGutGuage(myEquipment.main_gut_guage)
+      setInputCrossGutGuage(myEquipment.cross_gut_guage)
+      setInputMainGutTension(myEquipment.main_gut_tension);
+      setInputCrossGutTension(myEquipment.cross_gut_tension)
+      setRacket(myEquipment.racket);
+    }
 
     inactivateEdittingMyEquipment();
   }
 
-  
+  const resetEvaluationState = () => {
+    if(review) {
+      setMatchRate(review.match_rate);
+      setPysicalDurability(review.pysical_durability)
+      setPerformanceDurability(review.performance_durability)
+      setReviewComment(review.review)
+    }
+  }
+
+
   // myEquipment編集可否の状態変更
   const activateEdittingMyEquipment = () => {
     setNeedEditingMyEquipment(true);
@@ -513,7 +558,7 @@ const GutReviewEdit: NextPage = () => {
 
                     <div className="flex justify-end">
                       {needEditingMyEquipment
-                        ? <button type="button" onClick={resetState} className="text-white font-bold text-[14px] w-[128px] h-[32px] rounded ml-auto  bg-sub-green md:text-[16px]">リセット</button>
+                        ? <button type="button" onClick={resetMyEquipmentState} className="text-white font-bold text-[14px] w-[128px] h-[32px] rounded ml-auto  bg-sub-green md:text-[16px]">リセット</button>
                         : <button type="button" onClick={activateEdittingMyEquipment} className="text-white font-bold text-[14px] w-[160px] h-[32px] rounded ml-auto  bg-sub-green md:text-[16px]">マイ装備を編集</button>
                       }
                     </div>
@@ -532,7 +577,7 @@ const GutReviewEdit: NextPage = () => {
                         <select
                           name="stringing_way"
                           id="stringing_way"
-                          value={stringingWay}
+                          value={needEditingMyEquipment ? stringingWay : myEquipment?.stringing_way}
                           onChange={onChangeInputStringingWay}
                           disabled={!needEditingMyEquipment}
                           className="border border-gray-300 rounded w-[160px] h-10 p-2 focus:outline-sub-green"
@@ -690,7 +735,7 @@ const GutReviewEdit: NextPage = () => {
                             min="1"
                             max="100"
                             disabled={!needEditingMyEquipment}
-                            onChange={(e) => setInputMainCrossTension(Number(e.target.value))}
+                            onChange={(e) => setInputCrossGutTension(Number(e.target.value))}
                             className="inline-block border border-gray-300 rounded w-[64px] h-10 p-2 focus:outline-sub-green mr-1"
                           />
                           <span className="inline-block text-[14px] h-[16px] leading-[16px] md:text-[16px] md:h-[18px]">ポンド</span>
@@ -747,9 +792,13 @@ const GutReviewEdit: NextPage = () => {
 
                   {/* section-two */}
                   <div className="md:w-[100%] md:max-w-[360px]">
-                    <div className="w-[100%] max-w-[320px] mb-6 md:max-w-[360px]">
+                    <div className="w-[100%] max-w-[320px] mb-6 md:max-w-[360px] md:mb-4">
                       <SubHeading text='評価' className="text-[16px] md:text-[18px] md:mb-2" />
                       <TextUnderBar className="w-[100%] max-w-[320px] md:max-w-[360px]" />
+                    </div>
+
+                    <div className="flex justify-end md:mb-2">
+                      <button type="button" onClick={resetEvaluationState} className="text-white font-bold text-[14px] w-[128px] h-[32px] rounded ml-auto  bg-sub-green md:text-[16px]">リセット</button>
                     </div>
 
                     <div>
@@ -786,6 +835,7 @@ const GutReviewEdit: NextPage = () => {
                         <textarea
                           name="review"
                           id="review"
+                          value={reviewComment}
                           onChange={(e) => setReviewComment(e.target.value)}
                           className="inline-block border border-gray-300 rounded w-[320px] min-h-[160px] p-2 focus:outline-sub-green md:w-[360px] md:min-h-[240px]"
                         />
@@ -802,8 +852,9 @@ const GutReviewEdit: NextPage = () => {
                       <button
                         type="submit"
                         className="text-white font-bold text-[14px] w-[200px] h-8 rounded  bg-sub-green md:text-[16px] md:w-[160px]"
-                      >投稿する</button>
+                      >編集する</button>
                     </div>
+
                     {errors.main_gut_id.length !== 0 &&
                       errors.main_gut_id.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                     }
