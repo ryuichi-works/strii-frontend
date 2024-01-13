@@ -20,18 +20,14 @@ import EvaluationRangeItem from "@/components/EvaluationRangeItem";
 import MyEquipmentCard from "@/components/MyEquipmentCard";
 import { getToday } from "@/modules/getToday";
 
-type PostingGutReviewData = {
+type EditingGutReviewData = {
+  _method: 'PUT',
   match_rate: number | undefined,
   pysical_durability: number,
   performance_durability: number,
   review: string,
-  equipment_id: number | null,
-  need_creating_my_equipment: boolean,
+  need_editing_my_equipment: boolean,
 
-  user_id?: number,
-  user_height?: Height,
-  user_age?: Age,
-  experience_period?: number,
   stringing_way?: string,
   main_gut_id?: number,
   cross_gut_id?: number,
@@ -40,9 +36,6 @@ type PostingGutReviewData = {
   main_gut_tension?: number,
   cross_gut_tension?: number,
   racket_id?: number,
-  new_gut_date?: string,
-  change_gut_date?: string | null,
-  comment?: string,
 }
 
 const GutReviewEdit: NextPage = () => {
@@ -416,9 +409,6 @@ const GutReviewEdit: NextPage = () => {
     main_gut_tension: string[],
     cross_gut_tension: string[],
     racket_id: string[],
-    new_gut_date: string[],
-    // change_gut_date: string[],
-    // comment: string[],
     review: string[]
   }
 
@@ -435,9 +425,6 @@ const GutReviewEdit: NextPage = () => {
     main_gut_tension: [],
     cross_gut_tension: [],
     racket_id: [],
-    new_gut_date: [],
-    // change_gut_date: [],
-    // comment: [],
     review: [],
   }
 
@@ -446,55 +433,48 @@ const GutReviewEdit: NextPage = () => {
   //review登録処理関連
   const csrf = async () => await axios.get('/sanctum/csrf-cookie');
 
-  const postGutReview = async (e: React.FormEvent<HTMLFormElement>) => {
+  const editGutReview = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    let postingData: PostingGutReviewData = {
+    let editedData: EditingGutReviewData = {
+      _method: 'PUT',
       match_rate: matchRate,
       pysical_durability: pysicalDurability,
       performance_durability: performanceDurability,
       review: reviewComment,
-      equipment_id: myEquipment ? myEquipment.id : null,
-      need_creating_my_equipment: myEquipment ? false : true,
+      need_editing_my_equipment: needEditingMyEquipment,
     }
 
-    // 新規でmyEquipmentの登録が必要な場合にpostingDataに必要項目を追加
-    if (!myEquipment) {
-      postingData.user_id = user.id;
-      postingData.user_height = userTennisProfile?.height;
-      postingData.user_age = userTennisProfile?.age;
-      postingData.experience_period = userTennisProfile?.experience_period;
-      postingData.stringing_way = stringingWay;
-      postingData.main_gut_id = mainGut?.id;
-      postingData.cross_gut_id = stringingWay === 'hybrid' && crossGut ? crossGut.id : mainGut?.id;
-      postingData.main_gut_guage = inputMainGutGuage;
-      postingData.cross_gut_guage = inputCrossGutGuage;
-      postingData.main_gut_tension = inputMainGutTension;
-      postingData.cross_gut_tension = inputMainCrossTension;
-      postingData.racket_id = racket?.id;
-      postingData.new_gut_date = inputNewGutDate;
-      postingData.change_gut_date = null;
-      postingData.comment = '';
+    // myEquipmentの変更もする場合にeditedDataに必要項目を追加
+    if (needEditingMyEquipment) {
+      editedData.stringing_way = stringingWay;
+      editedData.main_gut_id = mainGut?.id;
+      editedData.cross_gut_id = stringingWay === 'hybrid' && crossGut ? crossGut.id : mainGut?.id;
+      editedData.main_gut_guage = inputMainGutGuage;
+      editedData.cross_gut_guage = inputCrossGutGuage;
+      editedData.main_gut_tension = inputMainGutTension;
+      editedData.cross_gut_tension = inputMainCrossTension;
+      editedData.racket_id = racket?.id;
     }
 
-    console.log('postingData', postingData)
+    console.log('editedData', editedData)
 
     await csrf();
 
-    await axios.post('api/gut_reviews', postingData, {
+    await axios.post(`api/gut_reviews/${reviewId}`, editedData, {
       headers: {
         'X-Xsrf-Token': Cookies.get('XSRF-TOKEN'),
       }
     }).then(res => {
-      console.log('レビューを投稿しました。');
+      console.log('レビューを更新しました。');
 
-      router.push('/reviews');
+      router.push(`/reviews/${reviewId}/review`);
     }).catch((e) => {
       const newErrors = { ...initialErrorVals, ...e.response.data.errors };
 
       setErrors(newErrors);
 
-      console.log('レビューを投稿に失敗しました');
+      console.log('レビュー更新に失敗しました');
     })
   }
 
@@ -545,7 +525,7 @@ const GutReviewEdit: NextPage = () => {
               <div className="w-[100%] max-w-[320px] mx-auto md:max-w-[768px]">
 
                 <form
-                  onSubmit={postGutReview}
+                  onSubmit={editGutReview}
                   className="w-[100%] max-w-[320px] mx-auto md:max-w-[768px] md:flex md:justify-between"
                 >
 
