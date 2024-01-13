@@ -57,6 +57,7 @@ export type MyEquipment = {
 
 export type Review = {
   id: number,
+  user_id: number,
   equipment_id: number,
   match_rate: number,
   pysical_durability: number,

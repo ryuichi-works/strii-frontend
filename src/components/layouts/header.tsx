@@ -128,7 +128,8 @@ const Header: React.FC = () => {
 
               {user.id && (
                 <>
-                  <li><Link href={'/reviews'} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">レビュー</Link></li>
+                  <li><Link href={'/reviews'} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">レビュー一覧</Link></li>
+                  <li><Link href={'/reviews/register'} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">レビュー投稿</Link></li>
                   <li><Link href={'/my_equipments'} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">マイ装備</Link></li>
                   <li><Link href={'/my_equipments/register'} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">マイ装備追加</Link></li>
                   <li><Link href={'/guts'} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">ストリング</Link></li>
