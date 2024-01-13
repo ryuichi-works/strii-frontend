@@ -1,7 +1,6 @@
 import type { NextPage } from "next";
 import type { Maker, Racket, TennisProfile } from "@/pages/users/[id]/profile";
 import type { Gut, MyEquipment, Review } from "..";
-import type { Age, Height } from "@/pages/users/[id]/edit/tennis_profile";
 
 import axios from "@/lib/axios";
 import Cookies from "js-cookie";
@@ -17,7 +16,6 @@ import TextUnderBar from "@/components/TextUnderBar";
 import { IoClose } from "react-icons/io5";
 import Pagination, { Paginator } from "@/components/Pagination";
 import EvaluationRangeItem from "@/components/EvaluationRangeItem";
-import MyEquipmentCard from "@/components/MyEquipmentCard";
 import { getToday } from "@/modules/getToday";
 
 type EditingGutReviewData = {
@@ -47,10 +45,7 @@ const GutReviewEdit: NextPage = () => {
 
   const today: string = getToday();
 
-  const [userTennisProfile, setUserTennisProfile] = useState<TennisProfile>();
-
   const [review, setReview] = useState<Review>();
-  console.log('review', review)
 
   //my_equipmentの登録に使うstate群
   const [stringingWay, setStringingWay] = useState<string>('single');
@@ -63,7 +58,6 @@ const GutReviewEdit: NextPage = () => {
 
   //要素の表示などに使用するstate群
   const [myEquipment, setMyEquipment] = useState<MyEquipment>();
-  console.log('myEquipmentOfUser', myEquipment)
 
   const [makers, setMakers] = useState<Maker[]>();
 
@@ -78,8 +72,6 @@ const GutReviewEdit: NextPage = () => {
 
   const [inputMainCrossTension, setInputCrossGutTension] = useState<number>(50);
 
-  const [inputNewGutDate, setInputNewGutDate] = useState<string>(today);
-
   //モーダルの開閉に関するstate
   const [modalVisibility, setModalVisibility] = useState<boolean>(false);
 
@@ -90,8 +82,6 @@ const GutReviewEdit: NextPage = () => {
   const [racketSearchModalVisibilityClassName, setRacketSearchModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
 
   const [myEquipmentSearchModalVisibility, setMyEquipmentModalVisibility] = useState<boolean>(false);
-
-  const [myEquipmentSearchModalVisibilityClassName, setMyEquipmentSearchModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
 
   //検索関連のstate
   const [inputSearchWord, setInputSearchWord] = useState<string>('');
@@ -106,31 +96,14 @@ const GutReviewEdit: NextPage = () => {
 
   const [racketsPaginator, setRacketsPaginator] = useState<Paginator<Racket>>();
 
-  const [searchedMyEquipments, setSearchedEquipments] = useState<MyEquipment[]>();
-  console.log('searchedMyEquipments', searchedMyEquipments)
-  const [myEquipmentsPaginator, setMyEquipmentsPaginator] = useState<Paginator<MyEquipment>>();
-  console.log('myEquipmentsPaginator', myEquipmentsPaginator)
-
-  // myEquipment検索state群
-  const [inputMyEquipmentSearchWord, setInputMyEquipmentSearchWord] = useState<string>('');
-  console.log('inputMyEquipmentSearchWord', inputMyEquipmentSearchWord)
-  const [inputMyEquipmentSearchStringingWay, setInputMyEquipmentSearchStringingWay] = useState<string>('');
-  console.log('inputMyEquipmentSearchStringingWay', inputMyEquipmentSearchStringingWay)
-  const [inputMyEquipmentSearchDate, setInputMyEquipmentSearchDate] = useState<string>(today);
-  console.log('inputMyEquipmentSearchDate', inputMyEquipmentSearchDate)
-  const [inputMyEquipmentSearchDateRangeType, setInputMyEquipmentSearchDateRangeType] = useState<string>('or_less');
-  console.log('inputMyEquipmentSearchDateRangeType', inputMyEquipmentSearchDateRangeType)
-
-
   // 評価に関するstate
   const [matchRate, setMatchRate] = useState<number>(3);
-  console.log('matchRate', matchRate)
+
   const [pysicalDurability, setPysicalDurability] = useState<number>(3);
-  console.log('pysicalDurability', pysicalDurability)
+
   const [performanceDurability, setPerformanceDurability] = useState<number>(3);
-  console.log('performanceDurability', performanceDurability)
+
   const [reviewComment, setReviewComment] = useState<string>('');
-  console.log('reviewComment', reviewComment)
 
   // 装備構成のmyEquipment情報を編集するかどうかの識別値
   const [needEditingMyEquipment, setNeedEditingMyEquipment] = useState<boolean>(false);
@@ -139,12 +112,6 @@ const GutReviewEdit: NextPage = () => {
     const getMakerList = async () => {
       await axios.get('api/makers').then(res => {
         setMakers(res.data);
-      })
-    }
-
-    const getUserTennisProfile = async () => {
-      await axios.get(`api/tennis_profiles/user/${user.id}`).then(res => {
-        setUserTennisProfile(res.data);
       })
     }
 
@@ -176,9 +143,7 @@ const GutReviewEdit: NextPage = () => {
     }
 
 
-    getUserTennisProfile();
     getMakerList();
-    // getReview();
     setInitialStates();
   }, [])
 
@@ -217,24 +182,6 @@ const GutReviewEdit: NextPage = () => {
       document.documentElement.style.overflow = 'auto';
     }
   }, [racketSearchModalVisibility])
-
-  // myEquipment検索モーダル開閉とその時の縦スクロールの挙動を考慮している
-  useEffect(() => {
-    if (myEquipmentSearchModalVisibility) {
-      setMyEquipmentSearchModalVisibilityClassName('opacity-100 scale-100')
-      document.body.style.overflow = 'hidden';
-      document.documentElement.style.overflow = 'hidden';
-    } else {
-      setMyEquipmentSearchModalVisibilityClassName('opacity-0 scale-0');
-      document.body.style.overflow = 'auto';
-      document.documentElement.style.overflow = 'auto';
-    }
-
-    return () => {
-      document.body.style.overflow = 'auto';
-      document.documentElement.style.overflow = 'auto';
-    }
-  }, [myEquipmentSearchModalVisibility])
 
   //inputの制御関数群
   const onChangeInputStringingWay = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -286,17 +233,6 @@ const GutReviewEdit: NextPage = () => {
     setRacketSearchModalVisibilityClassName('opacity-0 scale-0');
   }
 
-  // my_equipment検索モーダル開閉
-  const openMyEquipmentSearchModal = () => {
-    setMyEquipmentModalVisibility(true);
-    setMyEquipmentSearchModalVisibilityClassName('opacity-100 scale-100');
-  }
-
-  const closeMyEquipmentSearchModal = () => {
-    setMyEquipmentModalVisibility(false)
-    setMyEquipmentSearchModalVisibilityClassName('opacity-0 scale-0');
-  }
-
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/'
 
   //ページネーションを考慮した検索後gut一覧データの取得関数
@@ -343,29 +279,6 @@ const GutReviewEdit: NextPage = () => {
     }
   }
 
-  //ページネーションを考慮した検索後myEquipment一覧データの取得
-  const initialMyEquipmentSearchUrl = `api/my_equipments/user/${user.id}/search?several_words=${inputMyEquipmentSearchWord}&stringing_way=${inputMyEquipmentSearchStringingWay}&search_date=${inputMyEquipmentSearchDate}&date_range_type=${inputMyEquipmentSearchDateRangeType}`;
-  const getSearchedMyEquipmentsList = async (url: string = initialMyEquipmentSearchUrl) => {
-    await axios.get(url).then((res) => {
-      setMyEquipmentsPaginator(res.data);
-
-      setSearchedEquipments(res.data.data);
-    })
-  }
-
-  //myEquipment検索
-  const searchMyEquipments = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
-    e.preventDefault();
-
-    try {
-      getSearchedMyEquipmentsList();
-
-      console.log('検索完了しました')
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
   const selectGut = (gut: Gut) => {
     if (witchSelectingGut === 'main') {
       setMainGut(gut);
@@ -381,26 +294,11 @@ const GutReviewEdit: NextPage = () => {
     closeRacketSearchModal();
   }
 
-  const selectMyEquipment = (myEquipment: MyEquipment) => {
-    // 一つのmyEquipmentを選び、各stateに値をセット
-    setMyEquipment(myEquipment)
-    setStringingWay(myEquipment.stringing_way)
-    setMainGut(myEquipment.main_gut)
-    setCrossGut(myEquipment.cross_gut)
-    setRacket(myEquipment.racket)
-    setInputMainGutGuage(myEquipment.main_gut_guage)
-    setInputCrossGutGuage(myEquipment.cross_gut_guage)
-    setInputMainGutTension(myEquipment.main_gut_tension)
-    setInputCrossGutTension(myEquipment.cross_gut_tension)
-
-    closeMyEquipmentSearchModal();
-  }
-
   type Errors = {
-    user_id: string[],
-    user_height: string[],
-    user_age: string[],
-    experience_period: string[],
+    // user_id: string[],
+    // user_height: string[],
+    // user_age: string[],
+    // experience_period: string[],
     stringing_way: string[],
     main_gut_id: string[],
     cross_gut_id: string[],
@@ -413,10 +311,10 @@ const GutReviewEdit: NextPage = () => {
   }
 
   const initialErrorVals = {
-    user_id: [],
-    user_height: [],
-    user_age: [],
-    experience_period: [],
+    // user_id: [],
+    // user_height: [],
+    // user_age: [],
+    // experience_period: [],
     stringing_way: [],
     main_gut_id: [],
     cross_gut_id: [],
@@ -457,7 +355,7 @@ const GutReviewEdit: NextPage = () => {
       editedData.racket_id = racket?.id;
     }
 
-    console.log('editedData', editedData)
+    // console.log('editedData', editedData)
 
     await csrf();
 
