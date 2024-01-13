@@ -20,7 +20,8 @@ const InputRange: React.FC<InputRangeProps> = ({
         min={min}
         max={max}
         step={step}
-        defaultValue={value}
+        // defaultValue={value}
+        value={value}
         onChange={chengeHandler}
         className={`
           w-full bg-transparent cursor-pointer appearance-none disabled:opacity-50 disabled:pointer-events-none focus:outline-none

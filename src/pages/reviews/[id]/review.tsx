@@ -5,6 +5,7 @@ import { AuthContext } from "@/context/AuthContext";
 import axios from "@/lib/axios";
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
+import Link from "next/link";
 
 const Review = () => {
   const router = useRouter();
@@ -184,6 +185,15 @@ const Review = () => {
 
                 </div>
 
+              </div>
+
+              <div className="flex justify-center w-[100%] max-w-[320px] mx-auto mt-[24px] md:justify-end md:max-w-[768px]">
+                {(review && user.id === review.user_id) && (
+                  <Link
+                    href={`/reviews/${review.id}/edit`}
+                    className="inline-block  text-[14px] text-white text-center leading-[32px] font-bold w-[80px] h-[32px] rounded  bg-sub-green md:text-[16px] md:w-[100px]"
+                  >編集</Link>
+                )}
               </div>
             </div>
           </>

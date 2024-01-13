@@ -4,7 +4,8 @@ type EvaluationRangeItemProps = {
   labelText: string,
   scale: boolean,
   onChangeInputRangeHnadler: (e: React.ChangeEvent<HTMLInputElement>) => void
-  valueState?: number | null,
+  // valueState?: number | null,
+  valueState?: number,
   className?: string
 }
 
@@ -12,7 +13,7 @@ const EvaluationRangeItem: React.FC<EvaluationRangeItemProps> = ({
   labelText,
   scale = false,
   onChangeInputRangeHnadler,
-  valueState,
+  valueState = 3,
   className
 }) => {
   return (
@@ -27,7 +28,7 @@ const EvaluationRangeItem: React.FC<EvaluationRangeItemProps> = ({
           min={1}
           max={5}
           step={0.5}
-          value={3}
+          value={valueState}
           chengeHandler={onChangeInputRangeHnadler}
         />
 
