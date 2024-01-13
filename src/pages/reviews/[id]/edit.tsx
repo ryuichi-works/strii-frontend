@@ -295,10 +295,6 @@ const GutReviewEdit: NextPage = () => {
   }
 
   type Errors = {
-    // user_id: string[],
-    // user_height: string[],
-    // user_age: string[],
-    // experience_period: string[],
     stringing_way: string[],
     main_gut_id: string[],
     cross_gut_id: string[],
@@ -311,10 +307,6 @@ const GutReviewEdit: NextPage = () => {
   }
 
   const initialErrorVals = {
-    // user_id: [],
-    // user_height: [],
-    // user_age: [],
-    // experience_period: [],
     stringing_way: [],
     main_gut_id: [],
     cross_gut_id: [],
@@ -354,8 +346,6 @@ const GutReviewEdit: NextPage = () => {
       editedData.cross_gut_tension = inputMainCrossTension;
       editedData.racket_id = racket?.id;
     }
-
-    // console.log('editedData', editedData)
 
     await csrf();
 
@@ -399,7 +389,6 @@ const GutReviewEdit: NextPage = () => {
       setReviewComment(review.review)
     }
   }
-
 
   // myEquipment編集可否の状態変更
   const activateEdittingMyEquipment = () => {
