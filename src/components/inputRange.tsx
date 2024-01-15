@@ -1,9 +1,18 @@
+//　thumbColor　trackColorは使いたい色のリテラル型のユニオンで下記記法を参考に追加して使用元でリテラル型として指定して使う
+export type ThumbColor = '[&::-webkit-slider-thumb]:bg-sub-green [&::-moz-range-thumb]:bg-sub-green'
+
+export type TrackColor = 
+  | '[&::-webkit-slider-runnable-track]:bg-gray-300 [&::-moz-range-track]:bg-gray-300'
+  | '[&::-webkit-slider-runnable-track]:bg-white [&::-moz-range-track]:bg-white'
+
 type InputRangeProps = {
   min: number,
   max: number,
   step: number,
   value: number,
-  chengeHandler: (e: React.ChangeEvent<HTMLInputElement>) => void
+  chengeHandler: (e: React.ChangeEvent<HTMLInputElement>) => void,
+  thumbColor?: ThumbColor,
+  trackColor?: TrackColor
 }
 
 const InputRange: React.FC<InputRangeProps> = ({
@@ -11,7 +20,9 @@ const InputRange: React.FC<InputRangeProps> = ({
   max,
   step,
   value,
-  chengeHandler
+  chengeHandler,
+  thumbColor = ' [&::-webkit-slider-thumb]:bg-sub-green [&::-moz-range-thumb]:bg-sub-green ',
+  trackColor = ' [&::-webkit-slider-runnable-track]:bg-gray-300 [&::-moz-range-track]:bg-gray-300 ',
 }) => {
   return (
     <>
@@ -30,7 +41,7 @@ const InputRange: React.FC<InputRangeProps> = ({
           [&::-webkit-slider-thumb]:appearance-none
           [&::-webkit-slider-thumb]:rounded-full
           [&::-webkit-slider-thumb]:shadow-[0_0_0_1px_#628B5B]
-          [&::-webkit-slider-thumb]:bg-sub-green
+          ${thumbColor}
           [&::-webkit-slider-thumb]:relative
           [&::-webkit-slider-thumb]:top-[-50%]
 
@@ -39,7 +50,7 @@ const InputRange: React.FC<InputRangeProps> = ({
           [&::-moz-range-thumb]:appearance-none
           [&::-moz-range-thumb]:rounded-full
           [&::-moz-range-thumb]:shadow-[0_0_0_1px_#628B5B]
-          [&::-moz-range-thumb]:bg-sub-green
+          ${thumbColor}
           [&::-moz-range-thumb]:relative
           [&::-moz-range-thumb]:top-[-50%]
 
@@ -47,13 +58,13 @@ const InputRange: React.FC<InputRangeProps> = ({
           [&::-webkit-slider-runnable-track]:h-[10px]
           [&::-webkit-slider-runnable-track]:border-black
           [&::-webkit-slider-runnable-track]:rounded-full
-          [&::-webkit-slider-runnable-track]:bg-gray-300
+          ${trackColor}
 
           [&::-moz-range-track]:w-full
           [&::-moz-range-track]:h-[10px]
           [&::-moz-range-track]:border-black
           [&::-moz-range-track]:rounded-full
-          [&::-moz-range-track]:bg-gray-300
+          ${trackColor}
         `}
       />
     </>

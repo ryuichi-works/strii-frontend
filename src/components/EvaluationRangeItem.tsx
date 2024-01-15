@@ -1,4 +1,4 @@
-import InputRange from "./inputRange";
+import InputRange, { ThumbColor, TrackColor } from "./inputRange";
 
 type EvaluationRangeItemProps = {
   labelText: string,
@@ -6,7 +6,9 @@ type EvaluationRangeItemProps = {
   onChangeInputRangeHnadler: (e: React.ChangeEvent<HTMLInputElement>) => void
   // valueState?: number | null,
   valueState?: number,
-  className?: string
+  className?: string,
+  thumbColor?: ThumbColor,
+  trackColor?: TrackColor
 }
 
 const EvaluationRangeItem: React.FC<EvaluationRangeItemProps> = ({
@@ -14,7 +16,9 @@ const EvaluationRangeItem: React.FC<EvaluationRangeItemProps> = ({
   scale = false,
   onChangeInputRangeHnadler,
   valueState = 3,
-  className
+  className,
+  thumbColor,
+  trackColor,
 }) => {
   return (
     <>
@@ -30,6 +34,8 @@ const EvaluationRangeItem: React.FC<EvaluationRangeItemProps> = ({
           step={0.5}
           value={valueState}
           chengeHandler={onChangeInputRangeHnadler}
+          thumbColor={thumbColor ? thumbColor : undefined}
+          trackColor={trackColor ? trackColor : undefined}
         />
 
         {scale && (
