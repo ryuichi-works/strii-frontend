@@ -16,6 +16,7 @@ import SelectedToolWithoutImage from "@/components/SelectedToolWithoutImage";
 import useTennisProfileForm from "@/hooks/useTennisProfileForm";
 import SelectBox from "@/components/SelectBox";
 import GutSearchModal from "@/components/GutSearchModal";
+import RacketSearchModal from "@/components/RacketSearchModal";
 
 type GutImage = {
   id: number,
@@ -140,6 +141,8 @@ const ReviewList = () => {
   // 各種検索結果state
   const [searchedGuts, setSearchedGuts] = useState<Gut[]>();
 
+  const [searchedRackets, setSearchedRackets] = useState<Racket[]>();
+
   const [witchSelectingGut, setWitchSelectingGut] = useState<string>('');
   console.log('witchSelectingGut', witchSelectingGut)
 
@@ -181,6 +184,8 @@ const ReviewList = () => {
   const [reviewSearchModalVisibilityClassName, setReviewSearchModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
 
   const [gutSearchModalVisibility, setGutSearchModalVisibility] = useState<boolean>(false);
+
+  const [racketSearchModalVisibility, setRacketSearchModalVisibility] = useState<boolean>(false);
 
   // review検索モーダル開閉とその時の縦スクロールの挙動を考慮している
   useEffect(() => {
@@ -239,6 +244,17 @@ const ReviewList = () => {
     setWitchSelectingGut('');
   }
 
+  // racket検索モーダル関連
+  const closeRacketSearchModalHandler = () => {}
+
+  const openRacketSearchModal = () => {
+    setRacketSearchModalVisibility(true);
+  }
+
+  const selectRacketHandler = (racket: Racket) => {
+    setRacket(racket);
+  }
+
   const [stringingWay, setStringingWay] = useState<string>('single');
   console.log('stringingWay', stringingWay)
 
@@ -247,6 +263,9 @@ const ReviewList = () => {
 
   const [crossGut, setCrossGut] = useState<Gut>();
   console.log('crossGut', crossGut)
+
+  const [racket, setRacket] = useState<Racket>();
+  console.log('racket', racket)
 
   //inputの制御関数群
   const onChangeInputStringingWay = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -542,11 +561,11 @@ const ReviewList = () => {
 
                       <div className="mb-4">
                         <SelectedToolWithoutImage
-                          // tool={}
+                          tool={racket}
                           type='racket'
                           selectBtnVisible={true}
                           btnText="選ぶ"
-                        // btnClickHandler={}
+                          btnClickHandler={openRacketSearchModal}
                         />
                       </div>
                     </div>
@@ -726,6 +745,18 @@ const ReviewList = () => {
                 showingResult={true}
                 searchedGuts={searchedGuts}
                 setSearchedGuts={setSearchedGuts}
+                zIndexClassName="z-50"
+              />
+
+              <RacketSearchModal
+                modalVisibility={racketSearchModalVisibility}
+                setModalVisibility={setRacketSearchModalVisibility}
+                makers={makers}
+                closeModalHandler={closeRacketSearchModalHandler}
+                selectRacketHandler={selectRacketHandler}
+                showingResult={true}
+                searchedRackets={searchedRackets}
+                setSearchedRackets={setSearchedRackets}
                 zIndexClassName="z-50"
               />
 
