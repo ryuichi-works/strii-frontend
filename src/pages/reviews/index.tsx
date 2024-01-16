@@ -105,6 +105,18 @@ const ReviewList = () => {
     physique,
 
     // setState関数
+    setExperiencePeriod,
+    setFrequency,
+    setPlayStyle,
+    setGripForm,
+    setFavaritShot,
+    setWeakShot,
+    setAge,
+    setGender,
+    setHeight,
+    setPhysique,
+
+    // form、input変更メソッド関連
     onChangeExperiencePeriod,
     onChangeFrequency,
     onChangePlayStyle,
@@ -127,16 +139,16 @@ const ReviewList = () => {
     heights,
     physiques,
   } = useTennisProfileForm();
-  // console.log('experiencePeriod', experiencePeriod)
-  // console.log('frequency', frequency)
-  // console.log('playStyle', playStyle)
-  // console.log('favaritShot', favaritShot)
-  // console.log('gripForm', gripForm)
-  // console.log('age', age)
-  // console.log('weakShot', weakShot)
-  // console.log('gender', gender)
-  // console.log('height', height)
-  // console.log('physique', physique)
+  console.log('experiencePeriod', experiencePeriod)
+  console.log('frequency', frequency)
+  console.log('playStyle', playStyle)
+  console.log('favaritShot', favaritShot)
+  console.log('gripForm', gripForm)
+  console.log('age', age)
+  console.log('weakShot', weakShot)
+  console.log('gender', gender)
+  console.log('height', height)
+  console.log('physique', physique)
 
   // 各種検索結果state
   const [searchedGuts, setSearchedGuts] = useState<Gut[]>();
@@ -171,11 +183,11 @@ const ReviewList = () => {
   }, [])
 
   // 評価に関するstate
-  const [matchRate, setMatchRate] = useState<number>(3);
+  const [matchRate, setMatchRate] = useState<number>(1);
   console.log('matchRate', matchRate)
-  const [pysicalDurability, setPysicalDurability] = useState<number>(3);
+  const [pysicalDurability, setPysicalDurability] = useState<number>(1);
   console.log('pysicalDurability', pysicalDurability)
-  const [performanceDurability, setPerformanceDurability] = useState<number>(3);
+  const [performanceDurability, setPerformanceDurability] = useState<number>(1);
   console.log('performanceDurability', performanceDurability)
 
   //モーダルの開閉に関するstate
@@ -245,7 +257,7 @@ const ReviewList = () => {
   }
 
   // racket検索モーダル関連
-  const closeRacketSearchModalHandler = () => {}
+  const closeRacketSearchModalHandler = () => { }
 
   const openRacketSearchModal = () => {
     setRacketSearchModalVisibility(true);
@@ -255,7 +267,7 @@ const ReviewList = () => {
     setRacket(racket);
   }
 
-  const [stringingWay, setStringingWay] = useState<string>('single');
+  const [stringingWay, setStringingWay] = useState<string>();
   console.log('stringingWay', stringingWay)
 
   const [mainGut, setMainGut] = useState<Gut>();
@@ -273,16 +285,94 @@ const ReviewList = () => {
     setCrossGut(undefined);
   }
 
-  const searchReview = () => {
+  // const searchReviews = (e: React.FormEvent<HTMLFormElement>) => {
 
+  // }
+
+  const searchReviews = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    await axios.get('api/gut_reviews/search', {
+      params: {
+        match_rate: matchRate,
+        pysical_durability: pysicalDurability,
+        performance_durability: performanceDurability,
+        search_range_type: 'or_more',
+        // search_range_type: 'or_less',
+        racket_id: racket?.id,
+        stringing_way: (stringingWay && stringingWay !== '未設定') ? stringingWay : undefined,
+        main_gut_id: mainGut?.id,
+        cross_gut_id: crossGut?.id,
+
+        user_height: (height && height !== '未設定') ? height : undefined,
+        user_age: (age && age !== '未設定') ? age : undefined,
+        experience_period: experiencePeriod,
+        gender: (gender && gender !== '未設定') ? gender : undefined,
+        grip_form: (gripForm && gripForm !== '未設定') ? gripForm : undefined,
+        physique: (physique && physique !== '未設定') ? physique : undefined,
+        frequency: (frequency && frequency !== '未設定') ? frequency : undefined,
+        play_style: (playStyle && playStyle !== '未設定') ? playStyle : undefined,
+        favarit_shot: (favaritShot && favaritShot !== '未設定') ? favaritShot : undefined,
+        weak_shot: (weakShot && weakShot !== '未設定') ? weakShot : undefined,
+      }
+    }).then((res) => {
+      closeReviewSearchModal();
+
+      setReviewsPaginator(res.data)
+
+      setReviews(res.data.data);
+
+      console.log('検索完了しました');
+    }).catch(e => {
+      console.log(e);
+    })
   }
+
+  const allSearchStateReset = () => {
+    resetSearchStateOfEvaluations();
+    resetSearchStateOfTools();
+    resetSearchStateOfUserStatus();
+
+    getReviewsList();
+    // closeReviewSearchModal();
+  }
+
+  const resetSearchStateOfEvaluations = () => {
+    setMatchRate(1);
+    setPysicalDurability(1);
+    setPerformanceDurability(1);
+  }
+
+  const resetSearchStateOfTools = () => {
+    setStringingWay('未設定');
+    setRacket(undefined);
+    setMainGut(undefined);
+    setCrossGut(undefined);
+  }
+
+  const resetSearchStateOfUserStatus = () => {
+    setExperiencePeriod(undefined);
+    setFrequency('未設定');
+    setPlayStyle('未設定');
+    setGripForm('未設定');
+    setFavaritShot('未設定');
+    setWeakShot('未設定');
+    setAge('未設定');
+    setGender('未設定');
+    setHeight('未設定');
+    setPhysique('未設定');
+  }
+
+  const resetExperiencePeriod = () => {
+    setExperiencePeriod(undefined);
+  }
+
 
   return (
     <>
       <AuthCheck>
         {isAuth && (
           <>
-            {/* <div className="container mx-auto relative"> */}
             <div className="container mx-auto">
               <div className="mb-6 mt-6 italic md:mb-[32px] md:mt-[32px]">
                 <h1 className="text-center text-[20px] md:text-[32px]">Reviews</h1>
@@ -452,21 +542,30 @@ const ReviewList = () => {
               {/* review検索モーダル */}
               <div className={`bg-gray-300 w-screen h-screen fixed top-0 left-0 z-30 ${reviewSearchModalVisibilityClassName} duration-[400ms] pt-[24px] overflow-y-scroll`}>
                 <div className="flex flex-col items-center w-[100%] max-w-[320px] mx-auto md:max-w-[768px]">
-                  <div onClick={closeReviewSearchModal} className="self-end hover:cursor-pointer md:mr-[39px]">
+                  <div onClick={closeReviewSearchModal} className="self-end hover:cursor-pointer mb-2 ">
                     <IoClose size={48} />
                   </div>
 
-                  {/* <form action="" onSubmit={searchGuts} className="mb-[24px] md:flex md:mb-[40px]"> */}
-                  {/* <form action="" onSubmit={searchReview} className="mb-[24px] md:flex md:mb-[40px]"> */}
-                  <form action="" onSubmit={searchReview} className="flex flex-col mb-[24px] md:flex-row md:justify-center md:gap-x-[48px] md:flex-wrap md:mb-[40px]">
+                  <div className="flex justify-end w-[100%] max-w-[320px] mb-4 md:max-w-[784px] md:mx-auto md:justify-start">
+                    <button
+                      onClick={allSearchStateReset}
+                      className="text-white text-[14px] w-[120px] h-6 rounded  bg-sub-green md:w-[104px] md:h-8"
+                    >全てリセット</button>
+                  </div>
+
+                  <form action="" onSubmit={searchReviews} className="flex flex-col mb-[24px] md:flex-row md:justify-center md:gap-x-[48px] md:flex-wrap md:mb-[40px]">
+                    {/* section-two */}
                     <div className="w-[100%] max-w-[320px] mb-6 md:max-w-[360px]">
-                      <div className="w-[100%] max-w-[320px] mb-6 md:max-w-[360px]">
+                      <div className="w-[100%] max-w-[320px] mb-4 md:max-w-[360px]">
                         <SubHeading text='評価' className="text-[16px] md:text-[18px] md:mb-2" />
                         <TextUnderBar className="w-[100%] max-w-[320px] md:max-w-[360px]" />
                       </div>
 
+
                       {/* 評価値 */}
-                      <div className="w-[320px]">
+                      <div className="w-[320px] mb-6">
+                        <p className="text-[12px] text-right mb-1">※ 評価値以上で検索されます</p>
+
                         <EvaluationRangeItem
                           labelText="自分に合っているか"
                           scale={true}
@@ -509,16 +608,12 @@ const ReviewList = () => {
                           id="stringing_way"
                           value={stringingWay}
                           onChange={onChangeInputStringingWay}
-                          // disabled={!!myEquipment}
                           className="border border-gray-300 rounded w-[160px] h-10 p-2 focus:outline-sub-green"
                         >
+                          <option value="未設定" >未設定</option>
                           <option value="single" >単張り</option>
                           <option value="hybrid" >ハイブリッド</option>
                         </select>
-
-                        {/* {errors.stringing_way.length !== 0 &&
-                          errors.stringing_way.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                        } */}
                       </div>
 
                       <div className="w-[100%] max-w-[320px] mb-4 md:max-w-[360px]">
@@ -559,7 +654,7 @@ const ReviewList = () => {
                         <TextUnderBar className="w-[100%] max-w-[80px] md:max-w-[96px]" />
                       </div>
 
-                      <div className="mb-4">
+                      <div className="mb-10">
                         <SelectedToolWithoutImage
                           tool={racket}
                           type='racket'
@@ -573,15 +668,16 @@ const ReviewList = () => {
                     {/* section-two */}
                     {/* ユーザーステータスでの検索項目 */}
                     <div className="">
-                      <div className="w-[100%] max-w-[320px] mb-4 mt-[40px] md:mt-0 md:max-w-[360px]">
+                      <div className="w-[100%] max-w-[320px] mb-4 md:mt-0 md:max-w-[360px]">
                         <SubHeading text='ユーザーステータス' className="text-[16px] md:text-[18px] md:mb-2" />
                         <TextUnderBar className="w-[100%] max-w-[320px] md:max-w-[360px]" />
                       </div>
 
-                      <div className="mb-6">
+                      {/* <div className="flex flex-wrap mb-6 w-[100%] max-w-[320px] md:max-w-[360px]"> */}
+                      <div className="flex flex-wrap mb-4 w-[100%] max-w-[320px] md:max-w-[360px]">
                         <label
                           htmlFor="experience_period"
-                          className="block text-[14px] h-[16px] mb-1 md:text-[16px] md:h-[18px] md:mb-2"
+                          className="block text-[14px] h-[16px] mb-1 basis-[320px] md:text-[16px] md:h-[18px] md:mb-2"
                         >テニス歴</label>
 
                         <input
@@ -590,140 +686,115 @@ const ReviewList = () => {
                           onChange={onChangeExperiencePeriod}
                           min="0"
                           max="100"
-                          defaultValue={experiencePeriod}
+                          value={experiencePeriod === undefined ? '' : experiencePeriod}
                           className="border border-gray-300 rounded w-40 h-10 p-2 focus:outline-sub-green"
                         />
-                        <span className="ml-4">年</span>
+                        <span className="ml-4 h-10 leading-10">年</span>
 
-                        {/* {errors.experience_period.length !== 0 &&
-                        errors.experience_period.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                      } */}
+                        <button
+                          type="button"
+                          onClick={resetExperiencePeriod}
+                          className="text-white text-[14px] w-[80px] h-6 rounded ml-auto bg-sub-green md:w-[104px] md:h-8"
+                        >リセット</button>
                       </div>
 
-                      <div className=" mb-8">
+                      <div className="mb-4">
                         <SelectBox
                           labelText="テニス頻度"
                           type="frequency"
                           onChangeHandler={onChangeFrequency}
                           optionValues={frequencys}
+                          value={frequency}
                           className="w-80 md:w-[360px] h-10"
                         />
-
-                        {/* {errors.frequency.length !== 0 &&
-                        errors.frequency.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                      } */}
                       </div>
 
-                      <div className=" mb-8">
+                      <div className="mb-4">
                         <SelectBox
                           labelText="プレースタイル"
                           type="play_style"
                           onChangeHandler={onChangePlayStyle}
                           optionValues={playStyles}
+                          value={playStyle}
                           className="w-80 md:w-[360px] h-10"
                         />
-
-                        {/* {errors.frequency.length !== 0 &&
-                        errors.frequency.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                      } */}
                       </div>
 
-                      <div className=" mb-8">
+                      <div className="mb-4">
                         <SelectBox
                           labelText="グリップの握り方"
                           type="grip_form"
                           onChangeHandler={onChangeGripForm}
                           optionValues={gripForms}
+                          value={gripForm}
                           className="w-80 md:w-[360px] h-10"
                         />
-
-                        {/* {errors.frequency.length !== 0 &&
-                        errors.frequency.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                      } */}
                       </div>
 
-                      <div className=" mb-8">
+                      <div className="mb-4">
                         <SelectBox
                           labelText="好きなショット"
                           type="favarit_shot"
                           onChangeHandler={onChangeFavaritShot}
                           optionValues={favaritShots}
+                          value={favaritShot}
                           className="w-80 md:w-[360px] h-10"
                         />
-
-                        {/* {errors.frequency.length !== 0 &&
-                        errors.frequency.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                      } */}
                       </div>
 
-                      <div className=" mb-8">
+                      <div className="mb-4">
                         <SelectBox
                           labelText="苦手なショット"
                           type="weak_shot"
                           onChangeHandler={onChangeWeakShot}
                           optionValues={weakShots}
+                          value={weakShot}
                           className="w-80 md:w-[360px] h-10"
                         />
-
-                        {/* {errors.frequency.length !== 0 &&
-                        errors.frequency.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                      } */}
                       </div>
 
-                      <div className=" mb-8">
+                      <div className="mb-4">
                         <SelectBox
                           labelText="年齢"
                           type="age"
                           onChangeHandler={onChangeAge}
                           optionValues={ages}
+                          value={age}
                           className="w-80 md:w-[360px] h-10"
                         />
-
-                        {/* {errors.frequency.length !== 0 &&
-                        errors.frequency.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                      } */}
                       </div>
 
-                      <div className=" mb-8">
+                      <div className="mb-4">
                         <SelectBox
                           labelText="性別"
                           type="gender"
                           onChangeHandler={onChangeGender}
                           optionValues={genders}
+                          value={gender}
                           className="w-80 md:w-[360px] h-10"
                         />
-
-                        {/* {errors.frequency.length !== 0 &&
-                        errors.frequency.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                      } */}
                       </div>
 
-                      <div className=" mb-8">
+                      <div className="mb-4">
                         <SelectBox
                           labelText="背丈"
                           type="height"
                           onChangeHandler={onChangeHeight}
                           optionValues={heights}
+                          value={height}
                           className="w-80 md:w-[360px] h-10"
                         />
-
-                        {/* {errors.frequency.length !== 0 &&
-                        errors.frequency.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                      } */}
                       </div>
 
-                      <div className=" mb-8">
+                      <div className="mb-4">
                         <SelectBox
                           labelText="体格"
                           type="physique"
                           onChangeHandler={onChangePhysique}
                           optionValues={physiques}
+                          value={physique}
                           className="w-80 md:w-[360px] h-10"
                         />
-
-                        {/* {errors.frequency.length !== 0 &&
-                        errors.frequency.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                      } */}
                       </div>
                     </div>
 

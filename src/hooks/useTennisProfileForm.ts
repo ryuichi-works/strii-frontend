@@ -132,6 +132,18 @@ const useTennisProfileForm = () => {
     physique,
 
     // setState関数
+    setExperiencePeriod,
+    setFrequency,
+    setPlayStyle,
+    setGripForm,
+    setFavaritShot,
+    setWeakShot,
+    setAge,
+    setGender,
+    setHeight,
+    setPhysique,
+
+    // form、input変更メソッド関連
     onChangeExperiencePeriod,
     onChangeFrequency,
     onChangePlayStyle,
