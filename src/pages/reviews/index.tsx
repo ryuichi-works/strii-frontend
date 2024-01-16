@@ -15,6 +15,7 @@ import TextUnderBar from "@/components/TextUnderBar";
 import SelectedToolWithoutImage from "@/components/SelectedToolWithoutImage";
 import useTennisProfileForm from "@/hooks/useTennisProfileForm";
 import SelectBox from "@/components/SelectBox";
+import GutSearchModal from "@/components/GutSearchModal";
 
 type GutImage = {
   id: number,
@@ -85,6 +86,8 @@ const ReviewList = () => {
 
   const [reviewsPaginator, setReviewsPaginator] = useState<Paginator<Review>>();
 
+  const [makers, setMakers] = useState<Maker[]>();
+
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/';
 
   const {
@@ -123,16 +126,22 @@ const ReviewList = () => {
     heights,
     physiques,
   } = useTennisProfileForm();
-  console.log('experiencePeriod', experiencePeriod)
-  console.log('frequency', frequency)
-  console.log('playStyle', playStyle)
-  console.log('favaritShot', favaritShot)
-  console.log('gripForm', gripForm)
-  console.log('age', age)
-  console.log('weakShot', weakShot)
-  console.log('gender', gender)
-  console.log('height', height)
-  console.log('physique', physique)
+  // console.log('experiencePeriod', experiencePeriod)
+  // console.log('frequency', frequency)
+  // console.log('playStyle', playStyle)
+  // console.log('favaritShot', favaritShot)
+  // console.log('gripForm', gripForm)
+  // console.log('age', age)
+  // console.log('weakShot', weakShot)
+  // console.log('gender', gender)
+  // console.log('height', height)
+  // console.log('physique', physique)
+
+  // 各種検索結果state
+  const [searchedGuts, setSearchedGuts] = useState<Gut[]>();
+
+  const [witchSelectingGut, setWitchSelectingGut] = useState<string>('');
+  console.log('witchSelectingGut', witchSelectingGut)
 
   //ページネーションを考慮したreview一覧データの取得関数
   const getReviewsList = async (url: string = 'api/gut_reviews') => {
@@ -145,7 +154,14 @@ const ReviewList = () => {
 
   useEffect(() => {
     if (user.id) {
+      const getMakerList = async () => {
+        await axios.get('api/makers').then(res => {
+          setMakers(res.data);
+        })
+      }
+
       getReviewsList();
+      getMakerList();
     } else {
       router.push('/users/login');
     }
@@ -164,7 +180,9 @@ const ReviewList = () => {
 
   const [reviewSearchModalVisibilityClassName, setReviewSearchModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
 
-  // gut検索モーダル開閉とその時の縦スクロールの挙動を考慮している
+  const [gutSearchModalVisibility, setGutSearchModalVisibility] = useState<boolean>(false);
+
+  // review検索モーダル開閉とその時の縦スクロールの挙動を考慮している
   useEffect(() => {
     if (reviewSearchModalVisibility) {
       setReviewSearchModalVisibilityClassName('opacity-100 scale-100')
@@ -180,7 +198,7 @@ const ReviewList = () => {
       document.body.style.overflow = 'auto';
       document.documentElement.style.overflow = 'auto';
     }
-  }, [reviewSearchModalVisibility])
+  }, [reviewSearchModalVisibility, gutSearchModalVisibility])
 
   //モーダルの開閉
   const closeReviewSearchModal = () => {
@@ -193,13 +211,47 @@ const ReviewList = () => {
     setReviewSearchModalVisibilityClassName('opacity-100 scale-100')
   }
 
+  const closeGutSearchModalHandler = () => {
+    setWitchSelectingGut('');
+  }
+
+  // gut検索モーダルでgutを選んだ際、mainGut,crossGutで分けて値をstateにセットさせたかったため、
+  // 異なるopenメソッドでwitchSelectingGutを扱うようにしてある
+  const openMainGutSearchModal = () => {
+    setGutSearchModalVisibility(true);
+    setWitchSelectingGut('main');
+    console.log('cliked');
+  }
+
+  const openCrossGutSearchModal = () => {
+    setGutSearchModalVisibility(true);
+    setWitchSelectingGut('cross');
+  }
+
+  const selectGutHandler = (gut: Gut) => {
+    console.log('gut', gut)
+    if (witchSelectingGut === 'main') {
+      setMainGut(gut);
+    } else if (witchSelectingGut === 'cross') {
+      setCrossGut(gut);
+    }
+
+    setWitchSelectingGut('');
+  }
+
   const [stringingWay, setStringingWay] = useState<string>('single');
   console.log('stringingWay', stringingWay)
+
+  const [mainGut, setMainGut] = useState<Gut>();
+  console.log('mainGut', mainGut)
+
+  const [crossGut, setCrossGut] = useState<Gut>();
+  console.log('crossGut', crossGut)
 
   //inputの制御関数群
   const onChangeInputStringingWay = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setStringingWay(e.target.value);
-    // setCrossGut(undefined);
+    setCrossGut(undefined);
   }
 
   const searchReview = () => {
@@ -223,7 +275,7 @@ const ReviewList = () => {
                   className="text-white text-[14px] w-[264px] h-8 rounded  bg-sub-green md:w-[104px]"
                 >検索</button>
               </div>
-              
+
               <div className="flex flex-col items-center md:flex-row md:flex-wrap md:w-[784px] md:justify-between md:mx-auto">
                 {reviews && (
                   reviews.map(review => {
@@ -456,28 +508,28 @@ const ReviewList = () => {
                       </div>
 
                       <div className="mb-4">
-                        {stringingWay === 'hybrid' && <p className="text-[14px] h-[16px] mb-2 leading-[16px] md:text-[16px] md:h-[18px]">クロス</p>}
+                        {stringingWay === 'hybrid' && <p className="text-[14px] h-[16px] mb-2 leading-[16px] md:text-[16px] md:h-[18px]">メイン</p>}
 
                         <SelectedToolWithoutImage
-                          // tool={}
+                          tool={mainGut}
                           type='gut'
                           selectBtnVisible={true}
                           btnText="選ぶ"
-                        // btnClickHandler={}
+                          btnClickHandler={openMainGutSearchModal}
                         />
                       </div>
 
                       {stringingWay === 'hybrid' && (
                         <>
                           <div className="">
-                            <p className="text-[14px] h-[16px] mb-2 leading-[16px] md:text-[16px] md:h-[18px]">メイン</p>
+                            <p className="text-[14px] h-[16px] mb-2 leading-[16px] md:text-[16px] md:h-[18px]">クロス</p>
 
                             <SelectedToolWithoutImage
-                              // tool={}
+                              tool={crossGut}
                               type='gut'
                               selectBtnVisible={true}
                               btnText="選ぶ"
-                            // btnClickHandler={}
+                              btnClickHandler={openCrossGutSearchModal}
                             />
                           </div>
                         </>
@@ -664,6 +716,19 @@ const ReviewList = () => {
 
                 </div>
               </div>
+
+              <GutSearchModal
+                modalVisibility={gutSearchModalVisibility}
+                setModalVisibility={setGutSearchModalVisibility}
+                makers={makers}
+                closeModalHandler={closeGutSearchModalHandler}
+                selectGutHandler={selectGutHandler}
+                showingResult={true}
+                searchedGuts={searchedGuts}
+                setSearchedGuts={setSearchedGuts}
+                zIndexClassName="z-50"
+              />
+
             </div>
           </>
         )}
