@@ -2,10 +2,10 @@ import { Html, Head, Main, NextScript } from 'next/document'
 
 export default function Document() {
   return (
-    <Html lang="en" className='text-[16px] tracking-wide overflow-auto'>
+    <Html lang="en" className='text-[16px] tracking-wide'>
       <Head />
-      <body>
-        <div className='overflow-x-hidden min-h-screen relative'>
+      <body className='overflow-hidden'>
+        <div className='overflow-hidden min-h-screen relative'>
           <Main />
           <NextScript />
         </div>
