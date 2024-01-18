@@ -1,6 +1,7 @@
 import type { Gut } from "../reviews";
 import type { Maker } from "../users/[id]/profile";
 import React, { useContext, useEffect, useState } from "react";
+// import { useRouter } from "next/navigation";
 import { useRouter } from "next/router";
 import axios from "@/lib/axios";
 import { AuthContext } from "@/context/AuthContext";
@@ -11,26 +12,33 @@ import TextUnderBar from "@/components/TextUnderBar";
 import PrimaryHeading from "@/components/PrimaryHeading";
 import { Adamina } from "next/font/google";
 import { IoClose } from "react-icons/io5";
-import Pagination, {type Paginator } from "@/components/Pagination";
+import Pagination, { type Paginator } from "@/components/Pagination";
+import { GutContext } from "@/context/GutContext";
+import { usePathHistory } from "@/context/HistoryContext";
 
 const GutList = () => {
   const router = useRouter();
 
+  const [, lastBeforePath] = usePathHistory();
+
   const { isAuth, user, setUser, setIsAuth, admin, isAuthAdmin } = useContext(AuthContext);
 
-  const [gutsPaginator, setGutsPaginator] = useState<Paginator<Gut>>();
+  const {
+    gutsPaginator,
+    setGutsPaginator,
+    guts,
+    setGuts,
+    inputSearchWord,
+    setInputSearchWord,
+    inputSearchMaker,
+    setInputSearchMaker,
+  } = useContext(GutContext);
 
-  const [guts, setGuts] = useState<Gut[]>();
-  console.log('guts', guts)
+  console.log('inputSearchMaker', inputSearchMaker)
 
   const [makers, setMakers] = useState<Maker[]>();
 
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/'
-
-  //検索関連のstate
-  const [inputSearchWord, setInputSearchWord] = useState<string>('');
-
-  const [inputSearchMaker, setInputSearchMaker] = useState<number | null>();
 
   //モーダルの開閉に関するstate
   const [modalVisibilityClassName, setModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
@@ -38,7 +46,6 @@ const GutList = () => {
   //ページネーションを考慮したgut一覧データの取得関数
   const getGutsList = async (url: string = 'api/guts') => {
     await axios.get(url).then(res => {
-      console.log('res', res.data)
       setGutsPaginator(res.data)
       setGuts(res.data.data);
     })
@@ -54,7 +61,14 @@ const GutList = () => {
 
       getMakerList();
 
-      getGutsList();
+      let isVisitingByHistoryBack = router.asPath === lastBeforePath;
+
+      if (!guts || !isVisitingByHistoryBack) {
+        getGutsList();
+        setInputSearchWord('');
+        setInputSearchMaker(undefined);
+      }
+
     } else {
       router.push('/users/login');
     }
@@ -62,7 +76,7 @@ const GutList = () => {
 
   const onChangeInputSearchMaker = (e: React.ChangeEvent<HTMLSelectElement>) => {
     if (e.target.value === '未選択') {
-      setInputSearchMaker(null);
+      setInputSearchMaker(undefined);
       return
     };
 
@@ -121,13 +135,25 @@ const GutList = () => {
                   <form action="" onSubmit={searchGuts} className=" flex">
                     <div className="mb-6 md:mb-0 md:mr-[16px]">
                       <label htmlFor="name_ja" className="block text-[16px] mb-2 pl-1 h-[18px]">ストリング検索ワード</label>
-                      <input type="text" name="name_ja" onChange={(e) => setInputSearchWord(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[300px] h-10 p-2 focus:outline-sub-green" />
+                      <input
+                        type="text"
+                        name="name_ja"
+                        defaultValue={inputSearchWord}
+                        onChange={(e) => setInputSearchWord(e.target.value)}
+                        className="border border-gray-300 rounded w-80 md:w-[300px] h-10 p-2 focus:outline-sub-green"
+                      />
                     </div>
 
                     <div className="mb-8 md:mb-0 md:mr-[24px]">
                       <label htmlFor="maker" className="block text-[16px] mb-2 pl-1  h-[18px]">メーカー</label>
 
-                      <select name="maker" id="maker" onChange={(e) => { onChangeInputSearchMaker(e) }} className="border border-gray-300 rounded w-80 md:w-[250px] h-10 p-2 focus:outline-sub-green">
+                      <select
+                        name="maker"
+                        id="maker"
+                        value={inputSearchMaker ? inputSearchMaker : '未選択'}
+                        onChange={(e) => { onChangeInputSearchMaker(e) }}
+                        className="border border-gray-300 rounded w-80 md:w-[250px] h-10 p-2 focus:outline-sub-green"
+                      >
                         <option value="未選択" selected>未選択</option>
                         {makers?.map((maker) => (<option key={maker.id} value={maker.id}>{maker.name_ja}</option>))}
                       </select>
@@ -176,13 +202,25 @@ const GutList = () => {
                 <form action="" onSubmit={searchGuts} className="mb-[24px] md:flex md:mb-[40px]">
                   <div className="mb-6 md:mb-0 md:mr-[16px]">
                     <label htmlFor="name_ja" className="block mb-1 text-[14px] md:text-[16px] md:mb-2">ストリング検索ワード</label>
-                    <input type="text" name="name_ja" onChange={(e) => setInputSearchWord(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[300px] h-10 p-2 focus:outline-sub-green" />
+                    <input
+                      type="text"
+                      name="name_ja"
+                      defaultValue={inputSearchWord}
+                      onChange={(e) => setInputSearchWord(e.target.value)}
+                      className="border border-gray-300 rounded w-80 md:w-[300px] h-10 p-2 focus:outline-sub-green"
+                    />
                   </div>
 
                   <div className="mb-8 md:mb-0 md:mr-[24px]">
                     <label htmlFor="maker" className="block text-[14px] mb-1 md:text-[16px] md:mb-2">メーカー</label>
 
-                    <select name="maker" id="maker" onChange={(e) => { onChangeInputSearchMaker(e) }} className="border border-gray-300 rounded w-80 md:w-[250px] h-10 p-2 focus:outline-sub-green">
+                    <select
+                      name="maker"
+                      id="maker"
+                      value={inputSearchMaker ? inputSearchMaker : '未選択'}
+                      onChange={(e) => { onChangeInputSearchMaker(e) }}
+                      className="border border-gray-300 rounded w-80 md:w-[250px] h-10 p-2 focus:outline-sub-green"
+                    >
                       <option value="未選択" selected>未選択</option>
                       {makers?.map((maker) => (<option key={maker.id} value={maker.id}>{maker.name_ja}</option>))}
                     </select>
