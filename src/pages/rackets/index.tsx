@@ -13,23 +13,29 @@ import PrimaryHeading from "@/components/PrimaryHeading";
 import TextUnderBar from "@/components/TextUnderBar";
 import { IoClose } from "react-icons/io5";
 import Pagination, { type Paginator } from "@/components/Pagination";
+import { RacketContext } from "@/context/RacketContext";
+import { usePathHistory } from "@/context/HistoryContext";
 
 
 const RacketList = () => {
   const router = useRouter();
 
+  const [, lastBeforePath] = usePathHistory();
+
   const { isAuth, user, isAuthAdmin } = useContext(AuthContext);
 
-  const [racketsPaginator, setRacketsPaginator] = useState<Paginator<Racket>>();
-
-  const [rackets, setRackets] = useState<Racket[]>();
+  const {
+    racketsPaginator,
+    setRacketsPaginator,
+    rackets,
+    setRackets,
+    inputSearchWord,
+    setInputSearchWord,
+    inputSearchMaker,
+    setInputSearchMaker,
+  } = useContext(RacketContext);
 
   const [makers, setMakers] = useState<Maker[]>();
-
-  //検索関連のstate
-  const [inputSearchWord, setInputSearchWord] = useState<string>('');
-
-  const [inputSearchMaker, setInputSearchMaker] = useState<number | null>();
 
   //モーダルの開閉に関するstate
   const [modalVisibilityClassName, setModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
@@ -54,12 +60,18 @@ const RacketList = () => {
 
     getMakerList();
 
-    getRacketsList();
+    let isVisitingByHistoryBack = router.asPath === lastBeforePath;
+
+    if (!rackets || !isVisitingByHistoryBack) {
+      getRacketsList();
+      setInputSearchWord('');
+      setInputSearchMaker(undefined);
+    }
   }, [])
 
   const onChangeInputSearchMaker = (e: React.ChangeEvent<HTMLSelectElement>) => {
     if (e.target.value === '未選択') {
-      setInputSearchMaker(null);
+      setInputSearchMaker(undefined);
       return
     };
 
@@ -131,6 +143,7 @@ const RacketList = () => {
                         <input
                           type="text"
                           name="name_ja"
+                          defaultValue={inputSearchWord}
                           onChange={(e) => setInputSearchWord(e.target.value)}
                           className="border border-gray-300 rounded w-80 md:w-[300px] h-10 p-2 focus:outline-sub-green"
                         />
@@ -210,7 +223,9 @@ const RacketList = () => {
                       >ストリング検索ワード</label>
 
                       <input
-                        type="text" name="name_ja"
+                        type="text"
+                        name="name_ja"
+                        defaultValue={inputSearchWord}
                         onChange={(e) => setInputSearchWord(e.target.value)}
                         className="border border-gray-300 rounded w-80 md:w-[300px] h-10 p-2 focus:outline-sub-green"
                       />
