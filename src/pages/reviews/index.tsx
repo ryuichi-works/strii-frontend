@@ -683,9 +683,6 @@ const ReviewList = () => {
                           onChange={(e) => onChangeExperiencePeriod(e, setExperiencePeriod)}
                           min="0"
                           max="100"
-                          // value={experiencePeriod === undefined ? '' : experiencePeriod}
-                          // defaultValue={experiencePeriod === undefined ? '' : experiencePeriod}
-                          // defaultValue={experiencePeriod ? experiencePeriod : ''}
                           value={experiencePeriod ? experiencePeriod : ''}
                           className="border border-gray-300 rounded w-40 h-10 p-2 focus:outline-sub-green"
                         />
@@ -703,7 +700,6 @@ const ReviewList = () => {
                           labelText="テニス頻度"
                           type="frequency"
                           onChangeHandler={onChangeFrequency}
-                          // onChangeHandler={(e) => onChangeFrequency(e, setFrequency)}
                           setState={setFrequency}
                           optionValues={frequencys}
                           value={frequency}
