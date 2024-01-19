@@ -6,6 +6,7 @@ type SelectBoxProps = {
   onChangeHandler?: any,
   optionValues: string[],
   value?: any
+  setState?: any,
   className?: string,
 }
 
@@ -15,6 +16,7 @@ const SelectBox: React.FC<SelectBoxProps> = ({
   onChangeHandler,
   optionValues,
   value,
+  setState,
   className,
 }) => {
   return (
@@ -25,8 +27,7 @@ const SelectBox: React.FC<SelectBoxProps> = ({
         name={type}
         id={type}
         value={value}
-        // defaultValue={value}
-        onChange={onChangeHandler}
+        onChange={(e) => onChangeHandler(e, setState ? setState : null)}
         className={` border border-gray-300 rounded ${className} p-2 focus:outline-sub-green`}
       >
         {optionValues.map(_value => (<option key={_value} value={_value}>{_value}</option>))}
