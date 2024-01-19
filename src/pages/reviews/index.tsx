@@ -17,6 +17,8 @@ import useTennisProfileForm from "@/hooks/useTennisProfileForm";
 import SelectBox from "@/components/SelectBox";
 import GutSearchModal from "@/components/GutSearchModal";
 import RacketSearchModal from "@/components/RacketSearchModal";
+import { ReviewContext } from "@/context/ReviewContext";
+import { usePathHistory } from "@/context/HistoryContext";
 
 type GutImage = {
   id: number,
@@ -80,19 +82,40 @@ export type Review = {
 const ReviewList = () => {
   const router = useRouter();
 
+  const [, lastBeforePath] = usePathHistory();
+
   const { isAuth, user, setUser, setIsAuth } = useContext(AuthContext);
-
-  const [reviews, setReviews] = useState<Review[]>();
-  console.log(reviews);
-
-  const [reviewsPaginator, setReviewsPaginator] = useState<Paginator<Review>>();
 
   const [makers, setMakers] = useState<Maker[]>();
 
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/';
 
   const {
-    // state値
+    reviewsPaginator,
+    setReviewsPaginator,
+    reviews,
+    setReviews,
+    searchedGuts,
+    setSearchedGuts,
+    searchedRackets,
+    setSearchedRackets,
+
+    matchRate,
+    setMatchRate,
+    pysicalDurability,
+    setPysicalDurability,
+    performanceDurability,
+    setPerformanceDurability,
+
+    stringingWay,
+    setStringingWay,
+    mainGut,
+    setMainGut,
+    crossGut,
+    setCrossGut,
+    racket,
+    setRacket,
+
     experiencePeriod,
     frequency,
     playStyle,
@@ -115,7 +138,10 @@ const ReviewList = () => {
     setGender,
     setHeight,
     setPhysique,
+  } = useContext(ReviewContext)
+  console.log('experiencePeriod', experiencePeriod)
 
+  const {
     // form、input変更メソッド関連
     onChangeExperiencePeriod,
     onChangeFrequency,
@@ -139,21 +165,6 @@ const ReviewList = () => {
     heights,
     physiques,
   } = useTennisProfileForm();
-  console.log('experiencePeriod', experiencePeriod)
-  console.log('frequency', frequency)
-  console.log('playStyle', playStyle)
-  console.log('favaritShot', favaritShot)
-  console.log('gripForm', gripForm)
-  console.log('age', age)
-  console.log('weakShot', weakShot)
-  console.log('gender', gender)
-  console.log('height', height)
-  console.log('physique', physique)
-
-  // 各種検索結果state
-  const [searchedGuts, setSearchedGuts] = useState<Gut[]>();
-
-  const [searchedRackets, setSearchedRackets] = useState<Racket[]>();
 
   const [witchSelectingGut, setWitchSelectingGut] = useState<string>('');
   console.log('witchSelectingGut', witchSelectingGut)
@@ -175,20 +186,22 @@ const ReviewList = () => {
         })
       }
 
-      getReviewsList();
       getMakerList();
+
+      let isVisitingByHistoryBack = router.asPath === lastBeforePath;
+
+      if (!reviews || !isVisitingByHistoryBack) {
+        getReviewsList();
+
+        allSearchStateReset();
+
+        setSearchedGuts(undefined)
+        setSearchedRackets(undefined)
+      }
     } else {
       router.push('/users/login');
     }
   }, [])
-
-  // 評価に関するstate
-  const [matchRate, setMatchRate] = useState<number>(1);
-  console.log('matchRate', matchRate)
-  const [pysicalDurability, setPysicalDurability] = useState<number>(1);
-  console.log('pysicalDurability', pysicalDurability)
-  const [performanceDurability, setPerformanceDurability] = useState<number>(1);
-  console.log('performanceDurability', performanceDurability)
 
   //モーダルの開閉に関するstate
   const [reviewSearchModalVisibility, setReviewSearchModalVisibility] = useState<boolean>(false);
@@ -267,27 +280,11 @@ const ReviewList = () => {
     setRacket(racket);
   }
 
-  const [stringingWay, setStringingWay] = useState<string>();
-  console.log('stringingWay', stringingWay)
-
-  const [mainGut, setMainGut] = useState<Gut>();
-  console.log('mainGut', mainGut)
-
-  const [crossGut, setCrossGut] = useState<Gut>();
-  console.log('crossGut', crossGut)
-
-  const [racket, setRacket] = useState<Racket>();
-  console.log('racket', racket)
-
   //inputの制御関数群
   const onChangeInputStringingWay = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setStringingWay(e.target.value);
     setCrossGut(undefined);
   }
-
-  // const searchReviews = (e: React.FormEvent<HTMLFormElement>) => {
-
-  // }
 
   const searchReviews = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -683,10 +680,10 @@ const ReviewList = () => {
                         <input
                           type="number"
                           name="experience_period"
-                          onChange={onChangeExperiencePeriod}
+                          onChange={(e) => onChangeExperiencePeriod(e, setExperiencePeriod)}
                           min="0"
                           max="100"
-                          value={experiencePeriod === undefined ? '' : experiencePeriod}
+                          value={experiencePeriod ? experiencePeriod : ''}
                           className="border border-gray-300 rounded w-40 h-10 p-2 focus:outline-sub-green"
                         />
                         <span className="ml-4 h-10 leading-10">年</span>
@@ -695,7 +692,7 @@ const ReviewList = () => {
                           type="button"
                           onClick={resetExperiencePeriod}
                           className="text-white text-[14px] w-[80px] h-6 rounded ml-auto bg-sub-green md:w-[104px] md:h-8"
-                        >リセット</button>
+                        >年リセット</button>
                       </div>
 
                       <div className="mb-4">
@@ -703,6 +700,7 @@ const ReviewList = () => {
                           labelText="テニス頻度"
                           type="frequency"
                           onChangeHandler={onChangeFrequency}
+                          setState={setFrequency}
                           optionValues={frequencys}
                           value={frequency}
                           className="w-80 md:w-[360px] h-10"
@@ -714,6 +712,7 @@ const ReviewList = () => {
                           labelText="プレースタイル"
                           type="play_style"
                           onChangeHandler={onChangePlayStyle}
+                          setState={setPlayStyle}
                           optionValues={playStyles}
                           value={playStyle}
                           className="w-80 md:w-[360px] h-10"
@@ -725,6 +724,7 @@ const ReviewList = () => {
                           labelText="グリップの握り方"
                           type="grip_form"
                           onChangeHandler={onChangeGripForm}
+                          setState={setGripForm}
                           optionValues={gripForms}
                           value={gripForm}
                           className="w-80 md:w-[360px] h-10"
@@ -736,6 +736,7 @@ const ReviewList = () => {
                           labelText="好きなショット"
                           type="favarit_shot"
                           onChangeHandler={onChangeFavaritShot}
+                          setState={setFavaritShot}
                           optionValues={favaritShots}
                           value={favaritShot}
                           className="w-80 md:w-[360px] h-10"
@@ -747,6 +748,7 @@ const ReviewList = () => {
                           labelText="苦手なショット"
                           type="weak_shot"
                           onChangeHandler={onChangeWeakShot}
+                          setState={setWeakShot}
                           optionValues={weakShots}
                           value={weakShot}
                           className="w-80 md:w-[360px] h-10"
@@ -758,6 +760,7 @@ const ReviewList = () => {
                           labelText="年齢"
                           type="age"
                           onChangeHandler={onChangeAge}
+                          setState={setAge}
                           optionValues={ages}
                           value={age}
                           className="w-80 md:w-[360px] h-10"
@@ -769,6 +772,7 @@ const ReviewList = () => {
                           labelText="性別"
                           type="gender"
                           onChangeHandler={onChangeGender}
+                          setState={setGender}
                           optionValues={genders}
                           value={gender}
                           className="w-80 md:w-[360px] h-10"
@@ -780,6 +784,7 @@ const ReviewList = () => {
                           labelText="背丈"
                           type="height"
                           onChangeHandler={onChangeHeight}
+                          setState={setHeight}
                           optionValues={heights}
                           value={height}
                           className="w-80 md:w-[360px] h-10"
@@ -791,6 +796,7 @@ const ReviewList = () => {
                           labelText="体格"
                           type="physique"
                           onChangeHandler={onChangePhysique}
+                          setState={setPhysique}
                           optionValues={physiques}
                           value={physique}
                           className="w-80 md:w-[360px] h-10"
