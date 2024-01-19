@@ -388,7 +388,7 @@ const ReviewList = () => {
                     return (
                       <>
                         <Link href={`/reviews/${review.id}/review`}>
-                          <div key={review.id} className="w-[360px] h-[280px] border border-gray-400 rounded mb-6 flex flex-col justify-around py-4 hover:cursor-pointer">
+                          <div key={review.id} className="w-[360px] h-[280px] border border-gray-400 rounded-lg mb-6 flex flex-col justify-around py-4 hover:cursor-pointer">
                             {/* 単張りのカード */}
                             {review.my_equipment.stringing_way === "single" && (
                               <>
@@ -415,7 +415,7 @@ const ReviewList = () => {
                                   </div>
 
                                   <div>
-                                    <div className="w-[92px] h-[92px] flex flex-col justify-start items-start mb-10">
+                                    <div className="w-[92px] h-full flex flex-col justify-center items-start">
                                       <div className="w-[92px]">
                                         {review.my_equipment.main_gut.gut_image.file_path
                                           ? <img src={`${baseImagePath}${review.my_equipment.main_gut.gut_image.file_path}`} alt="ユーザープロフィール画像" className="w-[92px] h-[92px] mb-2" />
@@ -424,13 +424,13 @@ const ReviewList = () => {
                                       </div>
 
                                       <div>
-                                        <p className="h-[10px] text-[10px] mr-auto mb-2">Babolat</p>
-                                        <p className="h-8 text-[14px] mr-auto">RPMブラスト</p>
+                                        <p className="h-[10px] text-[10px] mr-auto mb-2">{review.my_equipment.main_gut.maker.name_ja}</p>
+                                        <p className=" text-[14px] mr-auto">{review.my_equipment.main_gut.name_ja}</p>
                                       </div>
 
                                       <div>
-                                        <p className="h-[12px] text-[10px] mr-auto mb-[4px]">ゲージ：1.25</p>
-                                        <p className="h-[12px] text-[10px] mr-auto">テンション：40</p>
+                                        <p className="h-[12px] text-[10px] mr-auto mb-[4px]">ゲージ：{review.my_equipment.main_gut_guage}</p>
+                                        <p className="h-[12px] text-[10px] mr-auto">テンション：{review.my_equipment.main_gut_tension}</p>
                                       </div>
                                     </div>
                                   </div>
@@ -464,7 +464,7 @@ const ReviewList = () => {
                                   </div>
 
                                   <div className="mr-4">
-                                    <div className="w-[92px] h-[92px] flex flex-col justify-start items-start mb-10">
+                                    <div className="w-[92px] flex flex-col justify-center items-start">
                                       <div className="w-[92px]">
                                         {review.my_equipment.main_gut.gut_image.file_path
                                           ? <img src={`${baseImagePath}${review.my_equipment.main_gut.gut_image.file_path}`} alt="ユーザープロフィール画像" className="w-[92px] h-[92px] mb-2" />
@@ -473,13 +473,13 @@ const ReviewList = () => {
                                       </div>
 
                                       <div>
-                                        <p className="h-[10px] text-[10px] mr-auto mb-2">Babolat</p>
-                                        <p className="h-8 text-[14px] mr-auto">RPMブラスト</p>
+                                        <p className="h-[10px] text-[10px] mr-auto mb-2">{review.my_equipment.main_gut.maker.name_ja}</p>
+                                        <p className="text-[14px] mr-auto">{review.my_equipment.main_gut.name_ja}</p>
                                       </div>
 
                                       <div>
-                                        <p className="h-[12px] text-[10px] mr-auto mb-[4px]">ゲージ：1.25</p>
-                                        <p className="h-[12px] text-[10px] mr-auto">テンション：40</p>
+                                        <p className="h-[12px] text-[10px] mr-auto mb-[4px]">ゲージ：{review.my_equipment.main_gut_guage}</p>
+                                        <p className="h-[12px] text-[10px] mr-auto">テンション：{review.my_equipment.main_gut_tension}</p>
                                       </div>
                                     </div>
                                   </div>
@@ -487,20 +487,20 @@ const ReviewList = () => {
                                   <div>
                                     <div className="w-[92px] h-[92px] flex flex-col justify-start items-start mb-10">
                                       <div className="w-[92px]">
-                                        {review.my_equipment.main_gut.gut_image.file_path
-                                          ? <img src={`${baseImagePath}${review.my_equipment.cross_gut.gut_image.file_path}`} alt="ユーザープロフィール画像" className="w-[92px] h-[92px] mb-2" />
+                                        {review.my_equipment.cross_gut.gut_image.file_path
+                                          ? <img src={`${baseImagePath}${review.my_equipment.cross_gut.gut_image.file_path}`} alt="ストリング画像" className="w-[92px] h-[92px] mb-2" />
                                           : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} width="64px" height="64px" alt="ユーザープロフィール画像" className="rounded-full mb-2" />
                                         }
                                       </div>
 
                                       <div>
-                                        <p className="h-[10px] text-[10px] mr-auto mb-2">Babolat</p>
-                                        <p className="h-8 text-[14px] mr-auto">RPMブラスト</p>
+                                        <p className="h-[10px] text-[10px] mr-auto mb-2">{review.my_equipment.cross_gut.maker.name_ja}</p>
+                                        <p className="h-8 text-[14px] mr-auto">{review.my_equipment.cross_gut.name_ja}</p>
                                       </div>
 
                                       <div>
-                                        <p className="h-[12px] text-[10px] mr-auto mb-[4px]">ゲージ：1.25</p>
-                                        <p className="h-[12px] text-[10px] mr-auto">テンション：40</p>
+                                        <p className="h-[12px] text-[10px] mr-auto mb-[4px]">ゲージ：{review.my_equipment.cross_gut_guage}</p>
+                                        <p className="h-[12px] text-[10px] mr-auto">テンション：{review.my_equipment.cross_gut_tension}</p>
                                       </div>
                                     </div>
                                   </div>
