@@ -20,6 +20,10 @@ const config: Config = {
         'faint-green': '#FEFFDE',
       }
     },
+    fontFamily: {
+      'hero-sub': ['Hiragino Maru Gothic Pro', 'Hiragino Sans', 'YuGothic', 'sans-serif'],
+      'top-yumincho': ['YuMincho', 'sans-serif'],
+    }
   },
   plugins: [],
 }
