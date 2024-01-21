@@ -14,7 +14,7 @@ export default function Home() {
       <div className="mx-auto">
         {/* hero section */}
         <section className='container mx-auto h-[480px] sm:h-[358px] md:h-[430px] xl:h-[571px]'>
-          <div className='relative sm:static sm:flex lg:w-[1024px] xl:w-[1280px]'>
+          <div className='relative mx-auto sm:static sm:flex lg:w-[1024px] xl:w-[1280px]'>
             <div className='absolute top-[98px] flex flex-col items-center gap-[8px] flex-wrap w-full h-[290px] bg-black bg-opacity-60 sm:static sm:h-[358px] md:h-[430px] xl:h-[571px] lg:w-[62.5%] xl:w-[60%]'>
               <p className='text-white font-hero-sub text-[24px] md:text-[28px] lg:text-[32px] xl:text-[40px] w-full max-w-[290px] sm:max-w-[260px] md:max-w-[312px] lg:max-w-[518px] xl:max-w-[648px] sm:mb-8  min-h-[144px] mt-6 md:mt-[48px] xl:mt-[72px] md:mb-[48px] xl:mb-[56px] '>
                 自分に合った<br className='lg:hidden' />
@@ -33,7 +33,7 @@ export default function Home() {
                   alt="Vercel Logo"
                   className="hidden sm:block sm:w-[320px] md:w-[384px] xl:w-[512px]"
                 />
-                
+
                 <Image
                   src={HeroSpSize}
                   alt="Vercel Logo"
