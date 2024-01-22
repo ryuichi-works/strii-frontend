@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  web-front:
+    build: ./docker
+    container_name: web-front
+    ports:
+      - 3000:3000
+    volumes:
+      - ./:/app/strii-frontend
+    tty: true
