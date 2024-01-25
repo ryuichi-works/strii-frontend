@@ -1,6 +1,6 @@
 import axios from "@/lib/axios";
 import Cookies from "js-cookie";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/context/AuthContext";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -25,6 +25,22 @@ const Header: React.FC = () => {
     setAdmin,
     setIsAuthAdmin,
   } = useContext(AuthContext);
+
+  // spサイズのmenu表示しに背景スクロールを操作
+  useEffect(() => {
+    if (hamburgerToggle === 'open') {
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+    } else if(hamburgerToggle === 'close') {
+      document.body.style.overflow = 'auto';
+      document.documentElement.style.overflow = 'auto';
+    }
+
+    return () => {
+      document.body.style.overflow = 'auto';
+      document.documentElement.style.overflow = 'auto';
+    }
+  }, [hamburgerToggle])
 
   const hamburgerClickHandler = () => {
     if (hamburgerToggle === 'close') {
