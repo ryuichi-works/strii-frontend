@@ -7,6 +7,8 @@ import { useRouter } from "next/router";
 import HeaderNavLink from "../HeaderNavLink";
 import UserHeaderNav from "../UserHeaderNav";
 import AdminHeaderNav from "../AdminHeaderNav";
+import Image from "next/image";
+import StriiLogo from "../../../public/strii-logo.png"
 
 const Header: React.FC = () => {
   const router = useRouter();
@@ -72,7 +74,13 @@ const Header: React.FC = () => {
 
           <div>
             <Link href='/'>
-              <h1 className="text-faint-green text-2xl font-bold italic tracking-wide">STRii</h1>
+              <h1 className="">
+                <Image
+                  src={StriiLogo}
+                  alt="Strii Logo"
+                  className="w-[120px]"
+                />
+              </h1>
             </Link>
           </div>
 
@@ -80,7 +88,7 @@ const Header: React.FC = () => {
             <ul className="flex text-white ">
               <HeaderNavLink
                 linkText="HOME"
-                className="h-[64] mr-4"
+                className="h-[64] mr-4 md:hidden lg:flex"
                 href="/"
               />
 
