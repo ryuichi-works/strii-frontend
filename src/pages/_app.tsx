@@ -9,7 +9,9 @@ export default function App({ Component, pageProps }: AppProps) {
     <>
       <ContextProvidor>
         <Header />
-        <Component {...pageProps} />
+        <div className="min-h-[calc(100vh-160px-64px-80px)] md:min-h-[calc(100vh-220px-64px-80px)]" >
+          <Component {...pageProps} />
+        </div>
         <Footer className='mt-[80px]' />
       </ContextProvidor>
     </>
