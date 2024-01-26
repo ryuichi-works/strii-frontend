@@ -75,11 +75,6 @@ const BaseProfileEdit: NextPage = () => {
   const onChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     changeImageFileToLocationUrl(files)
-
-    // if (files && files[0]) {
-    //   setFile(files[0])
-    // }
-    // console.log(file);
   }
 
   const csrf = async () => await axios.get('/sanctum/csrf-cookie');
@@ -92,7 +87,6 @@ const BaseProfileEdit: NextPage = () => {
       _method: 'PUT',
       name: name,
       email: email,
-      // file: file,
       file: croppedImage,
     }
 
