@@ -2,8 +2,6 @@ import type { NextPage } from "next";
 
 import axios from "@/lib/axios";
 import Cookies from "js-cookie";
-import Cropper, { type Point, Area } from "react-easy-crop";
-import getCroppedImg, { CropedImageInfo } from "@/modules/cropImage";
 
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
@@ -13,6 +11,10 @@ import AuthCheck from "@/components/AuthCheck";
 import PrimaryHeading from "@/components/PrimaryHeading";
 import { type Maker } from "../users/[id]/profile";
 import FlashMessage from "@/components/FlashMessage";
+import ImageCropArea from "@/components/ImageCropArea";
+
+import { useImageCrop } from "@/hooks/useImageCrop";
+import { useImageFile } from "@/hooks/useImageFile";
 
 const GutImageRegister: NextPage = () => {
   const router = useRouter();
@@ -20,8 +22,6 @@ const GutImageRegister: NextPage = () => {
   const { isAuth, user, isAuthAdmin } = useContext(AuthContext);
 
   const [title, setTitle] = useState<string>('');
-
-  const [imageFileUrl, setImageFileUrl] = useState<string>('');
 
   const [makers, setMakers] = useState<Maker[]>();
 
@@ -32,6 +32,30 @@ const GutImageRegister: NextPage = () => {
   // flassメッセージの表示関連stateとuseEffect
   const [showingFlashMessage, setShowingFlashMessage] = useState<boolean>(false);
   const [showingFlashMessageStyle, setShowingFlashMessageStyle] = useState<string>('bottom-[-100%]')
+
+  // useImageCropカスタムフックから取得
+  const {
+    crop,
+    setCrop,
+    rotation,
+    setRotation,
+    zoom,
+    setZoom,
+    croppedAreaPixels,
+    setCroppedAreaPixels,
+    croppedImage,
+    setCroppedImage,
+    croppedImageUrl,
+    setCroppedImageUrl,
+    onCropComplete,
+    showCroppedImage,
+  } = useImageCrop();
+
+  const {
+    imageFileUrl,
+    setImageFileUrl,
+    changeImageFileToLocationUrl,
+  } = useImageFile();
 
   // 下記の2つのuseEffectによりflashメッセージを表示切り替え
   // 依存配列のstateを同じuseEffect内で書き換えるこのができないため2つのuseEffectを使用して実装
@@ -58,16 +82,7 @@ const GutImageRegister: NextPage = () => {
 
   const onChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
-    if (files && files[0]) {
-      const reader = new FileReader();
-
-      reader.addEventListener('load', () => {
-        if (reader.result) {
-          setImageFileUrl(reader.result.toString() || '');
-        }
-      })
-      reader.readAsDataURL(files[0]);
-    }
+    changeImageFileToLocationUrl(files);
   }
 
   const onChangeSelectMaker = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -89,41 +104,6 @@ const GutImageRegister: NextPage = () => {
 
     getMakerList();
   }, [])
-
-  const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
-  const [rotation, setRotation] = useState(0)
-  const [zoom, setZoom] = useState(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area>()
-  const [croppedImage, setCroppedImage] = useState<File>();
-  const [croppedImageUrl, setCroppedImageUrl] = useState<string>();
-
-  const onCropComplete = (croppedArea: Area, croppedAreaPixels: Area) => {
-    setCroppedAreaPixels(croppedAreaPixels)
-  };
-
-  const showCroppedImage = async () => {
-    try {
-      const cropedImageInfo: CropedImageInfo = await getCroppedImg(
-        imageFileUrl,
-        croppedAreaPixels as Area,
-        rotation
-      ) as CropedImageInfo
-
-      const croppedImage = cropedImageInfo.file;
-
-      const croppedImageUrl = cropedImageInfo.url
-
-      setCroppedImage(croppedImage);
-
-      setCroppedImageUrl(croppedImageUrl);
-    } catch (e) {
-      console.error(e)
-    }
-  }
-
-  const onClose = () => {
-    setCroppedImage(undefined);
-  }
 
   type Errors = {
     title: string[],
@@ -147,6 +127,7 @@ const GutImageRegister: NextPage = () => {
     setCroppedAreaPixels(undefined)
     setCroppedImage(undefined)
     setCroppedImageUrl(undefined)
+    setErrors({ title: [], file: [], maker_id: [] })
   }
 
   const csrf = async () => await axios.get('/sanctum/csrf-cookie');
@@ -244,56 +225,24 @@ const GutImageRegister: NextPage = () => {
 
                         {imageFileUrl && (
                           <>
-                            <div className="h-[300px] relative mb-8">
-                              <Cropper
-                                image={imageFileUrl}
-                                crop={crop}
-                                rotation={rotation}
-                                zoom={zoom}
-                                aspect={1 / 1}
-                                onCropChange={setCrop}
-                                onRotationChange={setRotation}
-                                onCropComplete={onCropComplete}
-                                onZoomChange={setZoom}
-                              />
-                            </div>
-
-                            <div className="flex justify-start w-[100%] max-w-[288px] mx-auto mb-8">
-                              <span className="inline-block h-[16px] text-[14px] text-center w-[100%] max-w-[68px] md:text-[16px] md:h-[18px] leading-[18px]">ズーム：</span>
-                              <input
-                                type="range"
-                                value={zoom}
-                                min={1}
-                                max={3}
-                                step={0.1}
-                                aria-labelledby="Zoom"
-                                onChange={(e) => {
-                                  setZoom(Number(e.target.value))
-                                }}
-                                className="inline-block h-[16px] w-[100%] max-w-[220px] md:h-[18px]"
-                              />
-                            </div>
-
-                            <div className="flex justify-center mt-6 mb-[40px]">
-
-                              <span className="inline-block h-[16px] text-[14px] text-center w-[100%] max-w-[68px] md:text-[16px] md:h-[18px] leading-[18px]" >回転：</span>
-                              <input
-                                type="range"
-                                value={rotation}
-                                min={0}
-                                max={360}
-                                step={0.5}
-                                aria-labelledby="Rotation"
-                                onChange={(e) => {
-                                  setRotation(Number(e.target.value))
-                                }}
-                                className="inline-block h-[16px] w-[100%] max-w-[220px] md:h-[18px]"
-                              />
-                            </div>
-
-                            <div className="flex justify-end">
-                              <p onClick={showCroppedImage} className="inline-block border  hover:cursor-pointer hover:opacity-60 font-semibold text-white text-[14px] w-[192px] h-8 rounded  bg-sub-green text-center leading-[32px] md:text-[16px]">トリミングを完了</p>
-                            </div>
+                            <ImageCropArea
+                              imageFileUrl={imageFileUrl}
+                              crop={crop}
+                              rotation={rotation}
+                              zoom={zoom}
+                              aspect={1 / 1}
+                              setCrop={setCrop}
+                              setRotation={setRotation}
+                              setZoom={setZoom}
+                              onCropComplete={onCropComplete}
+                              showCroppedImage={showCroppedImage}
+                              zoomMin={1}
+                              zoomMax={3}
+                              zoomStep={0.05}
+                              rotationMin={0}
+                              rotationMax={360}
+                              rotationStep={0.5}
+                            />
                           </>
                         )}
                       </div>
