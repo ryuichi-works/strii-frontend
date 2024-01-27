@@ -1,12 +1,14 @@
 import axios from "@/lib/axios";
 import Cookies from "js-cookie";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/context/AuthContext";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import HeaderNavLink from "../HeaderNavLink";
 import UserHeaderNav from "../UserHeaderNav";
 import AdminHeaderNav from "../AdminHeaderNav";
+import Image from "next/image";
+import StriiLogo from "../../../public/strii-logo.png"
 
 const Header: React.FC = () => {
   const router = useRouter();
@@ -23,6 +25,22 @@ const Header: React.FC = () => {
     setAdmin,
     setIsAuthAdmin,
   } = useContext(AuthContext);
+
+  // spサイズのmenu表示しに背景スクロールを操作
+  useEffect(() => {
+    if (hamburgerToggle === 'open') {
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+    } else if(hamburgerToggle === 'close') {
+      document.body.style.overflow = 'auto';
+      document.documentElement.style.overflow = 'auto';
+    }
+
+    return () => {
+      document.body.style.overflow = 'auto';
+      document.documentElement.style.overflow = 'auto';
+    }
+  }, [hamburgerToggle])
 
   const hamburgerClickHandler = () => {
     if (hamburgerToggle === 'close') {
@@ -72,7 +90,13 @@ const Header: React.FC = () => {
 
           <div>
             <Link href='/'>
-              <h1 className="text-faint-green text-2xl font-bold italic tracking-wide">STRii</h1>
+              <h1 className="">
+                <Image
+                  src={StriiLogo}
+                  alt="Strii Logo"
+                  className="w-[120px]"
+                />
+              </h1>
             </Link>
           </div>
 
@@ -80,7 +104,7 @@ const Header: React.FC = () => {
             <ul className="flex text-white ">
               <HeaderNavLink
                 linkText="HOME"
-                className="h-[64] mr-4"
+                className="h-[64] mr-4 md:hidden lg:flex"
                 href="/"
               />
 

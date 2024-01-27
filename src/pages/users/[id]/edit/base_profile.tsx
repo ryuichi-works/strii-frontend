@@ -2,10 +2,14 @@ import type { NextPage } from "next";
 import type { User } from "@/context/AuthContext";
 import axios from "@/lib/axios";
 import Cookies from "js-cookie";
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { AuthContext } from "@/context/AuthContext";
 import { useRouter } from "next/router";
 import AuthCheck from "@/components/AuthCheck";
+import ImageCropArea from "@/components/ImageCropArea";
+
+import { useImageCrop } from "@/hooks/useImageCrop";
+import { useImageFile } from "@/hooks/useImageFile";
 
 const BaseProfileEdit: NextPage = () => {
   const router = useRouter();
@@ -15,7 +19,6 @@ const BaseProfileEdit: NextPage = () => {
   //基本プロフィール変更用state
   const [name, setName] = useState<string>(`${user.name}`);
   const [email, setEmail] = useState<string>(`${user.email}`);
-  const [file, setFile] = useState<File | null>(null);
 
   //password変更用state
   const [currentPassword, setCurrentPassword] = useState<string>('');
@@ -23,6 +26,32 @@ const BaseProfileEdit: NextPage = () => {
   const [passwordConfirmation, setPasswordConfirmation] = useState<string>('');
 
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/'
+
+  const inputFileRef = useRef<HTMLInputElement>(null);
+
+  // useImageCropカスタムフックから取得
+  const {
+    crop,
+    setCrop,
+    rotation,
+    setRotation,
+    zoom,
+    setZoom,
+    croppedAreaPixels,
+    setCroppedAreaPixels,
+    croppedImage,
+    setCroppedImage,
+    croppedImageUrl,
+    setCroppedImageUrl,
+    onCropComplete,
+    showCroppedImage,
+  } = useImageCrop();
+
+  const {
+    imageFileUrl,
+    setImageFileUrl,
+    changeImageFileToLocationUrl,
+  } = useImageFile();
 
   //エラー表示関連
   type Errors = {
@@ -45,10 +74,7 @@ const BaseProfileEdit: NextPage = () => {
 
   const onChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
-    if (files && files[0]) {
-      setFile(files[0])
-    }
-    console.log(file);
+    changeImageFileToLocationUrl(files)
   }
 
   const csrf = async () => await axios.get('/sanctum/csrf-cookie');
@@ -61,7 +87,7 @@ const BaseProfileEdit: NextPage = () => {
       _method: 'PUT',
       name: name,
       email: email,
-      file: file,
+      file: croppedImage,
     }
 
     await csrf();
@@ -89,6 +115,20 @@ const BaseProfileEdit: NextPage = () => {
 
       console.log('基本プロフィール更新に失敗しました。');
     })
+  }
+
+  // 画像登録処理データの初期化関数
+  const resetImageFile = () => {
+    setImageFileUrl('')
+    if (inputFileRef.current) {
+      inputFileRef.current.value = '';
+    }
+    setCrop({ x: 0, y: 0 })
+    setRotation(0)
+    setZoom(1)
+    setCroppedAreaPixels(undefined)
+    setCroppedImage(undefined)
+    setCroppedImageUrl(undefined)
   }
 
   // password更新処理
@@ -134,20 +174,72 @@ const BaseProfileEdit: NextPage = () => {
                   <hr className=" border-sub-green mb-6" />
 
                   <div className="w-16 md:w-20 mx-auto mb-4">
-                    {user.file_path
-                      ? <img src={`${baseImagePath}${user.file_path}`} alt="ユーザープロフィール画像" className="rounded-full mb-2 w-16 md:w-20 h-16 md:h-20" />
-                      : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} width="64px" height="64px" alt="ユーザープロフィール画像" className="rounded-full mb-2 w-16 md:w-20 h-16 md:h-20" />
-                    }
+                    <div className="w-[64px] h-[64px] rounded-full overflow-hidden mb-2 md:w-[80px] md:h-[80px]">
+                      {user.file_path
+                        ? <img src={`${baseImagePath}${user.file_path}`} alt="ユーザープロフィール画像" className=" w-[64px] md:w-[80px] h-[64px] md:h-[80px]" />
+                        : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} width="64px" height="64px" alt="ユーザープロフィール画像" className="w-[64px] md:w-[80px] h-[64px] md:h-[80px]" />
+                      }
+                    </div>
                     <div className="w-8 h-1 bg-sub-green mx-auto"></div>
                   </div>
 
                   <form onSubmit={updateBaseProfile}>
                     <div className="flex flex-col mb-6">
                       <label htmlFor="">プロフィール画像</label>
-                      <input type="file" name="file" accept=".jpg, .jpeg, .png" onChange={onChangeFile} className=" h-8" />
+                      <input type="file" name="file" accept=".jpg, .jpeg, .png" onChange={onChangeFile} ref={inputFileRef} className=" h-8" />
                       {errors.file.length !== 0 &&
                         errors.file.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                       }
+                    </div>
+
+                    {/* トリミングエリア */}
+                    <div className="mb-6 ">
+                      <p>画像トリミング</p>
+                      <div className="border-t rounded min-h-[40px] w-[100%] max-w-[320px] md:max-w-[380px]">
+
+                        {imageFileUrl && (
+                          <>
+                            <ImageCropArea
+                              imageFileUrl={imageFileUrl}
+                              crop={crop}
+                              rotation={rotation}
+                              zoom={zoom}
+                              aspect={1 / 1}
+                              setCrop={setCrop}
+                              setRotation={setRotation}
+                              setZoom={setZoom}
+                              onCropComplete={onCropComplete}
+                              showCroppedImage={showCroppedImage}
+                              zoomMin={1}
+                              zoomMax={3}
+                              zoomStep={0.05}
+                              rotationMin={0}
+                              rotationMax={360}
+                              rotationStep={0.5}
+                            />
+
+                            {/* プレビュー */}
+                            <div className="mb-[64px] md:mb-0">
+                              <div>
+                                {croppedImageUrl && (
+                                  <>
+                                    <p className="text-[14px] mb-1 md:text-[16px] md:mb-2">プレビュー</p>
+
+                                    <div className="flex justify-between mb-14">
+                                      <img src={croppedImageUrl} alt="" className="w-[100%] max-w-[160px] md:max-w-[180px] rounded-full" />
+
+                                      <button
+                                        className="text-white text-[14px] w-[80px] h-8 rounded  bg-sub-green mt-auto"
+                                        onClick={resetImageFile}
+                                      >リセット</button>
+                                    </div>
+                                  </>
+                                )}
+                              </div>
+                            </div>
+                          </>
+                        )}
+                      </div>
                     </div>
 
                     <div className="mb-6">
