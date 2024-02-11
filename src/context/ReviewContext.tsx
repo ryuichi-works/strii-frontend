@@ -69,6 +69,18 @@ type ContextVals = {
 
   physique: Physique | undefined,
   setPhysique: React.Dispatch<React.SetStateAction<Physique | undefined>>,
+
+  inputGutSearchWord: string,
+  setInputGutSearchWord: React.Dispatch<React.SetStateAction<string>>,
+
+  inputGutSearchMaker?: number,
+  setInputGutSearchMaker: React.Dispatch<React.SetStateAction<number | undefined>>,
+
+  inputRacketSearchWord: string,
+  setInputRacketSearchWord: React.Dispatch<React.SetStateAction<string>>,
+
+  inputRacketSearchMaker?: number,
+  setInputRacketSearchMaker: React.Dispatch<React.SetStateAction<number | undefined>>,
 }
 
 const initialContextVals = {
@@ -135,6 +147,18 @@ const initialContextVals = {
 
   physique: undefined,
   setPhysique: () => { },
+
+  inputGutSearchWord: '',
+  setInputGutSearchWord: () => { },
+
+  inputGutSearchMaker: undefined,
+  setInputGutSearchMaker: () => { },
+
+  inputRacketSearchWord: '',
+  setInputRacketSearchWord: () => { },
+
+  inputRacketSearchMaker: undefined,
+  setInputRacketSearchMaker: () => { },
 }
 
 const ReviewContext = createContext<ContextVals>(initialContextVals);
@@ -176,6 +200,12 @@ const ReviewContextProvider: React.FC<Props> = ({ children }) => {
   const [height, setHeight] = useState<Height | undefined>();
   const [physique, setPhysique] = useState<Physique | undefined>();
 
+  // レビュー検索モーダル内、ラケット、ガット検索モーダルinput値
+  const [inputGutSearchWord, setInputGutSearchWord] = useState<string>('');
+  const [inputGutSearchMaker, setInputGutSearchMaker] = useState<number>();
+  const [inputRacketSearchWord, setInputRacketSearchWord] = useState<string>('');
+  const [inputRacketSearchMaker, setInputRacketSearchMaker] = useState<number>();
+
   const contextVals = {
     reviewsPaginator,
     setReviewsPaginator,
@@ -209,6 +239,18 @@ const ReviewContextProvider: React.FC<Props> = ({ children }) => {
 
     racket,
     setRacket,
+
+    inputGutSearchWord,
+    setInputGutSearchWord,
+
+    inputGutSearchMaker,
+    setInputGutSearchMaker,
+
+    inputRacketSearchWord,
+    setInputRacketSearchWord,
+
+    inputRacketSearchMaker,
+    setInputRacketSearchMaker,
 
     experiencePeriod,
     setExperiencePeriod,

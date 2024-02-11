@@ -115,6 +115,14 @@ const ReviewList = () => {
     setCrossGut,
     racket,
     setRacket,
+    inputGutSearchWord,
+    setInputGutSearchWord,
+    inputGutSearchMaker,
+    setInputGutSearchMaker,
+    inputRacketSearchWord,
+    setInputRacketSearchWord,
+    inputRacketSearchMaker,
+    setInputRacketSearchMaker,
 
     experiencePeriod,
     frequency,
@@ -823,6 +831,10 @@ const ReviewList = () => {
                 searchedGuts={searchedGuts}
                 setSearchedGuts={setSearchedGuts}
                 zIndexClassName="z-50"
+                inputSearchWord={inputGutSearchWord}
+                setInputSearchWord={setInputGutSearchWord}
+                inputSearchMaker={inputGutSearchMaker}
+                setInputSearchMaker={setInputGutSearchMaker}
               />
 
               <RacketSearchModal
@@ -835,6 +847,10 @@ const ReviewList = () => {
                 searchedRackets={searchedRackets}
                 setSearchedRackets={setSearchedRackets}
                 zIndexClassName="z-50"
+                inputSearchWord={inputRacketSearchWord}
+                setInputSearchWord={setInputRacketSearchWord}
+                inputSearchMaker={inputRacketSearchMaker}
+                setInputSearchMaker={setInputRacketSearchMaker}
               />
 
             </div>
