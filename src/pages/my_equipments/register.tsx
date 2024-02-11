@@ -16,6 +16,8 @@ import TextUnderBar from "@/components/TextUnderBar";
 import { IoClose } from "react-icons/io5";
 import Pagination, { Paginator } from "@/components/Pagination";
 import { getToday } from "@/modules/getToday";
+import GutSearchModal from "@/components/GutSearchModal";
+import RacketSearchModal from "@/components/RacketSearchModal";
 
 const MyEquipmentRegister: NextPage = () => {
   const router = useRouter();
@@ -56,7 +58,7 @@ const MyEquipmentRegister: NextPage = () => {
   const [comment, setComment] = useState<string>('');
 
   //モーダルの開閉に関するstate
-  const [modalVisibility, setModalVisibility] = useState<boolean>(false);
+  const [gutSearchModalVisibility, setGutSearchModalVisibility] = useState<boolean>(false);
 
   const [modalVisibilityClassName, setModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
 
@@ -65,17 +67,14 @@ const MyEquipmentRegister: NextPage = () => {
   const [racketSearchModalVisibilityClassName, setRacketSearchModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
 
   //検索関連のstate
-  const [inputSearchWord, setInputSearchWord] = useState<string>('');
-
-  const [inputSearchMaker, setInputSearchMaker] = useState<number | null>();
+  const [inputGutSearchWord, setInputGutSearchWord] = useState<string>('');
+  const [inputGutSearchMaker, setInputGutSearchMaker] = useState<number>();
+  const [inputRacketSearchWord, setInputRacketSearchWord] = useState<string>('');
+  const [inputRacketSearchMaker, setInputRacketSearchMaker] = useState<number>();
 
   const [searchedGuts, setSearchedGuts] = useState<Gut[]>();
 
   const [searchedRackets, setSearchedRackets] = useState<Racket[]>();
-
-  const [gutsPaginator, setGutsPaginator] = useState<Paginator<Gut>>();
-
-  const [racketsPaginator, setRacketsPaginator] = useState<Paginator<Racket>>();
 
   useEffect(() => {
     const getMakerList = async () => {
@@ -96,12 +95,10 @@ const MyEquipmentRegister: NextPage = () => {
 
   // gut検索モーダル開閉とその時の縦スクロールの挙動を考慮している
   useEffect(() => {
-    if (modalVisibility) {
-      setModalVisibilityClassName('opacity-100 scale-100')
+    if (gutSearchModalVisibility) {
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
     } else {
-      setModalVisibilityClassName('opacity-0 scale-0');
       document.body.style.overflow = 'auto';
       document.documentElement.style.overflow = 'auto';
     }
@@ -110,16 +107,14 @@ const MyEquipmentRegister: NextPage = () => {
       document.body.style.overflow = 'auto';
       document.documentElement.style.overflow = 'auto';
     }
-  }, [modalVisibility])
+  }, [gutSearchModalVisibility])
 
   // racket検索モーダル開閉とその時の縦スクロールの挙動を考慮している
   useEffect(() => {
     if (racketSearchModalVisibility) {
-      setRacketSearchModalVisibilityClassName('opacity-100 scale-100')
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
     } else {
-      setRacketSearchModalVisibilityClassName('opacity-0 scale-0');
       document.body.style.overflow = 'auto';
       document.documentElement.style.overflow = 'auto';
     }
@@ -134,15 +129,6 @@ const MyEquipmentRegister: NextPage = () => {
   const onChangeInputStringingWay = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setStringingWay(e.target.value);
     setCrossGut(undefined);
-  }
-
-  const onChangeInputSearchMaker = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (e.target.value === '未選択') {
-      setInputSearchMaker(null);
-      return
-    };
-
-    setInputSearchMaker(Number(e.target.value));
   }
 
   const onChangeInputNewGutDate = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -163,25 +149,18 @@ const MyEquipmentRegister: NextPage = () => {
 
   //モーダルの開閉
   const closeModal = () => {
-    setModalVisibility(false);
-    setModalVisibilityClassName('opacity-0 scale-0')
+    setGutSearchModalVisibility(false);
     setWitchSelectingGut('');
-  }
-
-  const openModal = () => {
-    setModalVisibilityClassName('opacity-100 scale-100')
   }
 
   //gutを選んだ際、mainGut,crossGutで分けて値をstateにセットさせたかったためopenModalを分けてある
   const openMainGutSearchModal = () => {
-    setModalVisibility(true);
-    openModal();
+    setGutSearchModalVisibility(true);
     setWitchSelectingGut('main');
   }
 
   const openCrossGutSearchModal = () => {
-    setModalVisibility(true);
-    openModal();
+    setGutSearchModalVisibility(true);
     setWitchSelectingGut('cross');
   }
 
@@ -198,50 +177,6 @@ const MyEquipmentRegister: NextPage = () => {
 
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/'
 
-  //ページネーションを考慮した検索後racket一覧データの取得関数
-  const getSearchedGutsList = async (url: string = `api/guts/search?several_words=${inputSearchWord}&maker=${inputSearchMaker ? inputSearchMaker : ''}`) => {
-    await axios.get(url).then((res) => {
-      setGutsPaginator(res.data);
-
-      setSearchedGuts(res.data.data);
-    })
-  }
-
-  //gut検索
-  const searchGuts = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    try {
-      getSearchedGutsList();
-
-      console.log('検索完了しました')
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-  //ページネーションを考慮した検索後racket一覧データの取得関数
-  const getSearchedRacketsList = async (url: string = `api/rackets/search?several_words=${inputSearchWord}&maker=${inputSearchMaker ? inputSearchMaker : ''}`) => {
-    await axios.get(url).then((res) => {
-      setRacketsPaginator(res.data);
-
-      setSearchedRackets(res.data.data);
-    })
-  }
-
-  //racket検索
-  const searchRackets = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
-    e.preventDefault();
-
-    try {
-      getSearchedRacketsList();
-
-      console.log('検索完了しました')
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
   const selectGut = (gut: Gut) => {
     if (witchSelectingGut === 'main') {
       setMainGut(gut);
@@ -251,6 +186,7 @@ const MyEquipmentRegister: NextPage = () => {
 
     closeModal();
   }
+  
   const selectRacket = (racket: Racket) => {
     setRacket(racket)
     closeRacketSearchModal();
@@ -631,128 +567,37 @@ const MyEquipmentRegister: NextPage = () => {
                 </form>
 
                 {/* gut検索モーダル */}
-                <div className={`bg-gray-300 w-screen h-screen fixed top-0 left-0 ${modalVisibilityClassName} duration-[400ms] pt-[24px] overflow-y-scroll`}>
-                  <div className="flex flex-col items-center w-[100%] max-w-[320px] mx-auto md:max-w-[768px] overflow-y-auto">
-                    <div onClick={closeModal} className="self-end hover:cursor-pointer md:mr-[39px]">
-                      <IoClose size={48} />
-                    </div>
-
-                    <form action="" onSubmit={searchGuts} className="mb-[24px] md:flex md:mb-[40px]">
-                      <div className="mb-6 md:mb-0 md:mr-[16px]">
-                        <label htmlFor="several_words" className="block mb-1 text-[14px] md:text-[16px] md:mb-2">ストリング　検索ワード</label>
-                        <input type="text" name="several_words" onChange={(e) => setInputSearchWord(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[300px] h-10 p-2 focus:outline-sub-green" />
-                      </div>
-
-                      <div className="mb-8 md:mb-0 md:mr-[24px]">
-                        <label htmlFor="maker" className="block text-[14px] mb-1 md:text-[16px] md:mb-2">メーカー</label>
-
-                        <select name="maker" id="maker" onChange={(e) => { onChangeInputSearchMaker(e) }} className="border border-gray-300 rounded w-80 md:w-[250px] h-10 p-2 focus:outline-sub-green">
-                          <option value="未選択" selected>未選択</option>
-                          {makers?.map((maker) => (<option key={maker.id} value={maker.id}>{maker.name_ja}</option>))}
-                        </select>
-                      </div>
-
-                      <div className="flex justify-end md:justify-start">
-                        <button type="submit" className="text-white font-bold text-[14px] w-[160px] h-8 rounded  bg-sub-green md:text-[16px] md:self-end md:h-[40px] md:w-[100px]">検索する</button>
-                      </div>
-                    </form>
-
-                    {/* 検索結果表示欄 */}
-                    <div className="w-[100%] max-w-[320px] md:max-w-[768px]">
-                      <p className="text-[14px] mb-[16px] md:text-[16px] md:max-w-[640px] md:mx-auto">検索結果</p>
-                      <div className="flex justify-between flex-wrap w-[100%] max-w-[320px] md:max-w-[768px] md:mx-auto">
-                        {/* ガット */}
-                        {searchedGuts && searchedGuts.map(gut => (
-                          <>
-                            <div onClick={() => selectGut(gut)} className="flex  mb-6 hover:opacity-80 hover:cursor-pointer w-[100%] max-w-[360px] bg-white rounded-lg md:w-[100%] md:max-w-[360px]">
-                              <div className="w-[120px] mr-6">
-                                {gut.gut_image.file_path
-                                  ? <img src={`${baseImagePath}${gut.gut_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px]" />
-                                  : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} alt="ストリング画像" className="w-[120px] h-[120px]" />
-                                }
-                              </div>
-
-                              <div className="w-[100%] max-w-[160px] md:max-w-[216px]">
-                                <p className="text-[14px] mb-2 md:text-[16px]">{gut.maker.name_ja}</p>
-                                <p className="text-[16px] mb-2 md:text-[18px]">{gut.name_ja}</p>
-                                <TextUnderBar className="w-[100%] max-w-[160px] md:max-w-[216px]" />
-                              </div>
-                            </div>
-                          </>
-                        ))}
-
-                      </div>
-
-                      <Pagination
-                        paginator={gutsPaginator}
-                        paginate={getSearchedGutsList}
-                        className="mt-[32px] mb-[32px] md:mt-[48px] md:mb-[48px]"
-                      />
-                    </div>
-
-                  </div>
-                </div>
+                <GutSearchModal
+                  modalVisibility={gutSearchModalVisibility}
+                  setModalVisibility={setGutSearchModalVisibility}
+                  makers={makers}
+                  closeModalHandler={closeModal}
+                  selectGutHandler={selectGut}
+                  showingResult={true}
+                  searchedGuts={searchedGuts}
+                  setSearchedGuts={setSearchedGuts}
+                  zIndexClassName="z-50"
+                  inputSearchWord={inputGutSearchWord}
+                  setInputSearchWord={setInputGutSearchWord}
+                  inputSearchMaker={inputGutSearchMaker}
+                  setInputSearchMaker={setInputGutSearchMaker}
+                />
 
                 {/* racket検索モーダル */}
-                <div className={`bg-gray-300 w-screen h-screen fixed top-0 left-0 ${racketSearchModalVisibilityClassName} duration-[400ms] pt-[24px] overflow-y-scroll`}>
-                  <div className="flex flex-col items-center w-[100%] max-w-[320px] mx-auto md:max-w-[768px]">
-                    <div onClick={closeRacketSearchModal} className="self-end hover:cursor-pointer md:mr-[39px]">
-                      <IoClose size={48} />
-                    </div>
-
-                    <form action="" onSubmit={searchRackets} className="mb-[24px] md:flex md:mb-[40px]">
-                      <div className="mb-6 md:mb-0 md:mr-[16px]">
-                        <label htmlFor="several_words" className="block mb-1 text-[14px] md:text-[16px] md:mb-2">ラケット　検索ワード</label>
-                        <input type="text" name="several_words" onChange={(e) => setInputSearchWord(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[300px] h-10 p-2 focus:outline-sub-green" />
-                      </div>
-
-                      <div className="mb-8 md:mb-0 md:mr-[24px]">
-                        <label htmlFor="maker" className="block text-[14px] mb-1 md:text-[16px] md:mb-2">メーカー</label>
-
-                        <select name="maker" id="maker" onChange={(e) => { onChangeInputSearchMaker(e) }} className="border border-gray-300 rounded w-80 md:w-[250px] h-10 p-2 focus:outline-sub-green">
-                          <option value="未選択" selected>未選択</option>
-                          {makers?.map((maker) => (<option key={maker.id} value={maker.id}>{maker.name_ja}</option>))}
-                        </select>
-                      </div>
-
-                      <div className="flex justify-end md:justify-start">
-                        <button type="submit" className="text-white font-bold text-[14px] w-[160px] h-8 rounded  bg-sub-green md:text-[16px] md:self-end md:h-[40px] md:w-[100px]">検索する</button>
-                      </div>
-                    </form>
-
-                    {/* 検索結果表示欄 */}
-                    <div className="w-[100%] max-w-[320px] md:max-w-[768px]">
-                      <p className="text-[14px] mb-[16px] md:text-[16px] md:max-w-[640px] md:mx-auto">検索結果</p>
-                      <div className="flex justify-between flex-wrap w-[100%] max-w-[320px] md:max-w-[768px] md:mx-auto">
-                        {/* ラケット */}
-                        {searchedRackets && searchedRackets.map(racket => (
-                          <>
-                            <div onClick={() => selectRacket(racket)} className="flex  mb-6 hover:opacity-80 hover:cursor-pointer w-[100%] max-w-[360px] bg-white rounded-lg md:w-[100%] md:max-w-[360px]">
-                              <div className="w-[120px] mr-6">
-                                {racket.racket_image.file_path
-                                  ? <img src={`${baseImagePath}${racket.racket_image.file_path}`} alt="ラケット画像" className="w-[120px] h-[160px]" />
-                                  : <img src={`${baseImagePath}images/rackets/defalt_racket_image.png`} alt="ラケット画像" className="w-[120px] h-[160px]" />
-                                }
-                              </div>
-
-                              <div className="w-[100%] max-w-[160px] md:max-w-[216px]">
-                                <p className="text-[14px] mb-2 md:text-[16px]">{racket.maker.name_ja}</p>
-                                <p className="text-[16px] mb-2 md:text-[18px]">{racket.name_ja}</p>
-                                <TextUnderBar className="w-[100%] max-w-[160px] md:max-w-[216px]" />
-                              </div>
-                            </div>
-                          </>
-                        ))}
-                      </div>
-
-                      <Pagination
-                        paginator={racketsPaginator}
-                        paginate={getSearchedRacketsList}
-                        className="mt-[32px] mb-[32px] md:mt-[48px] md:mb-[48px]"
-                      />
-                    </div>
-                  </div>
-                </div>
+                <RacketSearchModal
+                  modalVisibility={racketSearchModalVisibility}
+                  setModalVisibility={setRacketSearchModalVisibility}
+                  makers={makers}
+                  selectRacketHandler={selectRacket}
+                  showingResult={true}
+                  searchedRackets={searchedRackets}
+                  setSearchedRackets={setSearchedRackets}
+                  zIndexClassName="z-50"
+                  inputSearchWord={inputRacketSearchWord}
+                  setInputSearchWord={setInputRacketSearchWord}
+                  inputSearchMaker={inputRacketSearchMaker}
+                  setInputSearchMaker={setInputRacketSearchMaker}
+                />
               </div>
             </div>
           </>
