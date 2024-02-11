@@ -15,6 +15,7 @@ import { IoClose } from "react-icons/io5";
 import Pagination, { type Paginator } from "@/components/Pagination";
 import { GutContext } from "@/context/GutContext";
 import { usePathHistory } from "@/context/HistoryContext";
+import GutSearchModal from "@/components/GutSearchModal";
 
 const GutList = () => {
   const router = useRouter();
@@ -34,14 +35,12 @@ const GutList = () => {
     setInputSearchMaker,
   } = useContext(GutContext);
 
-  console.log('inputSearchMaker', inputSearchMaker)
-
   const [makers, setMakers] = useState<Maker[]>();
 
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/'
 
   //モーダルの開閉に関するstate
-  const [modalVisibilityClassName, setModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
+  const [gutSearchModalVisibility, setGutSearchModalVisibility] = useState<boolean>(false);
 
   //ページネーションを考慮したgut一覧データの取得関数
   const getGutsList = async (url: string = 'api/guts') => {
@@ -83,16 +82,12 @@ const GutList = () => {
     setInputSearchMaker(Number(e.target.value));
   }
 
-  //モーダルの開閉
-  const closeModal = () => {
-    setModalVisibilityClassName('opacity-0 scale-0')
-  }
-
+  // モーダルの開閉
   const openModal = () => {
-    setModalVisibilityClassName('opacity-100 scale-100')
+    setGutSearchModalVisibility(true)
   }
 
-  //gut検索
+  //pcレイアウト時のgut検索
   const searchGuts = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -102,8 +97,6 @@ const GutList = () => {
         maker: inputSearchMaker
       }
     }).then((res) => {
-      closeModal();
-
       setGutsPaginator(res.data)
 
       setGuts(res.data.data);
@@ -193,45 +186,20 @@ const GutList = () => {
             </div>
 
             {/* 検索モーダル */}
-            <div className={`bg-gray-300 w-screen min-h-[100%] absolute top-[64px] left-0 ${modalVisibilityClassName} duration-[400ms] pt-[24px] overflow-y-auto md:hidden`}>
-              <div className="flex flex-col items-center w-[100%] max-w-[320px] mx-auto md:max-w-[768px]">
-                <div onClick={closeModal} className="self-end hover:cursor-pointer md:mr-[39px]">
-                  <IoClose size={48} />
-                </div>
-
-                <form action="" onSubmit={searchGuts} className="mb-[24px] md:flex md:mb-[40px]">
-                  <div className="mb-6 md:mb-0 md:mr-[16px]">
-                    <label htmlFor="name_ja" className="block mb-1 text-[14px] md:text-[16px] md:mb-2">ストリング検索ワード</label>
-                    <input
-                      type="text"
-                      name="name_ja"
-                      defaultValue={inputSearchWord}
-                      onChange={(e) => setInputSearchWord(e.target.value)}
-                      className="border border-gray-300 rounded w-80 md:w-[300px] h-10 p-2 focus:outline-sub-green"
-                    />
-                  </div>
-
-                  <div className="mb-8 md:mb-0 md:mr-[24px]">
-                    <label htmlFor="maker" className="block text-[14px] mb-1 md:text-[16px] md:mb-2">メーカー</label>
-
-                    <select
-                      name="maker"
-                      id="maker"
-                      value={inputSearchMaker ? inputSearchMaker : '未選択'}
-                      onChange={(e) => { onChangeInputSearchMaker(e) }}
-                      className="border border-gray-300 rounded w-80 md:w-[250px] h-10 p-2 focus:outline-sub-green"
-                    >
-                      <option value="未選択" selected>未選択</option>
-                      {makers?.map((maker) => (<option key={maker.id} value={maker.id}>{maker.name_ja}</option>))}
-                    </select>
-                  </div>
-
-                  <div className="flex justify-end md:justify-start">
-                    <button type="submit" className="text-white font-bold text-[14px] w-[160px] h-8 rounded  bg-sub-green md:text-[16px] md:self-end md:h-[40px] md:w-[100px]">検索する</button>
-                  </div>
-                </form>
-              </div>
-            </div>
+            <GutSearchModal
+              modalVisibility={gutSearchModalVisibility}
+              setModalVisibility={setGutSearchModalVisibility}
+              makers={makers}
+              showingResult={false}
+              searchedGuts={guts}
+              setSearchedGuts={setGuts}
+              zIndexClassName={'z-50'}
+              setGutsPaginator={setGutsPaginator}
+              inputSearchWord={inputSearchWord}
+              setInputSearchWord={setInputSearchWord}
+              inputSearchMaker={inputSearchMaker}
+              setInputSearchMaker={setInputSearchMaker}
+            />
 
             {/* ページネーション */}
             <Pagination
