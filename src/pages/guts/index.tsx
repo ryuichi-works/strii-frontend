@@ -165,7 +165,6 @@ const GutList = () => {
               <div className="w-[100%] max-w-[320px] mx-auto md:max-w-[768px] md:flex md:flex-wrap md:justify-between ">
                 {/* ガット */}
                 {guts && guts.map(gut => (
-                  // <Link href={`/guts/${gut.id}`} key={gut.id} className="block hover:opacity-80 hover:cursor-pointer md:w-[100%] md:max-w-[360px]">
                   <Link href={`/guts/${gut.id}`} key={gut.id} className="hover:opacity-80 hover:cursor-pointer md:w-[100%] md:max-w-[360px]">
                     <div className="flex justify-center mb-6 hover:opacity-80 hover:cursor-pointer md:w-[100%] md:max-w-[360px]">
                       <div className="w-[120px] mr-6">
