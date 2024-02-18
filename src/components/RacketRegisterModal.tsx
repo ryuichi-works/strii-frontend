@@ -192,9 +192,43 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
     setCroppedAreaPixels(undefined)
     setCroppedImage(undefined)
     setCroppedImageUrl(undefined)
-    // setErrors({ title: [], file: [], maker_id: [] })
+    setErrors(initialErrorVals)
   }
 
+  //エラーメッセージ関連
+  type Errors = {
+    name_ja: string[],
+    name_en: string[],
+    maker_id: string[],
+    need_posting_image: string[],
+    posting_user_id: string[],
+    series_id: string[],
+    head_size: string[],
+    pattern: string[],
+    weight: string[],
+    balance: string[],
+    agreement: string[],
+    file: string[],
+    title: string[],
+  }
+
+  const initialErrorVals: Errors = {
+    name_ja: [],
+    name_en: [],
+    maker_id: [],
+    need_posting_image: [],
+    posting_user_id: [],
+    series_id: [],
+    head_size: [],
+    pattern: [],
+    weight: [],
+    balance: [],
+    agreement: [],
+    file: [],
+    title: [],
+  };
+
+  const [errors, setErrors] = useState<Errors>(initialErrorVals);
 
   const csrf = async () => await axios.get('/sanctum/csrf-cookie');
 
@@ -234,17 +268,13 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
       afterRegistringHandle(res.data);
       closeModal();
     }).catch((e) => {
-      // const newErrors = { ...initialErrorVals, ...e.response.data.errors };
+      const newErrors = { ...initialErrorVals, ...e.response.data.errors };
 
-      // setErrors(newErrors);
+      setErrors(newErrors);
 
       console.log('ラケットの登録に失敗しました');
     })
   }
-
-
-
-
 
   return (
     <>
@@ -254,7 +284,6 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
             <IoClose size={48} />
           </div>
 
-          {/* <div className="w-[100%] max-w-[320px] md:max-w-[380px] mx-auto flex flex-col md:justify-center"> */}
           <div className="w-[100%] max-w-[320px] md:max-w-[768px] mx-auto flex flex-col md:justify-center">
             <SubHeading
               text="ラケット登録"
@@ -276,11 +305,11 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
                     type="text"
                     name="name_ja"
                     onChange={(e) => setInputNameJa(e.target.value)}
-                    className="border border-gray-300 rounded w-80 md:w-[360px] h-10 p-2 focus:outline-sub-green"
+                    className={`border border-gray-300 rounded w-80 md:w-[360px] h-10 p-2 focus:outline-sub-green ${errors.name_ja.length !== 0 ? '!border-red-300 focus:!outline-red-500' : null}`}
                   />
-                  {/* {errors.name_ja.length !== 0 &&
-                        errors.name_ja.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                      } */}
+                  {errors.name_ja.length !== 0 &&
+                    errors.name_ja.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                  }
                 </div>
 
                 {/* アルファベット名入力 */}
@@ -290,11 +319,11 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
                     type="text"
                     name="name_en"
                     onChange={(e) => setInputNameEn(e.target.value)}
-                    className="border border-gray-300 rounded w-80 md:w-[360px] h-10 p-2 focus:outline-sub-green"
+                    className={`border border-gray-300 rounded w-80 md:w-[360px] h-10 p-2 focus:outline-sub-green ${errors.name_en.length !== 0 ? '!border-red-300 focus:!outline-red-500' : null}`}
                   />
-                  {/* {errors.name_en.length !== 0 &&
-                        errors.name_en.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                      } */}
+                  {errors.name_en.length !== 0 &&
+                    errors.name_en.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                  }
                 </div>
 
                 {/* メーカー入力 */}
@@ -305,15 +334,15 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
                     name="maker"
                     id="maker"
                     onChange={(e) => { onChangeMaker(e) }}
-                    className=" border border-gray-300 rounded w-80 md:w-[360px] h-10 p-2 focus:outline-sub-green"
+                    className={` border border-gray-300 rounded w-80 md:w-[360px] h-10 p-2 focus:outline-sub-green ${errors.maker_id.length !== 0 ? '!border-red-300 focus:!outline-red-500' : null}`}
                   >
                     <option value="未選択" selected>未選択</option>
                     {makers?.map((maker) => (<option key={maker.id} value={maker.id}>{maker.name_ja}</option>))}
                   </select>
 
-                  {/* {errors.maker_id.length !== 0 &&
-                        errors.maker_id.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                      } */}
+                  {errors.maker_id.length !== 0 &&
+                    errors.maker_id.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                  }
                 </div>
 
                 {/* ラケットシリーズ入力 */}
@@ -324,15 +353,15 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
                     name="series"
                     id="series"
                     onChange={(e) => { onChangeRacketSeries(e) }}
-                    className=" border border-gray-300 rounded w-80 md:w-[360px] h-10 p-2 focus:outline-sub-green"
+                    className={`border border-gray-300 rounded w-80 md:w-[360px] h-10 p-2 focus:outline-sub-green ${errors.series_id.length !== 0 ? '!border-red-300 focus:!outline-red-500' : null}`}
                   >
                     <option value="未選択" selected>未選択</option>
                     {filteredRacketSeries?.map((series) => (<option key={series.id} value={series.id}>{series.name_ja}</option>))}
                   </select>
 
-                  {/* {errors.maker_id.length !== 0 &&
-                        errors.maker_id.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                      } */}
+                  {errors.series_id.length !== 0 &&
+                    errors.series_id.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                  }
                 </div>
 
                 {/* ヘッドサイズ入力 */}
@@ -345,13 +374,13 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
                     min="77"
                     max="150"
                     defaultValue={inputHeadSize}
-                    className="border border-gray-300 rounded w-40 h-10 p-2 focus:outline-sub-green"
+                    className={`border border-gray-300 rounded w-40 h-10 p-2 focus:outline-sub-green ${errors.head_size.length !== 0 ? '!border-red-300 focus:!outline-red-500' : null}`}
                   />
                   <span className="ml-4 text-[14px] md:text-[16px]">平方インチ</span>
 
-                  {/* {errors.experience_period.length !== 0 &&
-                    errors.experience_period.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                  } */}
+                  {errors.head_size.length !== 0 &&
+                    errors.head_size.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                  }
                 </div>
 
                 {/* ストリングパターン入力 */}
@@ -367,7 +396,7 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
                     min="11"
                     max="24"
                     defaultValue={mainGutPattern}
-                    className="text-center border border-gray-300 rounded w-14 h-10 p-2 focus:outline-sub-green"
+                    className={`text-center border border-gray-300 rounded w-14 h-10 p-2 focus:outline-sub-green ${errors.pattern.length !== 0 ? '!border-red-300 focus:!outline-red-500' : null}`}
                   />
                   <span className="mx-2 text-[14px] md:text-[16px]">/</span>
                   <input
@@ -377,12 +406,12 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
                     min="11"
                     max="24"
                     defaultValue={crossGutPattern}
-                    className="text-center border border-gray-300 rounded w-14 h-10 p-2 focus:outline-sub-green"
+                    className={`text-center border border-gray-300 rounded w-14 h-10 p-2 focus:outline-sub-green ${errors.pattern.length !== 0 ? '!border-red-300 focus:!outline-red-500' : null}`}
                   />
 
-                  {/* {errors.experience_period.length !== 0 &&
-                    errors.experience_period.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                  } */}
+                  {errors.pattern.length !== 0 &&
+                    errors.pattern.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                  }
                 </div>
 
                 {/* ラケット重量入力 */}
@@ -395,13 +424,13 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
                     min="0"
                     max="500"
                     defaultValue={racketWeight}
-                    className="border border-gray-300 rounded w-40 h-10 p-2 focus:outline-sub-green"
+                    className={`border border-gray-300 rounded w-40 h-10 p-2 focus:outline-sub-green ${errors.weight.length !== 0 ? '!border-red-300 focus:!outline-red-500' : null}`}
                   />
                   <span className="ml-4 md:text-[16px]">g</span>
 
-                  {/* {errors.experience_period.length !== 0 &&
-                    errors.experience_period.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                  } */}
+                  {errors.weight.length !== 0 &&
+                    errors.weight.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                  }
                 </div>
 
                 {/* バランスポイント入力 */}
@@ -414,13 +443,13 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
                     min="0"
                     max="400"
                     defaultValue={balance}
-                    className="border border-gray-300 rounded w-40 h-10 p-2 focus:outline-sub-green"
+                    className={`border border-gray-300 rounded w-40 h-10 p-2 focus:outline-sub-green${errors.balance.length !== 0 ? '!border-red-300 focus:!outline-red-500' : null}`}
                   />
                   <span className="ml-4 md:text-[16px]">g</span>
 
-                  {/* {errors.experience_period.length !== 0 &&
-                    errors.experience_period.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                  } */}
+                  {errors.balance.length !== 0 &&
+                    errors.balance.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                  }
                 </div>
               </div>
 
@@ -431,7 +460,6 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
                 <div className="mb-[24px]">
                   {/* ファイル選択 */}
                   <div className="flex flex-col mb-[16px]">
-                    {/* <label htmlFor="gut_image_file" className="text-[14px] mb-1 md:text-[16px] md:mb-2">画像ファイル</label> */}
                     <label htmlFor="gut_image_file" className="text-[14px] mb-1 md:text-[16px] md:mb-2">ラケット画像</label>
                     <input
                       type="file"
@@ -440,14 +468,13 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
                       onChange={onChangeFile}
                       ref={inputFileRef} className="h-8"
                     />
-                    {/* {errors.file.length !== 0 &&
+                    {errors.file.length !== 0 &&
                       errors.file.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
-                    } */}
+                    }
                   </div>
 
                   {/* トリミングエリア */}
                   <div className="mb-6 ">
-                    {/* <p className="text-[14px] mb-2">画像トリミング</p> */}
                     <div className="mb-[32px]">
                       <p className="text-[14px] mb-[8px] md:text-[16px] md:mb-[16px]">構図</p>
 
@@ -505,7 +532,6 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
                       {croppedImageUrl && (
                         <>
                           <p className="text-[14px] mb-1 md:text-[16px] md:mb-2">プレビュー</p>
-                          {/* <img src={croppedImageUrl} alt="" className="w-[100%] max-w-[160px] md:max-w-[180px]" /> */}
                           <img src={croppedImageUrl} alt="" className="w-[100%] max-w-[120px]" />
                         </>
                       )}
@@ -529,12 +555,40 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
                   </p>
                 </div>
 
-                <div className="flex justify-center">
+                <div className="flex flex-col items-center">
                   <button
                     type="submit"
                     className={`text-white font-bold text-[14px] w-[200px] h-8 rounded bg-sub-green ${!agreement && 'opacity-50'} md:text-[16px]`}
                     disabled={!agreement}
                   >登録</button>
+
+                  {/* エラー一覧表示 */}
+                  <div>
+                    {errors.name_ja.length !== 0 &&
+                      errors.name_ja.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                    }
+                    {errors.name_en.length !== 0 &&
+                      errors.name_en.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                    }
+                    {errors.maker_id.length !== 0 &&
+                      errors.maker_id.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                    }
+                    {errors.head_size.length !== 0 &&
+                      errors.head_size.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                    }
+                    {errors.pattern.length !== 0 &&
+                      errors.pattern.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                    }
+                    {errors.weight.length !== 0 &&
+                      errors.weight.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                    }
+                    {errors.balance.length !== 0 &&
+                      errors.balance.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                    }
+                    {errors.file.length !== 0 &&
+                      errors.file.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                    }
+                  </div>
                 </div>
               </div>
             </form>
