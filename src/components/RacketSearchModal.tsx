@@ -36,6 +36,9 @@ type RacketSearchModalProps = {
 
   inputSearchMaker: number | undefined,
   setInputSearchMaker: React.Dispatch<React.SetStateAction<number | undefined>>,
+
+  // ユーザーの使いたいラケットがない場合にラケットを登録させるモーダルを開閉
+  setRacketRegisterModalVisibility?:  React.Dispatch<React.SetStateAction<boolean>>,
 }
 
 const RacketSearchModal: React.FC<RacketSearchModalProps> = ({
@@ -55,6 +58,7 @@ const RacketSearchModal: React.FC<RacketSearchModalProps> = ({
   setInputSearchWord,
   inputSearchMaker,
   setInputSearchMaker,
+  setRacketRegisterModalVisibility,
 }) => {
   // モーダル内のページネーション用
   const [racketsModalPaginator, setRacketsModalPaginator] = useState<Paginator<Racket>>();
@@ -135,7 +139,7 @@ const RacketSearchModal: React.FC<RacketSearchModalProps> = ({
             <IoClose size={48} />
           </div>
 
-          <form action="" onSubmit={searchRackets} className="mb-[24px] md:flex md:mb-[40px]">
+          <form action="" onSubmit={searchRackets} className="mb-[24px] md:flex md:mb-[24px]">
             <div className="mb-6 md:mb-0 md:mr-[16px]">
               <label htmlFor="several_words" className="block mb-1 text-[14px] md:text-[16px] md:mb-2">ラケット　検索ワード</label>
               <input
@@ -166,6 +170,21 @@ const RacketSearchModal: React.FC<RacketSearchModalProps> = ({
               <button type="submit" className="text-white font-bold text-[14px] w-[160px] h-8 rounded  bg-sub-green md:text-[16px] md:self-end md:h-[40px] md:w-[100px]">検索する</button>
             </div>
           </form>
+
+          {/* racket検索で意図したものが見つからない時にユーザーに新規でracketを追加するように誘導するため */}
+          {setRacketRegisterModalVisibility && (
+            <>
+              <div className="flex flex-col items-center mb-[40px] md:w-full">
+                <p className="text-[14px] mb-2 md:text-[16px] md:inline-block">※ 検索で見つからなかった場合は新しいラケットとして登録をお願いします</p>
+                <button
+                  type="button"
+                  className="text-white font-bold text-[14px] w-[136px] h-[28px] rounded  bg-sub-green ml-auto
+                              md:mx-auto md:h-[32px]"
+                  onClick={() => setRacketRegisterModalVisibility(true)}
+                >ラケットを登録</button>
+              </div>
+            </>
+          )}
 
           {showingResult && (
             <>
