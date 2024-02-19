@@ -64,11 +64,7 @@ const MyEquipmentRegister: NextPage = () => {
   //モーダルの開閉に関するstate
   const [gutSearchModalVisibility, setGutSearchModalVisibility] = useState<boolean>(false);
 
-  // const [modalVisibilityClassName, setModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
-
   const [racketSearchModalVisibility, setRacketSearchModalVisibility] = useState<boolean>(false);
-
-  // const [racketSearchModalVisibilityClassName, setRacketSearchModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
 
   const [racketRegisterModalVisibility, setRacketRegisterModalVisibility] = useState<boolean>(false);
 
@@ -180,12 +176,10 @@ const MyEquipmentRegister: NextPage = () => {
   //gutとは別でracket検索のモーダルが必要であり開閉の処理をgut検索のモーダルとは分離しておく必要があった
   const openRacketSearchModal = () => {
     setRacketSearchModalVisibility(true);
-    // setRacketSearchModalVisibilityClassName('opacity-100 scale-100');
   }
 
   const closeRacketSearchModal = () => {
     setRacketSearchModalVisibility(false)
-    // setRacketSearchModalVisibilityClassName('opacity-0 scale-0');
   }
 
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/'

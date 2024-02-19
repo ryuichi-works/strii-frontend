@@ -1,17 +1,21 @@
-import { Maker, Racket } from "@/pages/users/[id]/profile";
-import { RacketSeries } from "@/types/global";
-import React, { use, useContext, useEffect, useRef, useState } from "react";
-import { IoClose } from "react-icons/io5";
-import ImageCropArea from "./ImageCropArea";
+import type { RacketSeries } from "@/types/global";
+import type { Maker, Racket } from "@/pages/users/[id]/profile";
+
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useImageCrop } from "@/hooks/useImageCrop";
 import { useImageFile } from "@/hooks/useImageFile";
-import { baseImagePath } from "@/consts/global";
-import SampleRacketImage from '../../public/sample_racket_image.jpeg';
-import Image from "next/image";
-import SubHeading from "./SubHeading";
-import axios from "@/lib/axios";
 import { AuthContext } from "@/context/AuthContext";
+
 import Cookies from "js-cookie";
+import axios from "@/lib/axios";
+import SampleRacketImage from '../../public/sample_racket_image.jpeg';
+import { baseImagePath } from "@/consts/global";
+
+import Image from "next/image";
+import { IoClose } from "react-icons/io5";
+import ImageCropArea from "./ImageCropArea";
+import SubHeading from "./SubHeading";
+
 
 type RacketRegisterModalProps = {
   modalVisibility: boolean,
@@ -40,7 +44,6 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
   const { user } = useContext(AuthContext);
 
   // makerごとにfilterをかけたラケットシリーズ
-  // const [filteredRacketSeries, setFilteredRacketSeries] = useState<RacketSeries[]>(racketSeries ? [...racketSeries] : [])
   const [filteredRacketSeries, setFilteredRacketSeries] = useState<RacketSeries[]>()
 
   //racket登録用のデータstate
@@ -48,19 +51,13 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
   const [inputNameEn, setInputNameEn] = useState<string>('');
   const [racketMakerId, setRacketMakerId] = useState<number | null>(null);
   const [racketSeriresId, setRacketSeriresId] = useState<number | null>(null);
-  console.log('racketSeriresId', racketSeriresId)
   const [inputHeadSize, setInputHeadSize] = useState<number>(100);
-  console.log('inputHeadSize', inputHeadSize)
   const [mainGutPattern, setMainGutPattern] = useState<string>('16');
   const [crossGutPattern, setCrossGutPattern] = useState<string>('19');
-  console.log('mainGutPattern', mainGutPattern)
-  console.log('crossGutPattern', crossGutPattern)
   const [racketWeight, setRacketWeight] = useState<number>(300);
-  console.log('racketWeight', racketWeight)
   const [balance, setBalance] = useState<number>(320);
-  console.log('balance', balance)
   const [agreement, setAgreement] = useState<boolean>(false);
-  console.log('agreement', agreement)
+  
   // useImageCropカスタムフックから取得
   const {
     crop,
