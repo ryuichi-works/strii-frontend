@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import type { User } from "@/context/AuthContext";
 import type { Maker, Racket, TennisProfile } from "../profile";
+import type { RacketSeries } from "@/types/global";
 import axios from "@/lib/axios";
 import Cookies from "js-cookie";
 import { useContext, useEffect, useState } from "react";
@@ -11,6 +12,7 @@ import { IoClose } from "react-icons/io5";
 import TextUnderBar from "@/components/TextUnderBar";
 import Pagination, { Paginator } from "@/components/Pagination";
 import RacketSearchModal from "@/components/RacketSearchModal";
+import RacketRegisterModal from "@/components/RacketRegisterModal";
 
 //注意：文字列の数字は全角
 export type Frequency = '未設定' | '週１回' | '週２回' | '週３回' | '週４回' | '週５回' | '週６回' | '月１回' | '月２回' | '月３回' | '月４回' | '毎日';
@@ -33,6 +35,9 @@ const TennisProfileEdit: NextPage = () => {
   //要素の表示などに使用するstate群
   const [makers, setMakers] = useState<Maker[]>();
 
+  const [racketSeries, setRacketSeries] = useState<RacketSeries[]>();
+  console.log('racketSeries', racketSeries)
+
   const [racket, setRacket] = useState<Racket>();
 
   //検索関連のstate
@@ -44,6 +49,8 @@ const TennisProfileEdit: NextPage = () => {
 
   //モーダルの開閉に関するstate
   const [racketSearchModalVisibility, setRacketSearchModalVisibility] = useState<boolean>(false);
+
+  const [RacketRegisterModalVisibility, setRacketRegisterModalVisibility] = useState<boolean>(false);
 
   useEffect(() => {
     if (user.id) {
@@ -70,8 +77,15 @@ const TennisProfileEdit: NextPage = () => {
         })
       }
 
+      const getRacketSeries = async () => {
+        await axios.get('api/racket_series').then(res => {
+          setRacketSeries(res.data);
+        })
+      }
+
       getTennisProfile();
       getMakerList();
+      getRacketSeries();
     } else {
       router.push('/users/login')
     }
@@ -99,6 +113,13 @@ const TennisProfileEdit: NextPage = () => {
   }
 
   const closeRacketSearchModal = () => {
+    setRacketSearchModalVisibility(false);
+  }
+
+  const afterRegistringRacketHandler = (racket?: Racket) => {
+    if(racket) {
+      setRacket(racket)
+    }
     setRacketSearchModalVisibility(false);
   }
 
@@ -458,11 +479,21 @@ const TennisProfileEdit: NextPage = () => {
                   showingResult={true}
                   searchedRackets={searchedRackets}
                   setSearchedRackets={setSearchedRackets}
-                  zIndexClassName="z-50"
+                  zIndexClassName="z-60"
                   inputSearchWord={inputSearchWord}
                   setInputSearchWord={setInputSearchWord}
                   inputSearchMaker={inputSearchMaker}
                   setInputSearchMaker={setInputSearchMaker}
+                  setRacketRegisterModalVisibility={setRacketRegisterModalVisibility}
+                />
+
+                <RacketRegisterModal
+                  modalVisibility={RacketRegisterModalVisibility}
+                  setModalVisibility={setRacketRegisterModalVisibility}
+                  makers={makers}
+                  zIndexClassName="z-70"
+                  racketSeries={racketSeries}
+                  afterRegistringHandler={afterRegistringRacketHandler}
                 />
               </div>
             </div>

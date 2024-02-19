@@ -22,6 +22,8 @@ import GutSearchModal from "@/components/GutSearchModal";
 import RacketSearchModal from "@/components/RacketSearchModal";
 
 import { getToday } from "@/modules/getToday";
+import RacketRegisterModal from "@/components/RacketRegisterModal";
+import { RacketSeries } from "@/types/global";
 
 type PostingGutReviewData = {
   match_rate: number | undefined,
@@ -74,6 +76,9 @@ const GutReviewRegister: NextPage = () => {
 
   const [witchSelectingGut, setWitchSelectingGut] = useState<string>('');
 
+  const [racketSeries, setRacketSeries] = useState<RacketSeries[]>();
+  console.log('racketSeries', racketSeries)
+
   // inputに関するstate
   const [inputMainGutGuage, setInputMainGutGuage] = useState<number>(1.25);
 
@@ -93,6 +98,8 @@ const GutReviewRegister: NextPage = () => {
   const [myEquipmentSearchModalVisibility, setMyEquipmentModalVisibility] = useState<boolean>(false);
 
   const [myEquipmentSearchModalVisibilityClassName, setMyEquipmentSearchModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
+
+  const [racketRegisterModalVisibility, setRacketRegisterModalVisibility] = useState<boolean>(false);
 
   //検索関連のstate
   const [inputGutSearchWord, setInputGutSearchWord] = useState<string>('');
@@ -133,8 +140,15 @@ const GutReviewRegister: NextPage = () => {
       })
     }
 
+    const getRacketSeries = async () => {
+      await axios.get('api/racket_series').then(res => {
+        setRacketSeries(res.data);
+      })
+    }
+
     getUserTennisProfile();
     getMakerList();
+    getRacketSeries();
   }, [])
 
   // gut検索モーダル開閉とその時の縦スクロールの挙動を考慮している
@@ -292,6 +306,12 @@ const GutReviewRegister: NextPage = () => {
     setInputMainCrossTension(myEquipment.cross_gut_tension)
 
     closeMyEquipmentSearchModal();
+  }
+
+  const afterRegistringRacketHandler = (racket?: Racket) => {
+    if(racket) {
+      selectRacket(racket);
+    }
   }
 
   type Errors = {
@@ -761,11 +781,22 @@ const GutReviewRegister: NextPage = () => {
                   showingResult={true}
                   searchedRackets={searchedRackets}
                   setSearchedRackets={setSearchedRackets}
-                  zIndexClassName="z-50"
+                  zIndexClassName="z-40"
                   inputSearchWord={inputRacketSearchWord}
                   setInputSearchWord={setInputRacketSearchWord}
                   inputSearchMaker={inputRacketSearchMaker}
                   setInputSearchMaker={setInputRacketSearchMaker}
+                  setRacketRegisterModalVisibility={setRacketRegisterModalVisibility}
+                />
+
+                {/* racket登録モーダル */}
+                <RacketRegisterModal
+                  modalVisibility={racketRegisterModalVisibility}
+                  setModalVisibility={setRacketRegisterModalVisibility}
+                  makers={makers}
+                  zIndexClassName="z-50"
+                  racketSeries={racketSeries}
+                afterRegistringHandler={afterRegistringRacketHandler}
                 />
 
                 {/* my_equipment検索モーダル */}

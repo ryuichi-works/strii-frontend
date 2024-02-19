@@ -18,6 +18,8 @@ import Pagination, { Paginator } from "@/components/Pagination";
 import { getToday } from "@/modules/getToday";
 import GutSearchModal from "@/components/GutSearchModal";
 import RacketSearchModal from "@/components/RacketSearchModal";
+import { RacketSeries } from "@/types/global";
+import RacketRegisterModal from "@/components/RacketRegisterModal";
 
 const MyEquipmentRegister: NextPage = () => {
   const router = useRouter();
@@ -42,6 +44,8 @@ const MyEquipmentRegister: NextPage = () => {
 
   const [witchSelectingGut, setWitchSelectingGut] = useState<string>('');
 
+  const [racketSeries, setRacketSeries] = useState<RacketSeries[]>();
+
   // inputに関するstate
   const [inputMainGutGuage, setInputMainGutGuage] = useState<number>(1.25);
 
@@ -60,11 +64,9 @@ const MyEquipmentRegister: NextPage = () => {
   //モーダルの開閉に関するstate
   const [gutSearchModalVisibility, setGutSearchModalVisibility] = useState<boolean>(false);
 
-  const [modalVisibilityClassName, setModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
-
   const [racketSearchModalVisibility, setRacketSearchModalVisibility] = useState<boolean>(false);
 
-  const [racketSearchModalVisibilityClassName, setRacketSearchModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
+  const [racketRegisterModalVisibility, setRacketRegisterModalVisibility] = useState<boolean>(false);
 
   //検索関連のstate
   const [inputGutSearchWord, setInputGutSearchWord] = useState<string>('');
@@ -89,8 +91,15 @@ const MyEquipmentRegister: NextPage = () => {
       })
     }
 
+    const getRacketSeries = async () => {
+      await axios.get('api/racket_series').then(res => {
+        setRacketSeries(res.data);
+      })
+    }
+
     getUserTennisProfile();
     getMakerList();
+    getRacketSeries();
   }, [])
 
   // gut検索モーダル開閉とその時の縦スクロールの挙動を考慮している
@@ -167,12 +176,10 @@ const MyEquipmentRegister: NextPage = () => {
   //gutとは別でracket検索のモーダルが必要であり開閉の処理をgut検索のモーダルとは分離しておく必要があった
   const openRacketSearchModal = () => {
     setRacketSearchModalVisibility(true);
-    setRacketSearchModalVisibilityClassName('opacity-100 scale-100');
   }
 
   const closeRacketSearchModal = () => {
     setRacketSearchModalVisibility(false)
-    setRacketSearchModalVisibilityClassName('opacity-0 scale-0');
   }
 
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/'
@@ -186,10 +193,16 @@ const MyEquipmentRegister: NextPage = () => {
 
     closeModal();
   }
-  
+
   const selectRacket = (racket: Racket) => {
     setRacket(racket)
     closeRacketSearchModal();
+  }
+
+  const afterRegistringRacketHandler = (racket?: Racket) => {
+    if(racket) {
+      selectRacket(racket);
+    }
   }
 
   type Errors = {
@@ -592,11 +605,22 @@ const MyEquipmentRegister: NextPage = () => {
                   showingResult={true}
                   searchedRackets={searchedRackets}
                   setSearchedRackets={setSearchedRackets}
-                  zIndexClassName="z-50"
+                  zIndexClassName="z-40"
                   inputSearchWord={inputRacketSearchWord}
                   setInputSearchWord={setInputRacketSearchWord}
                   inputSearchMaker={inputRacketSearchMaker}
                   setInputSearchMaker={setInputRacketSearchMaker}
+                  setRacketRegisterModalVisibility={setRacketRegisterModalVisibility}
+                />
+
+                {/* racket登録モーダル */}
+                <RacketRegisterModal
+                  modalVisibility={racketRegisterModalVisibility}
+                  setModalVisibility={setRacketRegisterModalVisibility}
+                  makers={makers}
+                  zIndexClassName="z-50"
+                  racketSeries={racketSeries}
+                  afterRegistringHandler={afterRegistringRacketHandler}
                 />
               </div>
             </div>
