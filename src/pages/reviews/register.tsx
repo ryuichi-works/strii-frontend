@@ -137,6 +137,9 @@ const GutReviewRegister: NextPage = () => {
     const getUserTennisProfile = async () => {
       await axios.get(`api/tennis_profiles/user/${user.id}`).then(res => {
         setUserTennisProfile(res.data);
+        if(res.data.racket) {
+          setRacket(res.data.racket);
+        }
       })
     }
 
