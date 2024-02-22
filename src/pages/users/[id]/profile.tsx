@@ -36,6 +36,15 @@ export type RacketImage = {
   maker: Maker
 }
 
+export type RacketSeries = {
+  "id": number,
+  "name_ja": string,
+  "name_en": string,
+  "maker_id": number,
+  "created_at": string,
+  "updated_at": string
+}
+
 export type Racket = {
   id: number,
   name_ja: string,
@@ -45,8 +54,16 @@ export type Racket = {
   need_posting_image: number,
   created_at: string,
   updated_at: string,
+  posting_user_id: number | null,
+  series_id: number | null,
+  head_size: number,
+  pattern: string,
+  weight: number | null,
+  balance: number | null,
   maker: Maker,
-  racket_image: RacketImage
+  racket_image: RacketImage,
+  user: User,
+  series: RacketSeries,
 }
 
 export type TennisProfile = {
@@ -95,7 +112,6 @@ const UserProfile: NextPage = () => {
       <AuthCheck>
         {isAuth && (
           <>
-            {/* <h1>プロフィールページ</h1> */}
             <div className="container mx-auto">
               <div className="w-80 mt-6  mx-auto flex flex-col md:flex-row md:justify-center md:mt-[48px] md:w-[704px]">
                 <div className="w-[320px] md:mr-[32px]">
