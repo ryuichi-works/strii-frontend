@@ -60,7 +60,7 @@ const RacketShow = () => {
                 <div className="w-[120px] mr-6 md:w-[160px] md:mr-8">
                   {racket?.racket_image.file_path
                     ? <img src={`${baseImagePath}${racket.racket_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[160px] md:w-[160px] md:h-[200px]" />
-                    : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} alt="ストリング画像" className="w-[120px] h-[160px] md:w-[160px] md:h-[200px]" />
+                    : <img src={`${baseImagePath}images/rackets/default_racket_image.png`} alt="ラケット画像" className="w-[120px] h-[160px]" />
                   }
                 </div>
 
@@ -118,7 +118,7 @@ const RacketShow = () => {
                       <div className="w-[120px] mr-6">
                         {otherRacket.racket_image.file_path
                           ? <img src={`${baseImagePath}${otherRacket.racket_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[160px]" />
-                          : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} alt="ストリング画像" className="w-[120px] h-[160px]" />
+                          : <img src={`${baseImagePath}images/rackets/default_racket_image.png`} alt="ラケット画像" className="w-[120px] h-[160px]" />
                         }
                       </div>
 

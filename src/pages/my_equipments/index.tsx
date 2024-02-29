@@ -27,7 +27,7 @@ const MyEquipmentList = () => {
       setMyEquipments(res.data.data);
     })
   }
-  
+
   useEffect(() => {
     if (user.id) {
       getMyEquipmentListOfUser();
@@ -63,9 +63,8 @@ const MyEquipmentList = () => {
                                   <div className="mr-8">
                                     <div className="w-[92px] flex flex-col justify-start items-start ">
                                       <div className="w-[92px]">
-                                        {myEquipment.main_gut.gut_image.file_path
-                                          ? <img src={`${baseImagePath}${myEquipment.main_gut.gut_image.file_path}`} alt="ユーザープロフィール画像" className="w-[92px] h-[92px] mb-2" />
-                                          : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} width="64px" height="64px" alt="ユーザープロフィール画像" className="rounded-full mb-2" />
+                                        {myEquipment.main_gut.gut_image.file_path &&
+                                          <img src={`${baseImagePath}${myEquipment.main_gut.gut_image.file_path}`} alt="ストリング画像" className="w-[92px] h-[92px] mb-2" />
                                         }
                                       </div>
 
@@ -83,9 +82,8 @@ const MyEquipmentList = () => {
 
                                   <div>
                                     <div className="w-[92px] flex flex-col items-center">
-                                      {myEquipment.main_gut.gut_image.file_path
-                                        ? <img src={`${baseImagePath}${myEquipment.main_gut.gut_image.file_path}`} alt="ユーザープロフィール画像" className="w-[60px] h-[92px] mb-4" />
-                                        : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} width="64px" height="64px" alt="ユーザープロフィール画像" className="rounded-full mb-2" />
+                                      {myEquipment.racket.racket_image.file_path &&
+                                        <img src={`${baseImagePath}${myEquipment.racket.racket_image.file_path}`} alt="ラケット画像" className="w-[69px] h-[92px] mb-4" />
                                       }
                                       <div className="text-center">
                                         <p className="h-[16px] text-[14px] mb-4">{myEquipment.racket.maker.name_ja}</p>
@@ -103,9 +101,8 @@ const MyEquipmentList = () => {
                                   <div className="mr-[18px]">
                                     <div className="w-[92px] flex flex-col justify-start items-start ">
                                       <div className="w-[92px]">
-                                        {myEquipment.main_gut.gut_image.file_path
-                                          ? <img src={`${baseImagePath}${myEquipment.main_gut.gut_image.file_path}`} alt="ユーザープロフィール画像" className="w-[92px] h-[92px] mb-2" />
-                                          : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} width="64px" height="64px" alt="ユーザープロフィール画像" className="rounded-full mb-2" />
+                                        {myEquipment.main_gut.gut_image.file_path && 
+                                          <img src={`${baseImagePath}${myEquipment.main_gut.gut_image.file_path}`} alt="ストリング画像" className="w-[92px] h-[92px] mb-2" />
                                         }
                                       </div>
 
@@ -124,9 +121,8 @@ const MyEquipmentList = () => {
                                   <div className="mr-[18px]">
                                     <div className="w-[92px] flex flex-col justify-start items-start ">
                                       <div className="w-[92px]">
-                                        {myEquipment.main_gut.gut_image.file_path
-                                          ? <img src={`${baseImagePath}${myEquipment.main_gut.gut_image.file_path}`} alt="ユーザープロフィール画像" className="w-[92px] h-[92px] mb-2" />
-                                          : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} alt="ユーザープロフィール画像" className="w-[92px] h-[92px] mb-2" />
+                                        {myEquipment.cross_gut.gut_image.file_path &&
+                                          <img src={`${baseImagePath}${myEquipment.cross_gut.gut_image.file_path}`} alt="ストリング画像" className="w-[92px] h-[92px] mb-2" />
                                         }
                                       </div>
 
@@ -144,9 +140,8 @@ const MyEquipmentList = () => {
 
                                   <div>
                                     <div className="w-[92px] flex flex-col items-center">
-                                      {myEquipment.main_gut.gut_image.file_path
-                                        ? <img src={`${baseImagePath}${myEquipment.main_gut.gut_image.file_path}`} alt="ユーザープロフィール画像" className="w-[60px] h-[92px] mb-4" />
-                                        : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} width="64px" height="64px" alt="ユーザープロフィール画像" className="rounded-full mb-2" />
+                                      {myEquipment.racket.racket_image.file_path &&
+                                        <img src={`${baseImagePath}${myEquipment.racket.racket_image.file_path}`} alt="ラケット画像" className="w-[69px] h-[92px] mb-4" />
                                       }
 
                                       <div className="text-center">

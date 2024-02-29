@@ -349,7 +349,7 @@ const MyEquipmentRegister: NextPage = () => {
                             <div className="w-[120px] mr-6">
                               {mainGut && mainGut.gut_image.file_path
                                 ? <img src={`${baseImagePath}${mainGut.gut_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px]" />
-                                : <img src={`${baseImagePath}images/guts/default_gut_image.jpg`} alt="ストリング画像" className="w-[120px] h-[120px]" />
+                                : <div className="w-[120px] h-[120px] border"></div>
                               }
                             </div>
 
@@ -383,7 +383,7 @@ const MyEquipmentRegister: NextPage = () => {
                                 <div className="w-[120px] mr-6">
                                   {crossGut && crossGut.gut_image.file_path
                                     ? <img src={`${baseImagePath}${crossGut.gut_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px]" />
-                                    : <img src={`${baseImagePath}images/guts/default_gut_image.jpg`} alt="ストリング画像" className="w-[120px] h-[120px]" />
+                                    : <div className="w-[120px] h-[120px] border"></div>
                                   }
                                 </div>
 
