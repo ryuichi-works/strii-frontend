@@ -176,7 +176,7 @@ const BaseProfileEdit: NextPage = () => {
                   <div className="w-16 md:w-20 mx-auto mb-4">
                     <div className="w-[64px] h-[64px] border rounded-full overflow-hidden mb-2 md:w-[80px] md:h-[80px]">
                       {user.file_path
-                        ? <img src={`${baseImagePath}${user.file_path}`} alt="ユーザープロフィール画像" className=" w-[64px] md:w-[80px] h-[64px] md:h-[80px]" />
+                        ? <img src={`${user.file_path}`} alt="ユーザープロフィール画像" className=" w-[64px] md:w-[80px] h-[64px] md:h-[80px]" />
                         : <img src={`${baseImagePath}images/users/defalt_user_image.png`} width="64px" height="64px" alt="ユーザープロフィール画像" className="w-[64px] md:w-[80px] h-[64px] md:h-[80px]" />
                       }
                     </div>

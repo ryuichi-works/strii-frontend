@@ -121,7 +121,7 @@ const UserProfile: NextPage = () => {
                   <div className="w-16 mx-auto mb-4">
                     <div className="w-[64px] h-[64px] rounded-full overflow-hidden mb-2 border">
                       {user.file_path
-                        ? <img src={`${baseImagePath}${user.file_path}`} width="64px" height="64px" alt="ユーザープロフィール画像" className="w-[64px] md:w-[80px] h-[64px] md:h-[80px]" />
+                        ? <img src={`${user.file_path}`} width="64px" height="64px" alt="ユーザープロフィール画像" className="w-[64px] md:w-[80px] h-[64px] md:h-[80px]" />
                         : <img src={`${baseImagePath}images/users/defalt_user_image.png`} width="64px" height="64px" alt="ユーザープロフィール画像" className="" />
                       }
                     </div>
@@ -150,7 +150,7 @@ const UserProfile: NextPage = () => {
 
                     <div className="w-28 h-40 bg-faint-green">
                       { tennisProfile?.racket?.racket_image.file_path
-                        ? <img src={`${baseImagePath}${tennisProfile.racket.racket_image.file_path}`} alt="ラケット画像" className="w-[120px] h-[160px]" />
+                        ? <img src={`${tennisProfile.racket.racket_image.file_path}`} alt="ラケット画像" className="w-[120px] h-[160px]" />
                         : <img src={`${baseImagePath}images/rackets/default_racket_image.png`} alt="ラケット画像" className="w-[120px] h-[160px]" />
                       }
                     </div>
