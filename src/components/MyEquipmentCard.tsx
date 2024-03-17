@@ -26,7 +26,7 @@ const MyEquipmentCard: React.FC<MyEquipmentCardProps> = ({
                 <div className="w-[96px] flex flex-col justify-start items-start">
                   <div className="w-[96px] mb-1">
                     {myEquipment.main_gut.gut_image.file_path
-                      && <img src={`${baseImagePath}${myEquipment.main_gut.gut_image.file_path}`} alt="ストリング画像" className="w-[96px] h-[96px]" />
+                      && <img src={`${myEquipment.main_gut.gut_image.file_path}`} alt="ストリング画像" className="w-[96px] h-[96px]" />
                     }
                   </div>
 
@@ -46,7 +46,7 @@ const MyEquipmentCard: React.FC<MyEquipmentCardProps> = ({
               <div className="flex flex-col items-center w-[96px]">
                 <div className="w-[72px] flex flex-col items-center mb-1">
                   {myEquipment.racket.racket_image.file_path
-                    ? <img src={`${baseImagePath}${myEquipment.racket.racket_image.file_path}`} alt="ラケット画像" className="w-[72px] h-[96px]" />
+                    ? <img src={`${myEquipment.racket.racket_image.file_path}`} alt="ラケット画像" className="w-[72px] h-[96px]" />
                     : <img src={`${baseImagePath}images/rackets/defalt_racket_image.png`} alt="ラケット画像" className="w-[72px] h-[96px]" />
                   }
                 </div>
@@ -68,7 +68,7 @@ const MyEquipmentCard: React.FC<MyEquipmentCardProps> = ({
                 <div className="w-[96px] flex flex-col justify-start items-start ">
                   <div className="w-[96px] mb-1">
                     {myEquipment.main_gut.gut_image.file_path
-                      && <img src={`${baseImagePath}${myEquipment.main_gut.gut_image.file_path}`} alt="ストリング画像" className="w-[96px] h-[96px]" />
+                      && <img src={`${myEquipment.main_gut.gut_image.file_path}`} alt="ストリング画像" className="w-[96px] h-[96px]" />
                     }
                   </div>
 
@@ -88,7 +88,7 @@ const MyEquipmentCard: React.FC<MyEquipmentCardProps> = ({
                 <div className="w-[96px] flex flex-col justify-start items-start">
                   <div className="w-[96px] mb-1">
                     {myEquipment.cross_gut.gut_image.file_path
-                      && <img src={`${baseImagePath}${myEquipment.cross_gut.gut_image.file_path}`} alt="ストリング画像" className="w-[96px] h-[96px]" />
+                      && <img src={`${myEquipment.cross_gut.gut_image.file_path}`} alt="ストリング画像" className="w-[96px] h-[96px]" />
                     }
                   </div>
 
@@ -108,7 +108,7 @@ const MyEquipmentCard: React.FC<MyEquipmentCardProps> = ({
               <div className="flex flex-col items-center w-[96px]">
                 <div className="w-[72px] flex flex-col items-center mb-1">
                   {myEquipment.racket.racket_image.file_path
-                    ? <img src={`${baseImagePath}${myEquipment.racket.racket_image.file_path}`} alt="ラケット画像" className="w-[72px] h-[96px]" />
+                    ? <img src={`${myEquipment.racket.racket_image.file_path}`} alt="ラケット画像" className="w-[72px] h-[96px]" />
                     : <img src={`${baseImagePath}images/rackets/defalt_racket_image.png`} alt="ラケット画像" className="w-[72px] h-[96px]" />
                   }
                 </div>

@@ -405,7 +405,7 @@ const ReviewList = () => {
                                     <div className="w-[92px] h-[92px] flex justify-center items-center mb-10">
                                       <div className="w-16">
                                         {review.my_equipment.user.file_path
-                                          ? <img src={`${baseImagePath}${user.file_path}`} width="64px" height="64px" alt="ユーザープロフィール画像" className="rounded-full mb-2" />
+                                          ? <img src={`${review.my_equipment.user.file_path}`} width="64px" height="64px" alt="ユーザープロフィール画像" className="rounded-full mb-2" />
                                           : <img src={`${baseImagePath}images/users/defalt_user_image.png`} width="64px" height="64px" alt="ユーザープロフィール画像" className="w-[64px] md:w-[80px] h-[64px] md:h-[80px] rounded-full border mb-2" />
                                         }
 
@@ -426,7 +426,7 @@ const ReviewList = () => {
                                     <div className="w-[92px] h-full flex flex-col justify-center items-start">
                                       <div className="w-[92px]">
                                         {review.my_equipment.main_gut.gut_image.file_path &&
-                                          <img src={`${baseImagePath}${review.my_equipment.main_gut.gut_image.file_path}`} alt="ストリング画像" className="w-[92px] h-[92px] mb-2" />
+                                          <img src={`${review.my_equipment.main_gut.gut_image.file_path}`} alt="ストリング画像" className="w-[92px] h-[92px] mb-2" />
                                         }
                                       </div>
 
@@ -453,7 +453,7 @@ const ReviewList = () => {
                                     <div className="w-[92px] h-[92px] flex justify-center items-center mb-10">
                                       <div className="w-16">
                                         {review.my_equipment.user.file_path
-                                          ? <img src={`${baseImagePath}${user.file_path}`} width="64px" height="64px" alt="ユーザープロフィール画像" className="rounded-full mb-2" />
+                                          ? <img src={`${review.my_equipment.user.file_path}`} width="64px" height="64px" alt="ユーザープロフィール画像" className="rounded-full mb-2" />
                                           : <img src={`${baseImagePath}images/users/defalt_user_image.png`} width="64px" height="64px" alt="ユーザープロフィール画像" className="w-[64px] md:w-[80px] h-[64px] md:h-[80px] rounded-full border mb-2" />
                                         }
 
@@ -474,7 +474,7 @@ const ReviewList = () => {
                                     <div className="w-[92px] flex flex-col justify-center items-start">
                                       <div className="w-[92px]">
                                         {review.my_equipment.main_gut.gut_image.file_path &&
-                                          <img src={`${baseImagePath}${review.my_equipment.main_gut.gut_image.file_path}`} alt="ストリング画像" className="w-[92px] h-[92px] mb-2" />
+                                          <img src={`${review.my_equipment.main_gut.gut_image.file_path}`} alt="ストリング画像" className="w-[92px] h-[92px] mb-2" />
                                         }
                                       </div>
 
@@ -494,7 +494,7 @@ const ReviewList = () => {
                                     <div className="w-[92px] h-[92px] flex flex-col justify-start items-start mb-10">
                                       <div className="w-[92px]">
                                         {review.my_equipment.cross_gut.gut_image.file_path &&
-                                          <img src={`${baseImagePath}${review.my_equipment.cross_gut.gut_image.file_path}`} alt="ストリング画像" className="w-[92px] h-[92px] mb-2" />
+                                          <img src={`${review.my_equipment.cross_gut.gut_image.file_path}`} alt="ストリング画像" className="w-[92px] h-[92px] mb-2" />
                                         }
                                       </div>
 

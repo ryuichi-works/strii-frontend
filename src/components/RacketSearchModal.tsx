@@ -198,8 +198,8 @@ const RacketSearchModal: React.FC<RacketSearchModalProps> = ({
                       <div onClick={() => selectRacket(racket)} className="flex  mb-6 hover:opacity-80 hover:cursor-pointer w-[100%] max-w-[360px] bg-white rounded-lg md:w-[100%] md:max-w-[360px]">
                         <div className="w-[120px] mr-6">
                           {racket.racket_image.file_path
-                            ? <img src={`${baseImagePath}${racket.racket_image.file_path}`} alt="ラケット画像" className="w-[120px] h-[160px]" />
-                            : <img src={`${baseImagePath}images/rackets/defalt_racket_image.png`} alt="ラケット画像" className="w-[120px] h-[160px]" />
+                            ? <img src={`${racket.racket_image.file_path}`} alt="ラケット画像" className="w-[120px] h-[160px]" />
+                            : <img src={`${baseImagePath}images/rackets/default_racket_image.png`} alt="ラケット画像" className="w-[120px] h-[160px]" />
                           }
                         </div>
 

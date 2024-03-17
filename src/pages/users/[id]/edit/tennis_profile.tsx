@@ -326,7 +326,7 @@ const TennisProfileEdit: NextPage = () => {
 
                     <div className="w-[100%] max-w-[120px] h-[160px] bg-faint-green">
                       {racket && racket.racket_image.file_path
-                        ? <img src={`${baseImagePath}${racket.racket_image.file_path}`} alt="ラケット画像" className="w-[120px] h-[160px]" />
+                        ? <img src={`${racket.racket_image.file_path}`} alt="ラケット画像" className="w-[120px] h-[160px]" />
                         : <img src={`${baseImagePath}images/rackets/default_racket_image.png`} alt="ラケット画像" className="w-[120px] h-[160px]" />
                       }
                     </div>
