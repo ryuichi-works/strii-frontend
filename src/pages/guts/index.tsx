@@ -169,8 +169,8 @@ const GutList = () => {
                     <div className="flex justify-center mb-6 hover:opacity-80 hover:cursor-pointer md:w-[100%] md:max-w-[360px]">
                       <div className="w-[120px] mr-6">
                         {gut.gut_image.file_path
-                          ? <img src={`${baseImagePath}${gut.gut_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px]" />
-                          : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} alt="ストリング画像" className="w-[120px] h-[120px]" />
+                          ? <img src={`${gut.gut_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px]" />
+                          : <img src={`${baseImagePath}images/guts/defalt_gut_image.png`} alt="ストリング画像" className="w-[120px] h-[120px]" />
                         }
                       </div>
 
