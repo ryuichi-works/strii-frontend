@@ -407,8 +407,8 @@ const GutReviewEdit: NextPage = () => {
                           <div className="flex md:w-[100%] md:max-w-[360px]">
                             <div className="w-[120px] mr-6">
                               {mainGut && mainGut.gut_image.file_path
-                                ? <img src={`${baseImagePath}${mainGut.gut_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px]" />
-                                : <img src={`${baseImagePath}images/guts/default_gut_image.jpg`} alt="ストリング画像" className="w-[120px] h-[120px]" />
+                                ? <img src={`${mainGut.gut_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px]" />
+                                : <div className="w-[120px] h-[120px] border"></div>
                               }
                             </div>
 
@@ -444,8 +444,8 @@ const GutReviewEdit: NextPage = () => {
                               <div className="flex md:w-[100%] md:max-w-[360px]">
                                 <div className="w-[120px] mr-6">
                                   {crossGut && crossGut.gut_image.file_path
-                                    ? <img src={`${baseImagePath}${crossGut.gut_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px]" />
-                                    : <img src={`${baseImagePath}images/guts/default_gut_image.jpg`} alt="ストリング画像" className="w-[120px] h-[120px]" />
+                                    ? <img src={`${crossGut.gut_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px]" />
+                                    : <div className="w-[120px] h-[120px] border"></div>
                                   }
                                 </div>
 
@@ -564,8 +564,8 @@ const GutReviewEdit: NextPage = () => {
                       <div className="flex  mb-6 md:w-[100%] md:max-w-[360px]">
                         <div className="w-[120px] mr-6">
                           {racket && racket.racket_image.file_path
-                            ? <img src={`${baseImagePath}${racket.racket_image.file_path}`} alt="ラケット画像" className="w-[120px] h-[160px]" />
-                            : <img src={`${baseImagePath}images/rackets/default_racket_image.png`} alt="ラケット画像" className="w-[120px] h-[160px]" />
+                            ? <img src={`${racket.racket_image.file_path}`} alt="ラケット画像" className="w-[120px] h-[160px]" />
+                            : <div className="w-[120px] h-[160px] border"></div>
                           }
                         </div>
 

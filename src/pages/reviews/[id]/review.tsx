@@ -45,7 +45,7 @@ const Review = () => {
                     <div className="w-[120px] mr-[24px] md:w-[140px]">
                       {review?.my_equipment.stringing_way === 'hybrid' && <p className="text-[12px] basis-full md:text-[14px] md:mb-2">メイン</p>}
                       {review?.my_equipment.main_gut.gut_image.file_path &&
-                        <img src={`${baseImagePath}${review.my_equipment.main_gut.gut_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px] md:w-[140px] md:h-[140px]" />
+                        <img src={`${review.my_equipment.main_gut.gut_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px] md:w-[140px] md:h-[140px]" />
                       }
                     </div>
 
@@ -76,7 +76,7 @@ const Review = () => {
                       <div className="w-[120px] mr-[24px] md:w-[140px]">
                         <p className="text-[12px] basis-full md:text-[14px] md:mb-2">クロス</p>
                         {review?.my_equipment.cross_gut.gut_image.file_path &&
-                          <img src={`${baseImagePath}${review.my_equipment.cross_gut.gut_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px] md:w-[140px] md:h-[140px]" />
+                          <img src={`${review.my_equipment.cross_gut.gut_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px] md:w-[140px] md:h-[140px]" />
                         }
                       </div>
 
@@ -101,7 +101,7 @@ const Review = () => {
                 <div className="mb-[32px] w-[360px] md:flex md:justify-center md:basis-full md:w-full">
                   <div className="w-16 mx-auto mb-[10px] md:w-[100px] md:mr-[56px] md:mx-0">
                     {review?.my_equipment.user.file_path
-                      ? <img src={`${baseImagePath}${user.file_path}`} alt="ユーザープロフィール画像" className="w-[64px] h-[64px] rounded-full border mb-2 md:w-[100px] md:h-[100px]" />
+                      ? <img src={`${review?.my_equipment.user.file_path}`} alt="ユーザープロフィール画像" className="w-[64px] h-[64px] rounded-full border mb-2 md:w-[100px] md:h-[100px]" />
                       : <img src={`${baseImagePath}images/users/defalt_user_image.png`} width="64px" height="64px" alt="ユーザープロフィール画像" className="w-[64px] md:w-[80px] h-[64px] md:h-[80px] rounded-full border mb-2" />
                     }
 
