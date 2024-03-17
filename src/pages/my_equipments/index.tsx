@@ -64,7 +64,7 @@ const MyEquipmentList = () => {
                                     <div className="w-[92px] flex flex-col justify-start items-start ">
                                       <div className="w-[92px]">
                                         {myEquipment.main_gut.gut_image.file_path &&
-                                          <img src={`${baseImagePath}${myEquipment.main_gut.gut_image.file_path}`} alt="ストリング画像" className="w-[92px] h-[92px] mb-2" />
+                                          <img src={`${myEquipment.main_gut.gut_image.file_path}`} alt="ストリング画像" className="w-[92px] h-[92px] mb-2" />
                                         }
                                       </div>
 
@@ -83,7 +83,7 @@ const MyEquipmentList = () => {
                                   <div>
                                     <div className="w-[92px] flex flex-col items-center">
                                       {myEquipment.racket.racket_image.file_path &&
-                                        <img src={`${baseImagePath}${myEquipment.racket.racket_image.file_path}`} alt="ラケット画像" className="w-[69px] h-[92px] mb-4" />
+                                        <img src={`${myEquipment.racket.racket_image.file_path}`} alt="ラケット画像" className="w-[69px] h-[92px] mb-4" />
                                       }
                                       <div className="text-center">
                                         <p className="h-[16px] text-[14px] mb-4">{myEquipment.racket.maker.name_ja}</p>
@@ -102,7 +102,7 @@ const MyEquipmentList = () => {
                                     <div className="w-[92px] flex flex-col justify-start items-start ">
                                       <div className="w-[92px]">
                                         {myEquipment.main_gut.gut_image.file_path && 
-                                          <img src={`${baseImagePath}${myEquipment.main_gut.gut_image.file_path}`} alt="ストリング画像" className="w-[92px] h-[92px] mb-2" />
+                                          <img src={`${myEquipment.main_gut.gut_image.file_path}`} alt="ストリング画像" className="w-[92px] h-[92px] mb-2" />
                                         }
                                       </div>
 
@@ -122,7 +122,7 @@ const MyEquipmentList = () => {
                                     <div className="w-[92px] flex flex-col justify-start items-start ">
                                       <div className="w-[92px]">
                                         {myEquipment.cross_gut.gut_image.file_path &&
-                                          <img src={`${baseImagePath}${myEquipment.cross_gut.gut_image.file_path}`} alt="ストリング画像" className="w-[92px] h-[92px] mb-2" />
+                                          <img src={`${myEquipment.cross_gut.gut_image.file_path}`} alt="ストリング画像" className="w-[92px] h-[92px] mb-2" />
                                         }
                                       </div>
 
@@ -141,7 +141,7 @@ const MyEquipmentList = () => {
                                   <div>
                                     <div className="w-[92px] flex flex-col items-center">
                                       {myEquipment.racket.racket_image.file_path &&
-                                        <img src={`${baseImagePath}${myEquipment.racket.racket_image.file_path}`} alt="ラケット画像" className="w-[69px] h-[92px] mb-4" />
+                                        <img src={`${myEquipment.racket.racket_image.file_path}`} alt="ラケット画像" className="w-[69px] h-[92px] mb-4" />
                                       }
 
                                       <div className="text-center">

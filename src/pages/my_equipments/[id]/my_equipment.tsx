@@ -39,7 +39,6 @@ const MyEquipment = () => {
     <>
       <AuthCheck>
         {isAuth && (
-          // <h1>マイ装備詳細</h1>
           <div className="container mb-8 mx-auto">
             <div className=" w-[100%] max-w-[320px] mx-auto md:max-w-[768px]">
               <div className="text-center my-6 md:mb-[32px]">
@@ -64,8 +63,8 @@ const MyEquipment = () => {
                       <div className="md:mr-[24px]">
                         <p className="text-[14px] md:text-[16px]">メイン</p>
                         {myEquipment?.main_gut.gut_image.file_path
-                          ? <img src={`${baseImagePath}${myEquipment.main_gut.gut_image.file_path}`} alt="ユーザープロフィール画像" className="w-[92px] h-[92px] mb-1 md:w-[120px] md:h-[120px] md:mb-0" />
-                          : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} width="64px" height="64px" alt="ユーザープロフィール画像" className="w-[92px] h-[92px] mb-1 md:w-[120px] md:h-[120px] md:mb-0" />
+                          ? <img src={`${myEquipment.main_gut.gut_image.file_path}`} alt="ユーザープロフィール画像" className="w-[92px] h-[92px] mb-1 md:w-[120px] md:h-[120px] md:mb-0" />
+                          : <div className="w-[120px] h-[120px] border"></div>
                         }
                       </div>
 
@@ -96,9 +95,9 @@ const MyEquipment = () => {
                         <div className="ml-[48px] md:ml-0 md:flex">
                           <div className="md:mr-[24px]">
                             <p className="text-[14px] md:text-[16px]">クロス</p>
-                            {myEquipment?.main_gut.gut_image.file_path
-                              ? <img src={`${baseImagePath}${myEquipment.cross_gut.gut_image.file_path}`} alt="ユーザープロフィール画像" className="w-[92px] h-[92px] mb-1 md:w-[120px] md:h-[120px] md:mb-0" />
-                              : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} width="64px" height="64px" alt="ユーザープロフィール画像" className="w-[92px] h-[92px] mb-1 md:w-[120px] md:h-[120px] md:mb-0" />
+                            {myEquipment?.cross_gut.gut_image.file_path
+                              ? <img src={`${myEquipment.cross_gut.gut_image.file_path}`} alt="ユーザープロフィール画像" className="w-[92px] h-[92px] mb-1 md:w-[120px] md:h-[120px] md:mb-0" />
+                              : <div className="w-[120px] h-[120px] border"></div>
                             }
                           </div>
 
@@ -126,8 +125,8 @@ const MyEquipment = () => {
                   <div className="flex justify-center md:justify-start">
                     <div className="mr-[24px]">
                       {myEquipment?.racket.racket_image.file_path
-                        ? <img src={`${baseImagePath}${myEquipment?.racket.racket_image.file_path}`} alt="ラケット画像" className="w-[92px] h-[132px] mb-1 md:w-[120px] md:h-[160px] md:mb-0" />
-                        : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} width="64px" height="64px" alt="ユーザープロフィール画像" className="w-[92px] h-[132px] mb-1 md:w-[120px] md:h-[160px] md:mb-0" />
+                        ? <img src={`${myEquipment?.racket.racket_image.file_path}`} alt="ラケット画像" className="w-[92px] h-[132px] mb-1 md:w-[120px] md:h-[160px] md:mb-0" />
+                        : <div className="w-[120px] h-[160px] border"></div>
                       }
                     </div>
 
