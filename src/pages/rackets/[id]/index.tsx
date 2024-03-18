@@ -59,8 +59,8 @@ const RacketShow = () => {
               <div className="flex md:w-[100%] md:max-w-[400px]">
                 <div className="w-[120px] mr-6 md:w-[160px] md:mr-8">
                   {racket?.racket_image.file_path
-                    ? <img src={`${baseImagePath}${racket.racket_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[160px] md:w-[160px] md:h-[200px]" />
-                    : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} alt="ストリング画像" className="w-[120px] h-[160px] md:w-[160px] md:h-[200px]" />
+                    ? <img src={`${racket.racket_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[160px] md:w-[160px] md:h-[200px]" />
+                    : <img src={`${baseImagePath}images/rackets/default_racket_image.png`} alt="ラケット画像" className="w-[120px] h-[160px]" />
                   }
                 </div>
 
@@ -81,22 +81,18 @@ const RacketShow = () => {
                       <th className="font-normal text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px] md:pl-6">メーカー</th>
                       <th className="font-normal text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px] md:pl-6">ヘッドサイズ</th>
                       <th className="font-normal text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px] md:pl-6">重さ</th>
-                      <th className="font-normal text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px] md:pl-6">長さ</th>
                       <th className="font-normal text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px] md:pl-6">バランス</th>
                       <th className="font-normal text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px] md:pl-6">ストリングパターン</th>
-                      <th className="font-normal text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-y border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px] md:pl-6">フレーム厚</th>
                     </tr>
                   </thead>
 
                   <tbody className="w-[100%] max-w-[320px] md:max-w-[384px]">
                     <tr className="flex flex-col text-left">
                       <td className="text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px]">{racket?.maker.name_ja}</td>
-                      <td className="text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px]">未登録</td>
-                      <td className="text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px]">未登録</td>
-                      <td className="text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px]">未登録</td>
-                      <td className="text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px]">未登録</td>
-                      <td className="text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px]">未登録</td>
-                      <td className="text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-y border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px]">未登録</td>
+                      <td className="text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px]">{racket?.head_size}平方インチ</td>
+                      <td className="text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px]">{racket?.weight ? `${racket?.weight}g` : '未登録' }</td>
+                      <td className="text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px]">{racket?.balance ? `${racket?.balance}mm` : '未登録' }</td>
+                      <td className="text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px]">{racket?.pattern !== '' ? racket?.pattern : '未登録' }</td>
                     </tr>
                   </tbody>
                 </table>
@@ -121,8 +117,8 @@ const RacketShow = () => {
                     <div className="flex  mb-6 hover:opacity-80 hover:cursor-pointer md:w-[100%] md:max-w-[360px]">
                       <div className="w-[120px] mr-6">
                         {otherRacket.racket_image.file_path
-                          ? <img src={`${baseImagePath}${otherRacket.racket_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[160px]" />
-                          : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} alt="ストリング画像" className="w-[120px] h-[160px]" />
+                          ? <img src={`${otherRacket.racket_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[160px]" />
+                          : <img src={`${baseImagePath}images/rackets/default_racket_image.png`} alt="ラケット画像" className="w-[120px] h-[160px]" />
                         }
                       </div>
 

@@ -115,6 +115,14 @@ const ReviewList = () => {
     setCrossGut,
     racket,
     setRacket,
+    inputGutSearchWord,
+    setInputGutSearchWord,
+    inputGutSearchMaker,
+    setInputGutSearchMaker,
+    inputRacketSearchWord,
+    setInputRacketSearchWord,
+    inputRacketSearchMaker,
+    setInputRacketSearchMaker,
 
     experiencePeriod,
     frequency,
@@ -392,13 +400,13 @@ const ReviewList = () => {
                             {/* 単張りのカード */}
                             {review.my_equipment.stringing_way === "single" && (
                               <>
-                                <div className=" flex justify-center mb-8">
+                                <div className=" flex justify-center ">
                                   <div className="mr-10">
                                     <div className="w-[92px] h-[92px] flex justify-center items-center mb-10">
                                       <div className="w-16">
                                         {review.my_equipment.user.file_path
-                                          ? <img src={`${baseImagePath}${user.file_path}`} width="64px" height="64px" alt="ユーザープロフィール画像" className="rounded-full mb-2" />
-                                          : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} width="64px" height="64px" alt="ユーザープロフィール画像" className="rounded-full mb-2" />
+                                          ? <img src={`${review.my_equipment.user.file_path}`} width="64px" height="64px" alt="ユーザープロフィール画像" className="rounded-full mb-2" />
+                                          : <img src={`${baseImagePath}images/users/defalt_user_image.png`} width="64px" height="64px" alt="ユーザープロフィール画像" className="w-[64px] h-[64px] rounded-full border mb-2" />
                                         }
 
                                         <p className="text-[10px] text-center w-full h-[12px] mb-2">{review.my_equipment.user.name}</p>
@@ -417,9 +425,8 @@ const ReviewList = () => {
                                   <div>
                                     <div className="w-[92px] h-full flex flex-col justify-center items-start">
                                       <div className="w-[92px]">
-                                        {review.my_equipment.main_gut.gut_image.file_path
-                                          ? <img src={`${baseImagePath}${review.my_equipment.main_gut.gut_image.file_path}`} alt="ユーザープロフィール画像" className="w-[92px] h-[92px] mb-2" />
-                                          : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} width="64px" height="64px" alt="ユーザープロフィール画像" className="rounded-full mb-2" />
+                                        {review.my_equipment.main_gut.gut_image.file_path &&
+                                          <img src={`${review.my_equipment.main_gut.gut_image.file_path}`} alt="ストリング画像" className="w-[92px] h-[92px] mb-2" />
                                         }
                                       </div>
 
@@ -446,8 +453,8 @@ const ReviewList = () => {
                                     <div className="w-[92px] h-[92px] flex justify-center items-center mb-10">
                                       <div className="w-16">
                                         {review.my_equipment.user.file_path
-                                          ? <img src={`${baseImagePath}${user.file_path}`} width="64px" height="64px" alt="ユーザープロフィール画像" className="rounded-full mb-2" />
-                                          : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} width="64px" height="64px" alt="ユーザープロフィール画像" className="rounded-full mb-2" />
+                                          ? <img src={`${review.my_equipment.user.file_path}`} width="64px" height="64px" alt="ユーザープロフィール画像" className="rounded-full mb-2" />
+                                          : <img src={`${baseImagePath}images/users/defalt_user_image.png`} width="64px" height="64px" alt="ユーザープロフィール画像" className="w-[64px] h-[64px] rounded-full border mb-2" />
                                         }
 
                                         <p className="text-[10px] text-center w-full h-[12px] mb-2">{review.my_equipment.user.name}</p>
@@ -466,9 +473,8 @@ const ReviewList = () => {
                                   <div className="mr-4">
                                     <div className="w-[92px] flex flex-col justify-center items-start">
                                       <div className="w-[92px]">
-                                        {review.my_equipment.main_gut.gut_image.file_path
-                                          ? <img src={`${baseImagePath}${review.my_equipment.main_gut.gut_image.file_path}`} alt="ユーザープロフィール画像" className="w-[92px] h-[92px] mb-2" />
-                                          : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} width="64px" height="64px" alt="ユーザープロフィール画像" className="rounded-full mb-2" />
+                                        {review.my_equipment.main_gut.gut_image.file_path &&
+                                          <img src={`${review.my_equipment.main_gut.gut_image.file_path}`} alt="ストリング画像" className="w-[92px] h-[92px] mb-2" />
                                         }
                                       </div>
 
@@ -487,15 +493,14 @@ const ReviewList = () => {
                                   <div>
                                     <div className="w-[92px] h-[92px] flex flex-col justify-start items-start mb-10">
                                       <div className="w-[92px]">
-                                        {review.my_equipment.cross_gut.gut_image.file_path
-                                          ? <img src={`${baseImagePath}${review.my_equipment.cross_gut.gut_image.file_path}`} alt="ストリング画像" className="w-[92px] h-[92px] mb-2" />
-                                          : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} width="64px" height="64px" alt="ユーザープロフィール画像" className="rounded-full mb-2" />
+                                        {review.my_equipment.cross_gut.gut_image.file_path &&
+                                          <img src={`${review.my_equipment.cross_gut.gut_image.file_path}`} alt="ストリング画像" className="w-[92px] h-[92px] mb-2" />
                                         }
                                       </div>
 
                                       <div>
                                         <p className="h-[10px] text-[10px] mr-auto mb-2">{review.my_equipment.cross_gut.maker.name_ja}</p>
-                                        <p className="h-8 text-[14px] mr-auto">{review.my_equipment.cross_gut.name_ja}</p>
+                                        <p className="text-[14px] mr-auto">{review.my_equipment.cross_gut.name_ja}</p>
                                       </div>
 
                                       <div>
@@ -508,7 +513,7 @@ const ReviewList = () => {
                               </>
                             )}
 
-                            <hr className="w-[320px] border-sub-green mb-2 mx-auto" />
+                            <hr className="w-[320px] border-sub-green mt-auto mb-2 mx-auto" />
                             <div className="flex justify-end mr-6">
                               <span className="text-[10px] pr-1">自分に合っているか</span>
 
@@ -823,6 +828,10 @@ const ReviewList = () => {
                 searchedGuts={searchedGuts}
                 setSearchedGuts={setSearchedGuts}
                 zIndexClassName="z-50"
+                inputSearchWord={inputGutSearchWord}
+                setInputSearchWord={setInputGutSearchWord}
+                inputSearchMaker={inputGutSearchMaker}
+                setInputSearchMaker={setInputGutSearchMaker}
               />
 
               <RacketSearchModal
@@ -835,6 +844,10 @@ const ReviewList = () => {
                 searchedRackets={searchedRackets}
                 setSearchedRackets={setSearchedRackets}
                 zIndexClassName="z-50"
+                inputSearchWord={inputRacketSearchWord}
+                setInputSearchWord={setInputRacketSearchWord}
+                inputSearchMaker={inputRacketSearchMaker}
+                setInputSearchMaker={setInputRacketSearchMaker}
               />
 
             </div>

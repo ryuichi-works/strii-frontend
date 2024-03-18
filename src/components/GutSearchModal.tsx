@@ -28,6 +28,15 @@ type GutSearchModalProps = {
   makers?: Maker[],
   searchedGuts?: Gut[],
   zIndexClassName?: string,
+
+  gutsPaginator?: Paginator<Gut> | undefined,
+  setGutsPaginator?: React.Dispatch<React.SetStateAction<Paginator<Gut> | undefined>>,
+
+  inputSearchWord: string,
+  setInputSearchWord: React.Dispatch<React.SetStateAction<string>>,
+
+  inputSearchMaker: number | undefined,
+  setInputSearchMaker: React.Dispatch<React.SetStateAction<number | undefined>>,
 }
 
 const GutSearchModal: React.FC<GutSearchModalProps> = ({
@@ -40,12 +49,16 @@ const GutSearchModal: React.FC<GutSearchModalProps> = ({
   searchedGuts,
   setSearchedGuts,
   zIndexClassName,
-}) => {
-  const [gutsPaginator, setGutsPaginator] = useState<Paginator<Gut>>();
 
-  // 検索input関連state
-  const [inputSearchWord, setInputSearchWord] = useState<string>('');
-  const [inputSearchMaker, setInputSearchMaker] = useState<number | null>();
+  setGutsPaginator,
+
+  inputSearchWord,
+  setInputSearchWord,
+  inputSearchMaker,
+  setInputSearchMaker,
+}) => {
+  // モーダル内ページネーション用
+  const [gutsModalPaginator, setGutsModalPaginator] = useState<Paginator<Gut>>();
 
   const [modalVisibilityClassName, setModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
 
@@ -60,7 +73,7 @@ const GutSearchModal: React.FC<GutSearchModalProps> = ({
 
   const onChangeInputSearchMaker = (e: React.ChangeEvent<HTMLSelectElement>) => {
     if (e.target.value === '未選択') {
-      setInputSearchMaker(null);
+      setInputSearchMaker(undefined);
       return
     };
 
@@ -70,7 +83,11 @@ const GutSearchModal: React.FC<GutSearchModalProps> = ({
   //ページネーションを考慮した検索後gut一覧データの取得関数
   const getSearchedGutsList = async (url: string = `api/guts/search?several_words=${inputSearchWord}&maker=${inputSearchMaker ? inputSearchMaker : ''}`) => {
     await axios.get(url).then((res) => {
-      setGutsPaginator(res.data);
+      setGutsModalPaginator(res.data);
+
+      if (setGutsPaginator) {
+        setGutsPaginator(res.data);
+      }
 
       setSearchedGuts(res.data.data);
     })
@@ -96,7 +113,10 @@ const GutSearchModal: React.FC<GutSearchModalProps> = ({
   const closeModal = () => {
     setModalVisibility(false);
     setModalVisibilityClassName('opacity-0 scale-0')
-    closeModalHandler();
+
+    if(closeModalHandler) {
+      closeModalHandler();
+    }
   }
 
   const selectGut = (gut: Gut) => {
@@ -117,13 +137,25 @@ const GutSearchModal: React.FC<GutSearchModalProps> = ({
           <form action="" onSubmit={searchGuts} className="mb-[24px] md:flex md:mb-[40px]">
             <div className="mb-6 md:mb-0 md:mr-[16px]">
               <label htmlFor="several_words" className="block mb-1 text-[14px] md:text-[16px] md:mb-2">ストリング　検索ワード</label>
-              <input type="text" name="several_words" onChange={(e) => setInputSearchWord(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[300px] h-10 p-2 focus:outline-sub-green" />
+              <input
+                type="text"
+                name="several_words"
+                onChange={(e) => setInputSearchWord(e.target.value)}
+                value={inputSearchWord ? inputSearchWord : ''}
+                className="border border-gray-300 rounded w-80 md:w-[300px] h-10 p-2 focus:outline-sub-green"
+              />
             </div>
 
             <div className="mb-8 md:mb-0 md:mr-[24px]">
               <label htmlFor="maker" className="block text-[14px] mb-1 md:text-[16px] md:mb-2">メーカー</label>
 
-              <select name="maker" id="maker" onChange={(e) => { onChangeInputSearchMaker(e) }} className="border border-gray-300 rounded w-80 md:w-[250px] h-10 p-2 focus:outline-sub-green">
+              <select
+                name="maker" 
+                id="maker"
+                onChange={(e) => { onChangeInputSearchMaker(e) }}
+                value={inputSearchMaker ? inputSearchMaker : '未選択'}
+                className="border border-gray-300 rounded w-80 md:w-[250px] h-10 p-2 focus:outline-sub-green"
+              >
                 <option value="未選択" selected>未選択</option>
                 {makers?.map((maker) => (<option key={maker.id} value={maker.id}>{maker.name_ja}</option>))}
               </select>
@@ -146,8 +178,8 @@ const GutSearchModal: React.FC<GutSearchModalProps> = ({
                       <div onClick={() => selectGut(gut)} className="flex  mb-6 hover:opacity-80 hover:cursor-pointer w-[100%] max-w-[360px] bg-white rounded-lg md:w-[100%] md:max-w-[360px]">
                         <div className="w-[120px] mr-6">
                           {gut.gut_image.file_path
-                            ? <img src={`${baseImagePath}${gut.gut_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px]" />
-                            : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} alt="ストリング画像" className="w-[120px] h-[120px]" />
+                            ? <img src={`${gut.gut_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px]" />
+                            : <img src={`${baseImagePath}images/guts/default_gut_image.png`} alt="ストリング画像" className="w-[120px] h-[120px]" />
                           }
                         </div>
 
@@ -163,7 +195,7 @@ const GutSearchModal: React.FC<GutSearchModalProps> = ({
                 </div>
 
                 <Pagination
-                  paginator={gutsPaginator}
+                  paginator={gutsModalPaginator}
                   paginate={getSearchedGutsList}
                   className="mt-[32px] mb-[32px] md:mt-[48px] md:mb-[48px]"
                 />

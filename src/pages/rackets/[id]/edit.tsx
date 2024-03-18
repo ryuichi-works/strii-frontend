@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import type { Maker, Racket } from "@/pages/users/[id]/profile";
 import type { RacketImage } from "@/pages/users/[id]/profile";
+import type { RacketSeries } from "@/types/global";
 
 import axios from "@/lib/axios";
 import Cookies from "js-cookie";
@@ -18,37 +19,40 @@ const RacketEdit: NextPage = () => {
 
   const id = router.query.id;
 
+  const { admin, isAuthAdmin, } = useContext(AuthContext);
+
+  // 表示に関連するstate
   const [currentRacket, setCurrentRacket] = useState<Racket>();
-
-  //gut登録用のデータstate
-  const [inputNameJa, setInputNameJa] = useState<string>('');
-  
-  const [inputNameEn, setInputNameEn] = useState<string>('');
-
-  const [racketMakerId, setRacketMakerId] = useState<number>();
-
-  const [needPostingImage, setNeedPostingImage] = useState<boolean>();
-
-  const [racketImageId, setRacketImageId] = useState<number>();
-
+  const [racketSeries, setRacketSeries] = useState<RacketSeries[]>();
   const [makers, setMakers] = useState<Maker[]>();
 
+  //racket登録用のデータstate
+  const [inputNameJa, setInputNameJa] = useState<string>('');
+  const [inputNameEn, setInputNameEn] = useState<string>('');
+  const [racketMakerId, setRacketMakerId] = useState<number | null>();
+  const [needPostingImage, setNeedPostingImage] = useState<boolean>();
+  const [racketImageId, setRacketImageId] = useState<number>();
+  const [racketSeriresId, setRacketSeriresId] = useState<number | null>(null);
+  const [inputHeadSize, setInputHeadSize] = useState<number>();
+  const [mainGutPattern, setMainGutPattern] = useState<string>();
+  const [crossGutPattern, setCrossGutPattern] = useState<string>();
+  const [racketWeight, setRacketWeight] = useState<number | null>();
+  const [balance, setBalance] = useState<number | null>();
   const [selectedRacketImage, setSelectedRacketImage] = useState<RacketImage>();
 
+  //ラケット画像検索関連のstate
+  const [inputSearchWord, setInputSearchWord] = useState<string>('');
+  const [inputSearchMaker, setInputSearchMaker] = useState<number | null>();
+  const [searchedRacketImages, setSearchedRacketImages] = useState<RacketImage[]>();
+
+  // イメージ検索モーダル内のページネーター
   const [racketImagesPaginator, setRacketImagesPaginator] = useState<Paginator<RacketImage>>();
 
-
-  //検索関連のstate
-  const [inputSearchWord, setInputSearchWord] = useState<string>('');
-
-  const [inputSearchMaker, setInputSearchMaker] = useState<number | null>();
-
-  const [searchedRacketImages, setSearchedRacketImages] = useState<RacketImage[]>();
+  // makerごとにfilterをかけたラケットシリーズ
+  const [filteredRacketSeries, setFilteredRacketSeries] = useState<RacketSeries[]>()
 
   //モーダルの開閉に関するstate
   const [modalVisibilityClassName, setModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
-
-  const { admin, isAuthAdmin, } = useContext(AuthContext);
 
   const baseImagePath = process.env.NEXT_PUBLIC_BACKEND_URL + '/storage/'
 
@@ -69,20 +73,49 @@ const RacketEdit: NextPage = () => {
         setRacketMakerId(racket.maker_id);
         setNeedPostingImage(!!racket.need_posting_image);
         setRacketImageId(racket.image_id);
+        setRacketSeriresId(racket.series_id);
+        setInputHeadSize(racket.head_size);
+
+        // ストリングパターンをバラす（例: '16/19' => '16', '19'）
+        const splitedPatturn: string[] = racket.pattern.split('/');
+
+        setMainGutPattern(splitedPatturn[0]);
+        setCrossGutPattern(splitedPatturn[1]);
+        if (racket.weight) setRacketWeight(racket.weight);
+        if (racket.balance) setBalance(racket.balance);
+      })
+    }
+
+    const getRacketSeries = async () => {
+      await axios.get('api/racket_series').then(res => {
+        setRacketSeries(res.data);
       })
     }
 
     getMakerList();
+    getRacketSeries();
     getCurrentRacket();
   }, [])
 
+  // ラケットシリーズの絞り込み（edit画面初期表示のため）
+  useEffect(() => {
+    if (currentRacket) {
+      filterRacketSeriesByMaker(currentRacket.maker_id, racketSeries)
+      console.log('確認')
+    }
+  }, [currentRacket])
+
   const onChangeMaker = (e: React.ChangeEvent<HTMLSelectElement>) => {
     if (e.target.value === '未選択') {
-      setRacketMakerId(undefined);
+      setRacketSeriresId(null)
+      setRacketMakerId(null);
+
+      setFilteredRacketSeries(undefined)
       return
     };
 
     setRacketMakerId(Number(e.target.value));
+    filterRacketSeriesByMaker(Number(e.target.value), racketSeries);
   }
 
   const onChangeInputSearchMaker = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -92,6 +125,50 @@ const RacketEdit: NextPage = () => {
     };
 
     setInputSearchMaker(Number(e.target.value));
+  }
+
+  const onChangeRacketSeries = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (e.target.value === '未選択') {
+      setRacketSeriresId(null);
+      return
+    };
+
+    setRacketSeriresId(Number(e.target.value));
+  }
+
+  const onChangeHeadSize = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputHeadSize(Number(e.target.value));
+  }
+
+  const onChangeGutPattern = (e: React.ChangeEvent<HTMLInputElement>, type: 'main' | 'cross') => {
+    switch (type) {
+      case 'main':
+        setMainGutPattern(e.target.value);
+        break;
+      case 'cross':
+        setCrossGutPattern(e.target.value);
+        break;
+    }
+  }
+
+  const onChangeRacketWeight = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setRacketWeight(Number(e.target.value));
+  }
+
+  const onChangeBalance = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setBalance(Number(e.target.value));
+  }
+
+  // makerごとのracketシリーズにフィルタリング
+  const filterRacketSeriesByMaker = (makerId: number, racketSeries?: RacketSeries[]) => {
+
+    const filteredSeries = racketSeries?.filter(series => {
+      return series.maker_id === makerId
+    })
+
+    if (filteredSeries) {
+      setFilteredRacketSeries(filteredSeries);
+    }
   }
 
   //モーダルの開閉
@@ -109,9 +186,25 @@ const RacketEdit: NextPage = () => {
     name_en: string[],
     maker_id: string[],
     image_id: string[],
+    series_id: string[],
+    head_size: string[],
+    pattern: string[],
+    weight: string[],
+    balance: string[],
+
   }
 
-  const initialErrorVals = { name_ja: [], name_en: [], maker_id: [], image_id: [] };
+  const initialErrorVals = {
+    name_ja: [],
+    name_en: [],
+    maker_id: [],
+    image_id: [],
+    series_id: [],
+    head_size: [],
+    pattern: [],
+    weight: [],
+    balance: [],
+  };
 
   const [errors, setErrors] = useState<Errors>(initialErrorVals);
 
@@ -137,19 +230,20 @@ const RacketEdit: NextPage = () => {
     }
   }
 
-
+  // 画像検索モーダルによる画像変更
   const selectImage = (racketImage: RacketImage) => {
     setSelectedRacketImage(racketImage);
     setRacketImageId(racketImage.id);
     closeModal();
   }
 
-  //gut登録処理関連
+  //racket更新処理関連
   const csrf = async () => await axios.get('/sanctum/csrf-cookie');
 
   const updateRacket = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    // 更新用データ
     const udpatedData = {
       _method: 'PUT',
       name_ja: inputNameJa,
@@ -157,6 +251,11 @@ const RacketEdit: NextPage = () => {
       maker_id: racketMakerId,
       image_id: racketImageId,
       need_posting_image: needPostingImage,
+      series_id: racketSeriresId ? racketSeriresId : null,
+      head_size: inputHeadSize,
+      pattern: (mainGutPattern && crossGutPattern) ? `${mainGutPattern}/${crossGutPattern}` : '',
+      weight: racketWeight ? racketWeight : null,
+      balance: balance ? balance : null,
     }
 
     await csrf();
@@ -192,6 +291,7 @@ const RacketEdit: NextPage = () => {
 
               <div className="w-[100%] max-w-[320px] md:max-w-[380px] mx-auto flex flex-col md:justify-center">
                 <form action="" onSubmit={(e) => updateRacket(e)}>
+                  {/* カナ名入力 */}
                   <div className="mb-6">
                     <label htmlFor="name_ja" className="block mb-1 text-[14px] md:text-[16px] md:mb-2">ラケット名(カナ)</label>
                     <input type="text" name="name_ja" onChange={(e) => setInputNameJa(e.target.value)} defaultValue={currentRacket?.name_ja} className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green" />
@@ -200,6 +300,7 @@ const RacketEdit: NextPage = () => {
                     }
                   </div>
 
+                  {/* アルファベット名入力 */}
                   <div className="mb-6">
                     <label htmlFor="name_en" className="block mb-1 text-[14px] md:text-[16px] md:mb-2">ラケット名(アルファベット)</label>
                     <input type="text" name="name_en" onChange={(e) => setInputNameEn(e.target.value)} defaultValue={currentRacket?.name_en} className="border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green" />
@@ -208,10 +309,10 @@ const RacketEdit: NextPage = () => {
                     }
                   </div>
 
+                  {/* メーカー入力 */}
                   <div className=" mb-8">
                     <label htmlFor="maker" className="block text-[14px] md:text-[16px]">メーカー</label>
-
-                    <select name="maker" id="maker" onChange={(e) => { onChangeMaker(e) }} value={racketMakerId} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
+                    <select name="maker" id="maker" onChange={(e) => { onChangeMaker(e) }} value={racketMakerId ? racketMakerId : '未選択'} className=" border border-gray-300 rounded w-80 md:w-[380px] h-10 p-2 focus:outline-sub-green">
                       <option value="未選択" selected>未選択</option>
                       {makers?.map((maker) => (<option key={maker.id} value={maker.id}>{maker.name_ja}</option>))}
                     </select>
@@ -221,9 +322,116 @@ const RacketEdit: NextPage = () => {
                     }
                   </div>
 
+                  {/* ラケットシリーズ入力 */}
+                  <div className=" mb-8">
+                    <label htmlFor="series" className="block text-[14px] md:text-[16px]">シリーズ</label>
+                    <select
+                      name="series"
+                      id="series"
+                      onChange={(e) => { onChangeRacketSeries(e) }}
+                      value={racketSeriresId ? racketSeriresId.toString() : '未選択'}
+                      className={`border border-gray-300 rounded w-80 md:w-[360px] h-10 p-2 focus:outline-sub-green ${errors.series_id.length !== 0 ? '!border-red-300 focus:!outline-red-500' : null}`}
+                    >
+                      <option value="未選択" selected>未選択</option>
+                      {filteredRacketSeries?.map((series) => (<option key={series.id} value={series.id}>{series.name_ja}</option>))}
+                    </select>
+
+                    {errors.series_id.length !== 0 &&
+                      errors.series_id.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                    }
+                  </div>
+
+                  {/* ヘッドサイズ入力 */}
+                  <div className="mb-6">
+                    <label htmlFor="head_size" className="block text-[14px] md:text-[16px]">ヘッドサイズ</label>
+                    <input
+                      type="number"
+                      name="head_size"
+                      onChange={onChangeHeadSize}
+                      min="77"
+                      max="150"
+                      defaultValue={inputHeadSize}
+                      className={`border border-gray-300 rounded w-40 h-10 p-2 focus:outline-sub-green ${errors.head_size.length !== 0 ? '!border-red-300 focus:!outline-red-500' : null}`}
+                    />
+                    <span className="ml-4 text-[14px] md:text-[16px]">平方インチ</span>
+
+                    {errors.head_size.length !== 0 &&
+                      errors.head_size.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                    }
+                  </div>
+
+                  {/* ストリングパターン入力 */}
+                  <div className="mb-6">
+                    <label htmlFor="gut_pattern" className="block text-[14px] md:text-[16px]">
+                      ストリングパターン
+                      <span className="text-[12px] md:text-[14px]">（メイン / クロス）</span>
+                    </label>
+                    <input
+                      type="number"
+                      name="main_pattern"
+                      onChange={(e) => onChangeGutPattern(e, 'main')}
+                      min="11"
+                      max="24"
+                      defaultValue={mainGutPattern}
+                      className={`text-center border border-gray-300 rounded w-14 h-10 p-2 focus:outline-sub-green`}
+                    />
+                    <span className="mx-2 text-[14px] md:text-[16px]">/</span>
+                    <input
+                      type="number"
+                      name="cross_pattern"
+                      onChange={(e) => onChangeGutPattern(e, 'cross')}
+                      min="11"
+                      max="24"
+                      defaultValue={crossGutPattern}
+                      className={`text-center border border-gray-300 rounded w-14 h-10 p-2 focus:outline-sub-green ${errors.pattern.length !== 0 ? '!border-red-300 focus:!outline-red-500' : null}`}
+                    />
+
+                    {errors.pattern.length !== 0 &&
+                      errors.pattern.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                    }
+                  </div>
+
+                  {/* ラケット重量入力 */}
+                  <div className="mb-6">
+                    <label htmlFor="racket_weight" className="block text-[14px] md:text-[16px]">重さ</label>
+                    <input
+                      type="number"
+                      name="racket_weight"
+                      onChange={onChangeRacketWeight}
+                      min="0"
+                      max="500"
+                      defaultValue={racketWeight ? racketWeight : ''}
+                      className={`border border-gray-300 rounded w-40 h-10 p-2 focus:outline-sub-green ${errors.weight.length !== 0 ? '!border-red-300 focus:!outline-red-500' : null}`}
+                    />
+                    <span className="ml-4 md:text-[16px]">g</span>
+
+                    {errors.weight.length !== 0 &&
+                      errors.weight.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                    }
+                  </div>
+
+                  {/* バランスポイント入力 */}
+                  <div className="mb-6">
+                    <label htmlFor="balance" className="block text-[14px] md:text-[16px]">バランスポイント</label>
+                    <input
+                      type="number"
+                      name="balance"
+                      onChange={onChangeBalance}
+                      min="0"
+                      max="400"
+                      defaultValue={balance ? balance : undefined}
+                      className={`border border-gray-300 rounded w-40 h-10 p-2 focus:outline-sub-green ${errors.balance.length !== 0 ? '!border-red-300 focus:!outline-red-500' : null}`}
+                    />
+                    <span className="ml-4 md:text-[16px]">mm</span>
+
+                    {errors.balance.length !== 0 &&
+                      errors.balance.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                    }
+                  </div>
+
                   <div className="mb-6">
                     <label htmlFor="need_posting_image" className="text-[14px] mr-1 md:text-[16px]">画像提供受付</label>
-                    <input type="checkbox" name="need_posting_image" id="need_posting_image" checked={needPostingImage} onChange={(e) => setNeedPostingImage(e.target.checked)}  className="align-middle"/>
+                    <input type="checkbox" name="need_posting_image" id="need_posting_image" checked={needPostingImage} onChange={(e) => setNeedPostingImage(e.target.checked)} className="align-middle" />
                   </div>
 
                   {/* 画像選択 */}
@@ -238,8 +446,8 @@ const RacketEdit: NextPage = () => {
                         </div>
 
                         <div className="w-[100%] max-w-[200px] h-[160px] flex justify-center md:justify-end">
-                          {selectedRacketImage && <img src={`${baseImagePath}${selectedRacketImage?.file_path}`} alt="" className="w-[100%] max-w-[120px] h-[160px] border" />}
-                          { (currentRacket?.racket_image && !selectedRacketImage) && <img src={`${baseImagePath}${currentRacket?.racket_image.file_path}`} alt="" className="w-[100%] max-w-[120px] h-[160px] border " /> }
+                          {selectedRacketImage && <img src={`${selectedRacketImage?.file_path}`} alt="" className="w-[100%] max-w-[120px] h-[160px] border" />}
+                          {(currentRacket?.racket_image && !selectedRacketImage) && <img src={`${currentRacket?.racket_image.file_path}`} alt="" className="w-[100%] max-w-[120px] h-[160px] border " />}
                         </div>
                       </div>
                     </div>
@@ -287,7 +495,7 @@ const RacketEdit: NextPage = () => {
                           {/* ガット画像情報カード */}
                           <div onClick={() => selectImage(racketImage)} className="bg-white p-2 rounded-lg w-[100%] max-w-[136px] hover:opacity-80 mb-6 hover:cursor-pointer md:[&:not(:last-child)]:mr-[24px]">
                             <div className="w-[120px] mb-2">
-                              {racketImage.file_path && <img src={`${baseImagePath}${racketImage.file_path}`} alt="ストリング画像" className="w-[120px] h-[160px]" />}
+                              {racketImage.file_path && <img src={`${racketImage.file_path}`} alt="ストリング画像" className="w-[120px] h-[160px]" />}
                             </div>
 
                             <p className="text-[14px] mb-1 md:text-[16px]">{racketImage.maker.name_ja}</p>

@@ -36,6 +36,15 @@ export type RacketImage = {
   maker: Maker
 }
 
+export type RacketSeries = {
+  "id": number,
+  "name_ja": string,
+  "name_en": string,
+  "maker_id": number,
+  "created_at": string,
+  "updated_at": string
+}
+
 export type Racket = {
   id: number,
   name_ja: string,
@@ -45,8 +54,16 @@ export type Racket = {
   need_posting_image: number,
   created_at: string,
   updated_at: string,
+  posting_user_id: number | null,
+  series_id: number | null,
+  head_size: number,
+  pattern: string,
+  weight: number | null,
+  balance: number | null,
   maker: Maker,
-  racket_image: RacketImage
+  racket_image: RacketImage,
+  user: User,
+  series: RacketSeries,
 }
 
 export type TennisProfile = {
@@ -95,7 +112,6 @@ const UserProfile: NextPage = () => {
       <AuthCheck>
         {isAuth && (
           <>
-            {/* <h1>プロフィールページ</h1> */}
             <div className="container mx-auto">
               <div className="w-80 mt-6  mx-auto flex flex-col md:flex-row md:justify-center md:mt-[48px] md:w-[704px]">
                 <div className="w-[320px] md:mr-[32px]">
@@ -103,10 +119,10 @@ const UserProfile: NextPage = () => {
                   <hr className=" border-sub-green mb-6" />
 
                   <div className="w-16 mx-auto mb-4">
-                    <div className="w-[64px] h-[64px] rounded-full overflow-hidden mb-2">
+                    <div className="w-[64px] h-[64px] rounded-full overflow-hidden mb-2 border">
                       {user.file_path
-                        ? <img src={`${baseImagePath}${user.file_path}`} width="64px" height="64px" alt="ユーザープロフィール画像" className="w-[64px] md:w-[80px] h-[64px] md:h-[80px]" />
-                        : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} width="64px" height="64px" alt="ユーザープロフィール画像" className="" />
+                        ? <img src={`${user.file_path}`} width="64px" height="64px" alt="ユーザープロフィール画像" className="w-[64px] md:w-[80px] h-[64px] md:h-[80px]" />
+                        : <img src={`${baseImagePath}images/users/defalt_user_image.png`} width="64px" height="64px" alt="ユーザープロフィール画像" className="" />
                       }
                     </div>
                     <div className="w-8 h-1 bg-sub-green mx-auto"></div>
@@ -134,7 +150,7 @@ const UserProfile: NextPage = () => {
 
                     <div className="w-28 h-40 bg-faint-green">
                       { tennisProfile?.racket?.racket_image.file_path
-                        ? <img src={`${baseImagePath}${tennisProfile.racket.racket_image.file_path}`} alt="ラケット画像" className="w-[120px] h-[160px]" />
+                        ? <img src={`${tennisProfile.racket.racket_image.file_path}`} alt="ラケット画像" className="w-[120px] h-[160px]" />
                         : <img src={`${baseImagePath}images/rackets/default_racket_image.png`} alt="ラケット画像" className="w-[120px] h-[160px]" />
                       }
                     </div>

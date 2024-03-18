@@ -56,11 +56,11 @@ const Gut = () => {
               {/* ガットセクション */}
               <div className="mb-[64px]">
                 <div className="w-[100%] max-w-[320px] mx-auto mb-8 md:max-w-[400px] md:mb-[64px]">
-                  <div className="flex hover:opacity-80 hover:cursor-pointer">
+                  <div className="flex justify-center hover:opacity-80 hover:cursor-pointer">
                     <div className="w-[120px] mr-6 md:w-[160px] md:mr-8">
                       {gut?.gut_image.file_path
-                        ? <img src={`${baseImagePath}${gut.gut_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px] md:w-[160px] md:h-[160px]" />
-                        : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} alt="ストリング画像" className="w-[120px] h-[120px] md:w-[160px] md:h-[160px]" />
+                        ? <img src={`${gut.gut_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px] md:w-[160px] md:h-[160px]" />
+                        : <img src={`${baseImagePath}images/guts/default_gut_image.png`} alt="ストリング画像" className="w-[120px] h-[120px] md:w-[160px] md:h-[160px]" />
                       }
                     </div>
 
@@ -112,11 +112,11 @@ const Gut = () => {
                   {/* ガット */}
                   {otherGuts && otherGuts.map(otherGut => (
                     <Link href={`/guts/${otherGut.id}`} key={otherGut.id} onClick={() => setId(`${otherGut.id}`)} className="block hover:opacity-80 hover:cursor-pointer md:w-[100%] md:max-w-[360px]">
-                      <div className="flex  mb-6 hover:opacity-80 hover:cursor-pointer md:w-[100%] md:max-w-[360px]">
+                      <div className="flex justify-center mb-6 hover:opacity-80 hover:cursor-pointer md:w-[100%] md:max-w-[360px]">
                         <div className="w-[120px] mr-6">
                           {otherGut.gut_image.file_path
-                            ? <img src={`${baseImagePath}${otherGut.gut_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px]" />
-                            : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} alt="ストリング画像" className="w-[120px] h-[120px]" />
+                            ? <img src={`${otherGut.gut_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px]" />
+                            : <img src={`${baseImagePath}images/guts/default_gut_image.png`} alt="ストリング画像" className="w-[120px] h-[120px]" />
                           }
                         </div>
 

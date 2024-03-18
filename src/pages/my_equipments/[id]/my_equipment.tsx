@@ -39,7 +39,6 @@ const MyEquipment = () => {
     <>
       <AuthCheck>
         {isAuth && (
-          // <h1>マイ装備詳細</h1>
           <div className="container mb-8 mx-auto">
             <div className=" w-[100%] max-w-[320px] mx-auto md:max-w-[768px]">
               <div className="text-center my-6 md:mb-[32px]">
@@ -48,7 +47,7 @@ const MyEquipment = () => {
 
               <div className="md:flex md:flex-col md:max-h-[700px] md:flex-wrap">
                 {/* ガットセクション */}
-                <div className="mb-8 md:w-[100%] md:max-w-[360px]">
+                <div className="flex flex-col items-center mb-8 md:w-[100%] md:max-w-[360px]">
                   <div className="w-[100%] max-w-[300px] mb-4 md:max-w-[360px]">
                     {myEquipment?.stringing_way === 'hybrid'
                       ? <SubHeading text='ストリング（ハイブリッド張り）' className="text-[16px] w-[100%] max-w-[300px] ml-[8px] mb-1 md:text-[18px] md:mb-2" />
@@ -64,8 +63,8 @@ const MyEquipment = () => {
                       <div className="md:mr-[24px]">
                         <p className="text-[14px] md:text-[16px]">メイン</p>
                         {myEquipment?.main_gut.gut_image.file_path
-                          ? <img src={`${baseImagePath}${myEquipment.main_gut.gut_image.file_path}`} alt="ユーザープロフィール画像" className="w-[92px] h-[92px] mb-1 md:w-[120px] md:h-[120px] md:mb-0" />
-                          : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} width="64px" height="64px" alt="ユーザープロフィール画像" className="w-[92px] h-[92px] mb-1 md:w-[120px] md:h-[120px] md:mb-0" />
+                          ? <img src={`${myEquipment.main_gut.gut_image.file_path}`} alt="ユーザープロフィール画像" className="w-[92px] h-[92px] mb-1 md:w-[120px] md:h-[120px] md:mb-0" />
+                          : <div className="w-[120px] h-[120px] border"></div>
                         }
                       </div>
 
@@ -96,9 +95,9 @@ const MyEquipment = () => {
                         <div className="ml-[48px] md:ml-0 md:flex">
                           <div className="md:mr-[24px]">
                             <p className="text-[14px] md:text-[16px]">クロス</p>
-                            {myEquipment?.main_gut.gut_image.file_path
-                              ? <img src={`${baseImagePath}${myEquipment.cross_gut.gut_image.file_path}`} alt="ユーザープロフィール画像" className="w-[92px] h-[92px] mb-1 md:w-[120px] md:h-[120px] md:mb-0" />
-                              : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} width="64px" height="64px" alt="ユーザープロフィール画像" className="w-[92px] h-[92px] mb-1 md:w-[120px] md:h-[120px] md:mb-0" />
+                            {myEquipment?.cross_gut.gut_image.file_path
+                              ? <img src={`${myEquipment.cross_gut.gut_image.file_path}`} alt="ユーザープロフィール画像" className="w-[92px] h-[92px] mb-1 md:w-[120px] md:h-[120px] md:mb-0" />
+                              : <div className="w-[120px] h-[120px] border"></div>
                             }
                           </div>
 
@@ -116,7 +115,7 @@ const MyEquipment = () => {
                 </div>
 
                 {/* ラケットセクション */}
-                <div className="mb-8 md:w-[100%] md:max-w-[360px]">
+                <div className="flex flex-col items-center mb-8 md:w-[100%] md:max-w-[360px]">
                   <div className="w-[100%] max-w-[300px] mb-4 md:max-w-[360px]">
                     <SubHeading text='ラケット' className="text-[16px] ml-[8px] mb-1 md:text-[18px] md:mb-2" />
                     <TextUnderBar className="w-[100%] max-w-[300px] md:max-w-[360px]" />
@@ -126,8 +125,8 @@ const MyEquipment = () => {
                   <div className="flex justify-center md:justify-start">
                     <div className="mr-[24px]">
                       {myEquipment?.racket.racket_image.file_path
-                        ? <img src={`${baseImagePath}${myEquipment?.racket.racket_image.file_path}`} alt="ラケット画像" className="w-[92px] h-[132px] mb-1 md:w-[120px] md:h-[160px] md:mb-0" />
-                        : <img src={`${baseImagePath}images/users/defalt_user_image.jpg`} width="64px" height="64px" alt="ユーザープロフィール画像" className="w-[92px] h-[132px] mb-1 md:w-[120px] md:h-[160px] md:mb-0" />
+                        ? <img src={`${myEquipment?.racket.racket_image.file_path}`} alt="ラケット画像" className="w-[92px] h-[132px] mb-1 md:w-[120px] md:h-[160px] md:mb-0" />
+                        : <div className="w-[120px] h-[160px] border"></div>
                       }
                     </div>
 
@@ -139,10 +138,10 @@ const MyEquipment = () => {
                   </div>
                 </div>
 
-                <TextUnderBar className="w-[100%] max-w-[300px] mb-4 md:hidden" />
+                <TextUnderBar className="w-[100%] max-w-[300px] mb-4 mx-auto md:hidden" />
 
                 {/* ストリング日時セクション */}
-                <div className="mb-8 md:mt-[35px]">
+                <div className="flex flex-col items-center mb-8 md:mt-[35px]">
                   <div className="w-[100%] max-w-[300px] border border-dashed border-black rounded-lg px-2 py-4 md:max-w-[360px] md:min-h-[240px] md:flex md:flex-col md:justify-center md:items-start md:pl-6">
                     <p className="text-[14px] text-right mb-2 md:test-[16px] md:mb-10">張った日：{myEquipment?.new_gut_date}</p>
                     <p className="tracking-tight text-[14px] text-right md:test-[16px] ">ストリング張り替え・切れた日：{myEquipment?.change_gut_date}</p>
@@ -150,12 +149,10 @@ const MyEquipment = () => {
                 </div>
 
                 {/* コメントセクション */}
-                <div>
-                  <div>
-                    <p className="text-[14px] md:text-[16px] md:mb-2">コメント</p>
+                  <div className="flex flex-col items-center">
+                    <p className="text-[14px] text-left w-[100%] max-w-[300px] md:text-[16px] md:mb-2 md:max-w-[360px]">コメント</p>
                     <p className="w-[100%] max-w-[300px] min-h-[160px] border p-2 md:max-w-[360px] md:min-h-[267px]" >{myEquipment?.comment}</p>
                   </div>
-                </div>
               </div>
 
               <div className="flex justify-center w-[100%] max-w-[320px] mx-auto mt-[24px] md:justify-end md:max-w-[768px]">

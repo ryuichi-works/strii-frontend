@@ -27,6 +27,18 @@ type RacketSearchModalProps = {
   makers?: Maker[],
   searchedRackets?: Racket[],
   zIndexClassName?: string,
+
+  racketsPaginator?: Paginator<Racket> | undefined,
+  setRacketsPaginator?: React.Dispatch<React.SetStateAction<Paginator<Racket> | undefined>>,
+
+  inputSearchWord: string,
+  setInputSearchWord: React.Dispatch<React.SetStateAction<string>>,
+
+  inputSearchMaker: number | undefined,
+  setInputSearchMaker: React.Dispatch<React.SetStateAction<number | undefined>>,
+
+  // ユーザーの使いたいラケットがない場合にラケットを登録させるモーダルを開閉
+  setRacketRegisterModalVisibility?:  React.Dispatch<React.SetStateAction<boolean>>,
 }
 
 const RacketSearchModal: React.FC<RacketSearchModalProps> = ({
@@ -39,12 +51,18 @@ const RacketSearchModal: React.FC<RacketSearchModalProps> = ({
   searchedRackets,
   setSearchedRackets,
   zIndexClassName,
-}) => {
-  const [racketsPaginator, setRacketsPaginator] = useState<Paginator<Racket>>();
 
-  // 検索input関連state
-  const [inputSearchWord, setInputSearchWord] = useState<string>('');
-  const [inputSearchMaker, setInputSearchMaker] = useState<number | null>();
+  setRacketsPaginator,
+
+  inputSearchWord,
+  setInputSearchWord,
+  inputSearchMaker,
+  setInputSearchMaker,
+  setRacketRegisterModalVisibility,
+}) => {
+  // モーダル内のページネーション用
+  const [racketsModalPaginator, setRacketsModalPaginator] = useState<Paginator<Racket>>();
+
 
   const [modalVisibilityClassName, setModalVisibilityClassName] = useState<string>('opacity-0 scale-0');
 
@@ -60,7 +78,7 @@ const RacketSearchModal: React.FC<RacketSearchModalProps> = ({
 
   const onChangeInputSearchMaker = (e: React.ChangeEvent<HTMLSelectElement>) => {
     if (e.target.value === '未選択') {
-      setInputSearchMaker(null);
+      setInputSearchMaker(undefined);
       return
     };
 
@@ -70,7 +88,11 @@ const RacketSearchModal: React.FC<RacketSearchModalProps> = ({
   //ページネーションを考慮した検索後racket一覧データの取得関数
   const getSearchedRacketsList = async (url: string = `api/rackets/search?several_words=${inputSearchWord}&maker=${inputSearchMaker ? inputSearchMaker : ''}`) => {
     await axios.get(url).then((res) => {
-      setRacketsPaginator(res.data);
+      setRacketsModalPaginator(res.data)
+
+      if(setRacketsPaginator) {
+        setRacketsPaginator(res.data);
+      }
 
       setSearchedRackets(res.data.data);
     })
@@ -96,7 +118,10 @@ const RacketSearchModal: React.FC<RacketSearchModalProps> = ({
   const closeModal = () => {
     setModalVisibility(false);
     setModalVisibilityClassName('opacity-0 scale-0')
-    closeModalHandler();
+
+    if(closeModalHandler) {
+      closeModalHandler();
+    }
   }
 
   const selectRacket = (racket: Racket) => {
@@ -114,16 +139,28 @@ const RacketSearchModal: React.FC<RacketSearchModalProps> = ({
             <IoClose size={48} />
           </div>
 
-          <form action="" onSubmit={searchRackets} className="mb-[24px] md:flex md:mb-[40px]">
+          <form action="" onSubmit={searchRackets} className="mb-[24px] md:flex md:mb-[24px]">
             <div className="mb-6 md:mb-0 md:mr-[16px]">
               <label htmlFor="several_words" className="block mb-1 text-[14px] md:text-[16px] md:mb-2">ラケット　検索ワード</label>
-              <input type="text" name="several_words" onChange={(e) => setInputSearchWord(e.target.value)} className="border border-gray-300 rounded w-80 md:w-[300px] h-10 p-2 focus:outline-sub-green" />
+              <input
+                type="text"
+                name="several_words"
+                onChange={(e) => setInputSearchWord(e.target.value)}
+                value={inputSearchWord ? inputSearchWord : ''}
+                className="border border-gray-300 rounded w-80 md:w-[300px] h-10 p-2 focus:outline-sub-green"
+              />
             </div>
 
             <div className="mb-8 md:mb-0 md:mr-[24px]">
               <label htmlFor="maker" className="block text-[14px] mb-1 md:text-[16px] md:mb-2">メーカー</label>
 
-              <select name="maker" id="maker" onChange={(e) => { onChangeInputSearchMaker(e) }} className="border border-gray-300 rounded w-80 md:w-[250px] h-10 p-2 focus:outline-sub-green">
+              <select
+                name="maker"
+                id="maker"
+                onChange={(e) => { onChangeInputSearchMaker(e) }}
+                value={inputSearchMaker ? inputSearchMaker : '未選択'}
+                className="border border-gray-300 rounded w-80 md:w-[250px] h-10 p-2 focus:outline-sub-green"
+              >
                 <option value="未選択" selected>未選択</option>
                 {makers?.map((maker) => (<option key={maker.id} value={maker.id}>{maker.name_ja}</option>))}
               </select>
@@ -133,6 +170,21 @@ const RacketSearchModal: React.FC<RacketSearchModalProps> = ({
               <button type="submit" className="text-white font-bold text-[14px] w-[160px] h-8 rounded  bg-sub-green md:text-[16px] md:self-end md:h-[40px] md:w-[100px]">検索する</button>
             </div>
           </form>
+
+          {/* racket検索で意図したものが見つからない時にユーザーに新規でracketを追加するように誘導するため */}
+          {setRacketRegisterModalVisibility && (
+            <>
+              <div className="flex flex-col items-center mb-[40px] md:w-full">
+                <p className="text-[14px] mb-2 md:text-[16px] md:inline-block">※ 検索で見つからなかった場合は新しいラケットとして登録をお願いします</p>
+                <button
+                  type="button"
+                  className="text-white font-bold text-[14px] w-[136px] h-[28px] rounded  bg-sub-green ml-auto
+                              md:mx-auto md:h-[32px]"
+                  onClick={() => setRacketRegisterModalVisibility(true)}
+                >ラケットを登録</button>
+              </div>
+            </>
+          )}
 
           {showingResult && (
             <>
@@ -146,8 +198,8 @@ const RacketSearchModal: React.FC<RacketSearchModalProps> = ({
                       <div onClick={() => selectRacket(racket)} className="flex  mb-6 hover:opacity-80 hover:cursor-pointer w-[100%] max-w-[360px] bg-white rounded-lg md:w-[100%] md:max-w-[360px]">
                         <div className="w-[120px] mr-6">
                           {racket.racket_image.file_path
-                            ? <img src={`${baseImagePath}${racket.racket_image.file_path}`} alt="ラケット画像" className="w-[120px] h-[160px]" />
-                            : <img src={`${baseImagePath}images/rackets/defalt_racket_image.png`} alt="ラケット画像" className="w-[120px] h-[160px]" />
+                            ? <img src={`${racket.racket_image.file_path}`} alt="ラケット画像" className="w-[120px] h-[160px]" />
+                            : <img src={`${baseImagePath}images/rackets/default_racket_image.png`} alt="ラケット画像" className="w-[120px] h-[160px]" />
                           }
                         </div>
 
@@ -163,7 +215,7 @@ const RacketSearchModal: React.FC<RacketSearchModalProps> = ({
                 </div>
 
                 <Pagination
-                  paginator={racketsPaginator}
+                  paginator={racketsModalPaginator}
                   paginate={getSearchedRacketsList}
                   className="mt-[32px] mb-[32px] md:mt-[48px] md:mb-[48px]"
                 />

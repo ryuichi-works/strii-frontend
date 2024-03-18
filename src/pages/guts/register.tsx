@@ -229,8 +229,8 @@ const GutRegister: NextPage = () => {
 
                         <div className="w-[100%] max-w-[200px] h-[120px] flex justify-center md:h-[160px] md:max-w-[] md:justify-end">
                           {selectedGutImage
-                            ? <img src={`${baseImagePath}${selectedGutImage?.file_path}`} alt="" className="w-[100%] max-w-[120px] border md:max-w-[160px]" />
-                            : <img src={`${baseImagePath}images/guts/default_gut.jpg`} alt="" className="w-[100%] max-w-[120px] border md:max-w-[160px]" />
+                            ? <img src={`${selectedGutImage?.file_path}`} alt="" className="w-[100%] max-w-[120px] border md:max-w-[160px]" />
+                            : <img src={`${baseImagePath}images/guts/default_gut_image.png`} alt="" className="w-[100%] max-w-[120px] border md:max-w-[160px]" />
                           }
                         </div>
                       </div>
@@ -279,10 +279,10 @@ const GutRegister: NextPage = () => {
                           {/* ガット画像情報カード */}
                           <div onClick={() => selectImage(gutImage)} className="bg-white p-2 rounded-lg w-[100%] max-w-[136px] hover:opacity-80 mb-6 hover:cursor-pointer md:[&:not(:last-child)]:mr-[24px]">
                             <div className="w-[120px] mb-2">
-                              {gutImage.file_path && <img src={`${baseImagePath}${gutImage.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px]" />}
+                              {gutImage.file_path && <img src={`${gutImage.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px]" />}
                             </div>
 
-                            <p className="text-[14px] mb-1 md:text-[16px]">{gutImage.maker.name_ja}</p>
+                            <p className="text-[14px] mb-1 md:text-[16px]">{gutImage.maker ? gutImage.maker.name_ja : ''}</p>
 
                             <p className="text-[14px] md:text-[16px]">{gutImage.title}</p>
                           </div>
