@@ -46,9 +46,9 @@ const MyEquipmentList = () => {
                 <PrimaryHeading text="Equipments" className="text-[18px] italic h-[20px] md:text-[20px] md:h-[22px]" />
               </div>
 
-              <div className="flex justify-center mb-6 md:w-[784px] md:mx-auto md:justify-end">
+              {/* <div className="flex justify-center mb-6 md:w-[784px] md:mx-auto md:justify-end">
                 <button className="text-white text-[14px] max-w-[264px] w-[100%] h-8 rounded  bg-sub-green md:w-[104px]">検索</button>
-              </div>
+              </div> */}
 
               <div className="flex flex-col items-center md:flex-row md:flex-wrap md:w-[784px] md:justify-between md:mx-auto">
                 {myEquipments && (
