@@ -56,8 +56,9 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
   const [crossGutPattern, setCrossGutPattern] = useState<string>('19');
   const [racketWeight, setRacketWeight] = useState<number | null>(null);
   const [balance, setBalance] = useState<number | null>(null);
+  const [releaseYear, setReleaseYear] = useState<number | null>(null);
   const [agreement, setAgreement] = useState<boolean>(false);
-  
+
   // useImageCropカスタムフックから取得
   const {
     crop,
@@ -167,6 +168,10 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
     setBalance(Number(e.target.value));
   }
 
+  const onChangeReleaseYear = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setReleaseYear(Number(e.target.value));
+  }
+
   const onChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     changeImageFileToLocationUrl(files);
@@ -199,6 +204,7 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
     setCrossGutPattern('19');
     setRacketWeight(null);
     setBalance(null);
+    setReleaseYear(null);
     setAgreement(false);
   }
 
@@ -214,6 +220,7 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
     pattern: string[],
     weight: string[],
     balance: string[],
+    release_year: string[],
     agreement: string[],
     file: string[],
     title: string[],
@@ -231,6 +238,7 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
     pattern: [],
     weight: [],
     balance: [],
+    release_year: [],
     agreement: [],
     file: [],
     title: [],
@@ -258,6 +266,7 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
       pattern: `${mainGutPattern}/${crossGutPattern}`,
       weight: racketWeight,
       balance: balance,
+      release_year: releaseYear ? releaseYear : null,
 
       // multipart/form-dataの時はstring型になってしまうため変換
       agreement: Number(agreement),
@@ -467,6 +476,26 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
                     errors.balance.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                   }
                 </div>
+
+                {/* 発売年入力 */}
+                <div className="mb-6">
+                  <label htmlFor="release_year" className="block text-[14px] md:text-[16px]">発売年</label>
+                  <input
+                    type="number"
+                    name="release_year"
+                    onChange={onChangeReleaseYear}
+                    min="1000"
+                    max="2500"
+                    value={releaseYear ? releaseYear : ''}
+                    placeholder="半角数字(20xx)"
+                    className={`border border-gray-300 rounded w-40 h-10 p-2 focus:outline-sub-green ${errors.balance.length !== 0 ? '!border-red-300 focus:!outline-red-500' : null}`}
+                  />
+                  <span className="ml-4 md:text-[16px]">年</span>
+
+                  {errors.release_year.length !== 0 &&
+                    errors.release_year.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                  }
+                </div>
               </div>
 
 
@@ -601,6 +630,9 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
                     }
                     {errors.balance.length !== 0 &&
                       errors.balance.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                    }
+                    {errors.release_year.length !== 0 &&
+                      errors.release_year.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                     }
                     {errors.file.length !== 0 &&
                       errors.file.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
