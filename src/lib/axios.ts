@@ -1,7 +1,8 @@
 import Axios from "axios";
 
 const axios = Axios.create({
-  baseURL: 'http://localhost',
+  // baseURL: 'http://localhost',
+  baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
   xsrfHeaderName: 'X-XSRF-TOKEN',
   xsrfCookieName: 'XSRF-TOKEN',
   withCredentials: true,
