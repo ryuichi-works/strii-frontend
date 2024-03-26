@@ -189,7 +189,12 @@ const RacketList = () => {
                         <div className="w-[100%] max-w-[176px] pt-4 md:max-w-[216px]">
                           <p className="text-[14px] mb-2 pl-2 md:text-[16px]">{firstLetterToUpperCase(racket.maker.name_en)}</p>
                           <p className="text-[16px] text-center mb-2 md:text-[18px]">{racket.name_ja}</p>
-                          <TextUnderBar className="w-[100%] max-w-[176px] md:max-w-[216px]" />
+                          
+                          <TextUnderBar className="w-[100%] max-w-[176px] mb-1 md:max-w-[216px]" />
+
+                          {racket.release_year &&
+                            <p className="text-[10px] text-right mb-2 md:text-[12px]">{racket.release_year}年</p>
+                          }
                         </div>
                       </div>
                     </Link>

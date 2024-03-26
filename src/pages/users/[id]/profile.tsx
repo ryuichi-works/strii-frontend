@@ -60,6 +60,7 @@ export type Racket = {
   pattern: string,
   weight: number | null,
   balance: number | null,
+  release_year: number | null,
   maker: Maker,
   racket_image: RacketImage,
   user: User,
