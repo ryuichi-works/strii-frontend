@@ -35,6 +35,8 @@ export type Gut = {
   maker_id: number,
   image_id: number,
   need_posting_image: number,
+  guage: string,
+  category: string,
   created_at: string,
   updated_at: string,
   maker: Maker,

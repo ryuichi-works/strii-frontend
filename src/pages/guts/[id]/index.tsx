@@ -78,18 +78,18 @@ const Gut = () => {
                       <thead className="w-[100%] max-w-[120px] md:max-w-[720px] md:mb-4">
                         <tr className="flex flex-col items-start border-r border-sub-green w-[100%] max-w-[120px] md:flex-row md:max-w-[720px] md:border-r-0 md:border-b">
                           <th className="font-normal text-[14px] text-center w-[100%] max-w-[120px] min-h-[45px] leading-[45px] p-[0px] md:text-[16px] md:max-w-[180px]">メーカー</th>
-                          <th className="font-normal text-[14px] text-center w-[100%] max-w-[120px] min-h-[45px] leading-[45px] p-[0px] md:text-[16px] md:max-w-[180px]">カラー</th>
+                          <th className="font-normal text-[14px] text-center w-[100%] max-w-[120px] min-h-[45px] leading-[45px] p-[0px] tracking-tighter md:text-[16px] md:max-w-[180px]">種類</th>
                           <th className="font-normal text-[14px] text-center w-[100%] max-w-[120px] min-h-[45px] leading-[45px] p-[0px] md:text-[16px] md:max-w-[180px]">ゲージ</th>
-                          <th className="font-normal text-[14px] text-center w-[100%] max-w-[120px] min-h-[45px] leading-[45px] p-[0px] tracking-tighter md:text-[16px] md:max-w-[180px]">ストリングの種類</th>
+                          <th className="font-normal text-[14px] text-center w-[100%] max-w-[120px] min-h-[45px] leading-[45px] p-[0px] md:text-[16px] md:max-w-[180px]">カラー</th>
                         </tr>
                       </thead>
 
                       <tbody className="w-[100%] max-w-[200px] md:max-w-[720px]">
                         <tr className="flex flex-col items-start w-[100%] max-w-[200px] md:flex-row md:max-w-[720px]">
                           <td className="pl-6 min-h-[45px] text-[14px] leading-[45px] p-[0px] md:text-[16px] md:pl-0 md:w-[100%] md:max-w-[180px] md:text-center">{gut?.maker.name_ja}</td>
-                          <td className="pl-6 min-h-[45px] text-[14px] leading-[45px] p-[0px] md:text-[16px] md:pl-0 md:w-[100%] md:max-w-[180px] md:text-center">black/white</td>
-                          <td className="pl-6 min-h-[45px] text-[12px] leading-[45px] p-[0px] md:text-[12px] md:pl-0 md:w-[100%] md:max-w-[180px] md:text-center">1.20/1.25/1.30/1.25/1.30mm</td>
-                          <td className="pl-6 min-h-[45px] text-[14px] leading-[45px] p-[0px] md:text-[16px] md:pl-0 md:w-[100%] md:max-w-[180px] md:text-center">ポリエステル</td>
+                          <td className="pl-6 min-h-[45px] text-[14px] leading-[45px] p-[0px] md:text-[16px] md:pl-0 md:w-[100%] md:max-w-[180px] md:text-center">{gut?.category}</td>
+                          <td className="pl-6 min-h-[45px] text-[12px] leading-[45px] p-[0px] md:text-[12px] md:pl-0 md:w-[100%] md:max-w-[180px] md:text-center">{gut?.guage}mm</td>
+                          <td className="pl-6 min-h-[45px] text-[14px] leading-[45px] p-[0px] md:text-[16px] md:pl-0 md:w-[100%] md:max-w-[180px] md:text-center">未登録</td>
                         </tr>
                       </tbody>
                     </table>
