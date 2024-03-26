@@ -83,6 +83,7 @@ const RacketShow = () => {
                       <th className="font-normal text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px] md:pl-6">重さ</th>
                       <th className="font-normal text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px] md:pl-6">バランス</th>
                       <th className="font-normal text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px] md:pl-6">ストリングパターン</th>
+                      <th className="font-normal text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px] md:pl-6">発売年</th>
                     </tr>
                   </thead>
 
@@ -93,6 +94,7 @@ const RacketShow = () => {
                       <td className="text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px]">{racket?.weight ? `${racket?.weight}g` : '未登録' }</td>
                       <td className="text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px]">{racket?.balance ? `${racket?.balance}mm` : '未登録' }</td>
                       <td className="text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px]">{racket?.pattern !== '' ? racket?.pattern : '未登録' }</td>
+                      <td className="text-[14px] h-[32px] leading-[32px] p-[0px] pl-1 border-t border-sub-green md:text-[16px] md:h-[50px] md:leading-[50px]">{racket?.release_year ? racket?.release_year : '未登録' }年</td>
                     </tr>
                   </tbody>
                 </table>

@@ -38,6 +38,7 @@ const RacketEdit: NextPage = () => {
   const [crossGutPattern, setCrossGutPattern] = useState<string>();
   const [racketWeight, setRacketWeight] = useState<number | null>();
   const [balance, setBalance] = useState<number | null>();
+  const [releaseYear, setReleaseYear] = useState<number | null>(null);
   const [selectedRacketImage, setSelectedRacketImage] = useState<RacketImage>();
 
   //ラケット画像検索関連のstate
@@ -83,6 +84,7 @@ const RacketEdit: NextPage = () => {
         setCrossGutPattern(splitedPatturn[1]);
         if (racket.weight) setRacketWeight(racket.weight);
         if (racket.balance) setBalance(racket.balance);
+        if (racket.release_year) setReleaseYear(racket.release_year);
       })
     }
 
@@ -159,6 +161,10 @@ const RacketEdit: NextPage = () => {
     setBalance(Number(e.target.value));
   }
 
+  const onChangeReleaseYear = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setReleaseYear(Number(e.target.value));
+  }
+
   // makerごとのracketシリーズにフィルタリング
   const filterRacketSeriesByMaker = (makerId: number, racketSeries?: RacketSeries[]) => {
 
@@ -191,7 +197,7 @@ const RacketEdit: NextPage = () => {
     pattern: string[],
     weight: string[],
     balance: string[],
-
+    release_year: string[],
   }
 
   const initialErrorVals = {
@@ -204,6 +210,7 @@ const RacketEdit: NextPage = () => {
     pattern: [],
     weight: [],
     balance: [],
+    release_year: [],
   };
 
   const [errors, setErrors] = useState<Errors>(initialErrorVals);
@@ -256,6 +263,7 @@ const RacketEdit: NextPage = () => {
       pattern: (mainGutPattern && crossGutPattern) ? `${mainGutPattern}/${crossGutPattern}` : '',
       weight: racketWeight ? racketWeight : null,
       balance: balance ? balance : null,
+      release_year: releaseYear ? releaseYear : null,
     }
 
     await csrf();
@@ -426,6 +434,25 @@ const RacketEdit: NextPage = () => {
 
                     {errors.balance.length !== 0 &&
                       errors.balance.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                    }
+                  </div>
+
+                  {/* 発売年入力 */}
+                  <div className="mb-6">
+                    <label htmlFor="release_year" className="block text-[14px] md:text-[16px]">発売年</label>
+                    <input
+                      type="number"
+                      name="release_year"
+                      onChange={onChangeReleaseYear}
+                      min="1000"
+                      max="2500"
+                      defaultValue={releaseYear ? releaseYear : undefined}
+                      className={`border border-gray-300 rounded w-40 h-10 p-2 focus:outline-sub-green ${errors.balance.length !== 0 ? '!border-red-300 focus:!outline-red-500' : null}`}
+                    />
+                    <span className="ml-4 md:text-[16px]">年</span>
+
+                    {errors.release_year.length !== 0 &&
+                      errors.release_year.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                     }
                   </div>
 

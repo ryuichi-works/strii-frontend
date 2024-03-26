@@ -54,10 +54,11 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
   const [inputHeadSize, setInputHeadSize] = useState<number>(100);
   const [mainGutPattern, setMainGutPattern] = useState<string>('16');
   const [crossGutPattern, setCrossGutPattern] = useState<string>('19');
-  const [racketWeight, setRacketWeight] = useState<number>(300);
-  const [balance, setBalance] = useState<number>(320);
+  const [racketWeight, setRacketWeight] = useState<number | null>(null);
+  const [balance, setBalance] = useState<number | null>(null);
+  const [releaseYear, setReleaseYear] = useState<number | null>(null);
   const [agreement, setAgreement] = useState<boolean>(false);
-  
+
   // useImageCropカスタムフックから取得
   const {
     crop,
@@ -75,7 +76,7 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
     onCropComplete,
     showCroppedImage,
   } = useImageCrop();
-  console.log('croppedImage', croppedImage);
+  // console.log('croppedImage', croppedImage);
 
   const {
     imageFileUrl,
@@ -167,6 +168,10 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
     setBalance(Number(e.target.value));
   }
 
+  const onChangeReleaseYear = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setReleaseYear(Number(e.target.value));
+  }
+
   const onChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     changeImageFileToLocationUrl(files);
@@ -190,6 +195,17 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
     setCroppedImage(undefined)
     setCroppedImageUrl(undefined)
     setErrors(initialErrorVals)
+    setInputNameJa('');
+    setInputNameEn('');
+    setRacketMakerId(null);
+    setRacketSeriresId(null);
+    setInputHeadSize(100);
+    setMainGutPattern('16');
+    setCrossGutPattern('19');
+    setRacketWeight(null);
+    setBalance(null);
+    setReleaseYear(null);
+    setAgreement(false);
   }
 
   //エラーメッセージ関連
@@ -204,9 +220,11 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
     pattern: string[],
     weight: string[],
     balance: string[],
+    release_year: string[],
     agreement: string[],
     file: string[],
     title: string[],
+    limit: string[],
   }
 
   const initialErrorVals: Errors = {
@@ -220,9 +238,11 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
     pattern: [],
     weight: [],
     balance: [],
+    release_year: [],
     agreement: [],
     file: [],
     title: [],
+    limit: [],
   };
 
   const [errors, setErrors] = useState<Errors>(initialErrorVals);
@@ -246,6 +266,7 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
       pattern: `${mainGutPattern}/${crossGutPattern}`,
       weight: racketWeight,
       balance: balance,
+      release_year: releaseYear ? releaseYear : null,
 
       // multipart/form-dataの時はstring型になってしまうため変換
       agreement: Number(agreement),
@@ -297,11 +318,12 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
               <div>
                 {/* カナ名入力 */}
                 <div className="mb-6">
-                  <label htmlFor="name_ja" className="block mb-1 text-[14px] md:text-[16px] md:mb-2">ラケット名(カナ)</label>
+                  <label htmlFor="name_ja" className="block mb-1 text-[14px] md:text-[16px] md:mb-2">ラケット名(カナ) <span className="text-[14px] md:text-[16px] text-red-400">※必須</span></label>
                   <input
                     type="text"
                     name="name_ja"
                     onChange={(e) => setInputNameJa(e.target.value)}
+                    value={inputNameJa}
                     className={`border border-gray-300 rounded w-80 md:w-[360px] h-10 p-2 focus:outline-sub-green ${errors.name_ja.length !== 0 ? '!border-red-300 focus:!outline-red-500' : null}`}
                   />
                   {errors.name_ja.length !== 0 &&
@@ -316,6 +338,7 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
                     type="text"
                     name="name_en"
                     onChange={(e) => setInputNameEn(e.target.value)}
+                    value={inputNameEn}
                     className={`border border-gray-300 rounded w-80 md:w-[360px] h-10 p-2 focus:outline-sub-green ${errors.name_en.length !== 0 ? '!border-red-300 focus:!outline-red-500' : null}`}
                   />
                   {errors.name_en.length !== 0 &&
@@ -325,12 +348,13 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
 
                 {/* メーカー入力 */}
                 <div className=" mb-8">
-                  <label htmlFor="maker" className="block text-[14px] md:text-[16px]">メーカー</label>
+                  <label htmlFor="maker" className="block text-[14px] md:text-[16px]">メーカー<span className="text-[14px] md:text-[16px] text-red-400"> ※必須</span></label>
 
                   <select
                     name="maker"
                     id="maker"
                     onChange={(e) => { onChangeMaker(e) }}
+                    value={racketMakerId ? String(racketMakerId) : '未選択'}
                     className={` border border-gray-300 rounded w-80 md:w-[360px] h-10 p-2 focus:outline-sub-green ${errors.maker_id.length !== 0 ? '!border-red-300 focus:!outline-red-500' : null}`}
                   >
                     <option value="未選択" selected>未選択</option>
@@ -350,6 +374,7 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
                     name="series"
                     id="series"
                     onChange={(e) => { onChangeRacketSeries(e) }}
+                    value={racketSeriresId ? String(racketSeriresId) : '未選択'}
                     className={`border border-gray-300 rounded w-80 md:w-[360px] h-10 p-2 focus:outline-sub-green ${errors.series_id.length !== 0 ? '!border-red-300 focus:!outline-red-500' : null}`}
                   >
                     <option value="未選択" selected>未選択</option>
@@ -363,14 +388,14 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
 
                 {/* ヘッドサイズ入力 */}
                 <div className="mb-6">
-                  <label htmlFor="head_size" className="block text-[14px] md:text-[16px]">ヘッドサイズ</label>
+                  <label htmlFor="head_size" className="block text-[14px] md:text-[16px]">ヘッドサイズ<span className="text-[14px] md:text-[16px] text-red-400"> ※必須</span></label>
                   <input
                     type="number"
                     name="head_size"
                     onChange={onChangeHeadSize}
                     min="77"
                     max="150"
-                    defaultValue={inputHeadSize}
+                    value={inputHeadSize}
                     className={`border border-gray-300 rounded w-40 h-10 p-2 focus:outline-sub-green ${errors.head_size.length !== 0 ? '!border-red-300 focus:!outline-red-500' : null}`}
                   />
                   <span className="ml-4 text-[14px] md:text-[16px]">平方インチ</span>
@@ -385,6 +410,7 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
                   <label htmlFor="gut_pattern" className="block text-[14px] md:text-[16px]">
                     ストリングパターン
                     <span className="text-[12px] md:text-[14px]">（メイン / クロス）</span>
+                    <span className="text-[14px] md:text-[16px] text-red-400"> ※必須</span>
                   </label>
                   <input
                     type="number"
@@ -392,7 +418,7 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
                     onChange={(e) => onChangeGutPattern(e, 'main')}
                     min="11"
                     max="24"
-                    defaultValue={mainGutPattern}
+                    value={mainGutPattern}
                     className={`text-center border border-gray-300 rounded w-14 h-10 p-2 focus:outline-sub-green ${errors.pattern.length !== 0 ? '!border-red-300 focus:!outline-red-500' : null}`}
                   />
                   <span className="mx-2 text-[14px] md:text-[16px]">/</span>
@@ -402,7 +428,7 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
                     onChange={(e) => onChangeGutPattern(e, 'cross')}
                     min="11"
                     max="24"
-                    defaultValue={crossGutPattern}
+                    value={crossGutPattern}
                     className={`text-center border border-gray-300 rounded w-14 h-10 p-2 focus:outline-sub-green ${errors.pattern.length !== 0 ? '!border-red-300 focus:!outline-red-500' : null}`}
                   />
 
@@ -420,7 +446,8 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
                     onChange={onChangeRacketWeight}
                     min="0"
                     max="500"
-                    defaultValue={racketWeight}
+                    value={racketWeight ? racketWeight : ''}
+                    placeholder="半角数字"
                     className={`border border-gray-300 rounded w-40 h-10 p-2 focus:outline-sub-green ${errors.weight.length !== 0 ? '!border-red-300 focus:!outline-red-500' : null}`}
                   />
                   <span className="ml-4 md:text-[16px]">g</span>
@@ -439,13 +466,34 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
                     onChange={onChangeBalance}
                     min="0"
                     max="400"
-                    defaultValue={balance}
-                    className={`border border-gray-300 rounded w-40 h-10 p-2 focus:outline-sub-green${errors.balance.length !== 0 ? '!border-red-300 focus:!outline-red-500' : null}`}
+                    value={balance ? balance : ''}
+                    placeholder="半角数字"
+                    className={`border border-gray-300 rounded w-40 h-10 p-2 focus:outline-sub-green ${errors.balance.length !== 0 ? '!border-red-300 focus:!outline-red-500' : null}`}
                   />
-                  <span className="ml-4 md:text-[16px]">g</span>
+                  <span className="ml-4 md:text-[16px]">mm</span>
 
                   {errors.balance.length !== 0 &&
                     errors.balance.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                  }
+                </div>
+
+                {/* 発売年入力 */}
+                <div className="mb-6">
+                  <label htmlFor="release_year" className="block text-[14px] md:text-[16px]">発売年</label>
+                  <input
+                    type="number"
+                    name="release_year"
+                    onChange={onChangeReleaseYear}
+                    min="1000"
+                    max="2500"
+                    value={releaseYear ? releaseYear : ''}
+                    placeholder="半角数字(20xx)"
+                    className={`border border-gray-300 rounded w-40 h-10 p-2 focus:outline-sub-green ${errors.balance.length !== 0 ? '!border-red-300 focus:!outline-red-500' : null}`}
+                  />
+                  <span className="ml-4 md:text-[16px]">年</span>
+
+                  {errors.release_year.length !== 0 &&
+                    errors.release_year.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                   }
                 </div>
               </div>
@@ -457,7 +505,7 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
                 <div className="mb-[24px]">
                   {/* ファイル選択 */}
                   <div className="flex flex-col mb-[16px]">
-                    <label htmlFor="gut_image_file" className="text-[14px] mb-1 md:text-[16px] md:mb-2">ラケット画像</label>
+                    <label htmlFor="gut_image_file" className="text-[14px] mb-1 md:text-[16px] md:mb-2">ラケット画像<span className="text-[14px] md:text-[16px] text-red-400"> ※必須</span></label>
                     <input
                       type="file"
                       name="gut_image_file"
@@ -546,6 +594,7 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
                       id="agreement"
                       onChange={(e) => { onChangeAgreement(e) }}
                       disabled={croppedImage ? false : true}
+                      checked={agreement}
                       className="mr-1"
                     />
                     <label htmlFor="agreement" className="md:text-[16px]">はい</label>
@@ -582,8 +631,14 @@ const RacketRegisterModal: React.FC<RacketRegisterModalProps> = ({
                     {errors.balance.length !== 0 &&
                       errors.balance.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                     }
+                    {errors.release_year.length !== 0 &&
+                      errors.release_year.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                    }
                     {errors.file.length !== 0 &&
                       errors.file.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
+                    }
+                    {errors.limit.length !== 0 &&
+                      errors.limit.map((message, i) => <p key={i} className="text-red-400">{message}</p>)
                     }
                   </div>
                 </div>
