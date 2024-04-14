@@ -7,6 +7,7 @@ import { useContext, useState } from "react";
 import { useRouter } from "next/router";
 import { AuthContext } from "@/context/AuthContext";
 import type { User } from "@/context/AuthContext";
+import Head from 'next/head'
 
 const UserLogin: NextPage = () => {
   const router = useRouter();
@@ -61,6 +62,10 @@ const UserLogin: NextPage = () => {
 
   return (
     <>
+      <Head>
+        <title>strii(ストリー) - ログイン</title>
+      </Head>
+
       <div className="container text-gray-600 px-2 sm:px-5 py-5 mx-auto">
 
         <div className="flex flex-col text-center w-full mb-5">
