@@ -6,6 +6,7 @@ import AuthCheck from "@/components/AuthCheck";
 import axios from "@/lib/axios";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import Head from 'next/head';
 import Pagination, { Paginator } from "@/components/Pagination";
 import BarGraph, { EvaluationVal } from "@/components/BarGraph";
 import { IoClose } from "react-icons/io5";
@@ -380,6 +381,10 @@ const ReviewList = () => {
       <AuthCheck>
         {isAuth && (
           <>
+            <Head>
+              <title>ストリング・ガットレビュー一覧</title>
+            </Head>
+
             <div className="container mx-auto">
               <div className="mb-6 mt-6 italic md:mb-[32px] md:mt-[32px]">
                 <h1 className="text-center text-[20px] md:text-[32px]">Reviews</h1>

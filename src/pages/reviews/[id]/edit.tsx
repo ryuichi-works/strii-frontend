@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 
 import React, { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import Head from 'next/head';
 import { AuthContext } from "@/context/AuthContext";
 
 import AuthCheck from "@/components/AuthCheck";
@@ -340,6 +341,15 @@ const GutReviewEdit: NextPage = () => {
       <AuthCheck>
         {(isAuth || isAuthAdmin) && (
           <>
+            <Head>
+              <title>
+                レビュー編集 - {review ? `${review?.my_equipment.main_gut.name_ja}(${review?.my_equipment.main_gut.maker.name_en})` : ''}
+                {review?.my_equipment.stringing_way === 'hybrid'
+                  ? `/${review?.my_equipment.cross_gut.name_ja}(${review?.my_equipment.cross_gut.maker.name_en})`
+                  : ''}
+              </title>
+            </Head>
+
             <div className="container mx-auto mb-6">
               <div className="text-center my-6 md:mb-[32px]">
                 <PrimaryHeading text="Post Review" className="text-[18px] italic h-[20px] md:text-[20px] md:h-[22px]" />
