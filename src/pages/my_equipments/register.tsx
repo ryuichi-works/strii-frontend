@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 
 import React, { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import Head from 'next/head';
 import { AuthContext } from "@/context/AuthContext";
 
 import AuthCheck from "@/components/AuthCheck";
@@ -294,6 +295,10 @@ const MyEquipmentRegister: NextPage = () => {
       <AuthCheck>
         {(isAuth || isAuthAdmin) && (
           <>
+            <Head>
+              <title>マイ装備登録</title>
+            </Head>
+
             <div className="container mx-auto">
               <div className="text-center my-6 md:mb-[32px]">
                 <PrimaryHeading text="マイ装備追加" className="text-[18px] h-[20px] md:text-[20px] md:h-[22px]" />
