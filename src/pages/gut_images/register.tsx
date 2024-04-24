@@ -5,6 +5,7 @@ import Cookies from "js-cookie";
 
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
+import Head from 'next/head';
 import { AuthContext } from "@/context/AuthContext";
 
 import AuthCheck from "@/components/AuthCheck";
@@ -170,6 +171,10 @@ const GutImageRegister: NextPage = () => {
       <AuthCheck>
         {(isAuth || isAuthAdmin) && (
           <>
+            <Head>
+              <title>ストリング画像提供</title>
+            </Head>
+
             <div className="container mx-auto mb-[48px]">
               <FlashMessage
                 flashMessage={'画像提供受付ました、ご協力ありがとうございます。'}

@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import axios from "@/lib/axios";
 import { AuthContext } from "@/context/AuthContext";
 import Link from "next/link";
+import Head from 'next/head';
 import AuthCheck from "@/components/AuthCheck";
 import PrimaryHeading from "@/components/PrimaryHeading";
 import Pagination, { Paginator } from "@/components/Pagination";
@@ -41,6 +42,10 @@ const MyEquipmentList = () => {
       <AuthCheck>
         {isAuth && (
           <>
+            <Head>
+              <title>マイ装備一覧</title>
+            </Head>
+
             <div className="container mx-auto px-2">
               <div className="text-center my-6 md:my-[32px]">
                 <PrimaryHeading text="Equipments" className="text-[18px] italic h-[20px] md:text-[20px] md:h-[22px]" />

@@ -17,6 +17,7 @@ import AuthCheck from "@/components/AuthCheck";
 import Link from "next/link";
 import axios from "@/lib/axios";
 import { Router, useRouter } from "next/router";
+import Head from 'next/head';
 
 export type Maker = {
   id: number,
@@ -113,6 +114,10 @@ const UserProfile: NextPage = () => {
       <AuthCheck>
         {isAuth && (
           <>
+            <Head>
+              <title>strii(ストリー) - プロフィール</title>
+            </Head>
+
             <div className="container mx-auto">
               <div className="w-80 mt-6  mx-auto flex flex-col md:flex-row md:justify-center md:mt-[48px] md:w-[704px]">
                 <div className="w-[320px] md:mr-[32px]">
@@ -150,12 +155,12 @@ const UserProfile: NextPage = () => {
                     <p className="mb-2 basis-full">使用ラケット</p>
 
                     <div className="w-28 h-40 bg-faint-green">
-                      { tennisProfile?.racket?.racket_image.file_path
+                      {tennisProfile?.racket?.racket_image.file_path
                         ? <img src={`${tennisProfile.racket.racket_image.file_path}`} alt="ラケット画像" className="w-[120px] h-[160px]" />
                         : <img src={`${baseImagePath}images/rackets/default_racket_image.png`} alt="ラケット画像" className="w-[120px] h-[160px]" />
                       }
                     </div>
-                    
+
                     <div className="w-44 flex flex-col">
                       <span className="inline-block pl-2 text-xs mb-2">{tennisProfile?.racket ? tennisProfile?.racket.maker.name_en : ''}</span>
                       <p className="pl-2 leading-[18px] mb-4">{tennisProfile?.racket ? tennisProfile?.racket.name_ja : '未選択'}</p>

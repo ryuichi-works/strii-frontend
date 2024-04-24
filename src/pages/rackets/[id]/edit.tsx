@@ -7,6 +7,7 @@ import axios from "@/lib/axios";
 import Cookies from "js-cookie";
 import React, { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import Head from 'next/head';
 import { AuthContext } from "@/context/AuthContext";
 
 import AuthAdminCheck from "@/components/AuthAdminCheck";
@@ -290,6 +291,9 @@ const RacketEdit: NextPage = () => {
       <AuthAdminCheck>
         {isAuthAdmin && (
           <>
+            <Head>
+              <title>ラケット情報編集 - {currentRacket ? (`${currentRacket.name_ja} (${currentRacket.maker.name_ja})`) : ''}</title>
+            </Head>
 
             <div className="container mx-auto mb-8 w-screen overflow-y-auto">
 

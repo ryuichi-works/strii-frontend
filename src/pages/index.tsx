@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import Link from 'next/link';
+import Head from 'next/head'
 import SubHeading from '@/components/SubHeading';
 import TextUnderBar from '@/components/TextUnderBar';
 import HeroPcSize from '../../public/hero_pc_size.png';
@@ -11,6 +12,9 @@ const inter = Inter({ subsets: ['latin'] })
 export default function Home() {
   return (
     <>
+      <Head>
+        <title>strii(ストリー) - テニスのストリング・ガット、レビューサイト</title>
+      </Head>
       <div className="mx-auto">
         {/* hero section */}
         <section className='container mx-auto h-[480px] sm:h-[358px] md:h-[430px] xl:h-[571px]'>

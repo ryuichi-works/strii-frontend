@@ -6,6 +6,7 @@ import { AuthContext } from "@/context/AuthContext";
 import axios from "@/lib/axios";
 import Cookies from "js-cookie";
 import type { NextPage } from "next";
+import Head from 'next/head';
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
 import { IoClose } from "react-icons/io5";
@@ -168,6 +169,9 @@ const RacketRegister: NextPage = () => {
       <AuthAdminCheck>
         {isAuthAdmin && (
           <>
+            <Head>
+              <title>ラケット登録</title>
+            </Head>
 
             <div className="container mx-auto mb-8 w-screen overflow-y-auto">
 

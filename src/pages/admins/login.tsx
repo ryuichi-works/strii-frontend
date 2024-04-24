@@ -4,6 +4,8 @@ import Cookies from "js-cookie";
 import axios from "@/lib/axios";
 import { useContext, useState } from "react";
 import { useRouter } from "next/router";
+import Head from 'next/head';
+
 import { AuthContext } from "@/context/AuthContext";
 
 const UserLogin: NextPage = () => {
@@ -60,6 +62,10 @@ const UserLogin: NextPage = () => {
 
   return (
     <>
+      <Head>
+        <title>管理者 - ログイン</title>
+      </Head>
+
       <div className="container text-gray-600 px-2 sm:px-5 py-5 mx-auto">
 
         <div className="flex flex-col text-center w-full mb-5">

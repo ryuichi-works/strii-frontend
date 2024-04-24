@@ -5,6 +5,7 @@ import Cookies from "js-cookie";
 import { useContext, useRef, useState } from "react";
 import { AuthContext } from "@/context/AuthContext";
 import { useRouter } from "next/router";
+import Head from 'next/head';
 import AuthCheck from "@/components/AuthCheck";
 import ImageCropArea from "@/components/ImageCropArea";
 
@@ -166,6 +167,10 @@ const BaseProfileEdit: NextPage = () => {
       <AuthCheck>
         {isAuth && (
           <>
+            <Head>
+              <title>strii(ストリー) - 基本プロフィール編集</title>
+            </Head>
+
             {/* <h1>プロフィールページ</h1> */}
             <div className="container mx-auto">
               <div className="w-80 mt-[24px] md:w-[500px] mx-auto flex flex-col md:justify-center md:mt-[48px]">

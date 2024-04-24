@@ -6,6 +6,7 @@ import axios from "@/lib/axios";
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
 import Link from "next/link";
+import Head from 'next/head';
 
 const Review = () => {
   const router = useRouter();
@@ -36,6 +37,15 @@ const Review = () => {
       <AuthCheck>
         {isAuth && (
           <>
+            <Head>
+              <title>
+                レビュー - {review ? `${review?.my_equipment.main_gut.name_ja}(${review?.my_equipment.main_gut.maker.name_en})` : ''}
+                {review?.my_equipment.stringing_way === 'hybrid'
+                  ? `/${review?.my_equipment.cross_gut.name_ja}(${review?.my_equipment.cross_gut.maker.name_en})`
+                  : ''}
+              </title>
+            </Head>
+
             <div className="container mx-auto">
               <h1 className="text-center my-[24px] italic md:my-[32px] md:text-[24px]">Review</h1>
               <div className="flex flex-col items-center flex-wrap">
@@ -134,11 +144,11 @@ const Review = () => {
                     <div className="flex justify-end mb-2">
                       <span className="text-[14px] h-[16px] leading-[16px] pr-1 md:text-[16px] md:h-[18px] md:leading-[18px]">自分に合っているか</span>
                       {review && (
-                          <BarGraph
-                            evaluationVal={review.match_rate as EvaluationVal}
-                            areaSize="md"
-                            graphHeight="h-[16px] md:h-[18px]"
-                          />
+                        <BarGraph
+                          evaluationVal={review.match_rate as EvaluationVal}
+                          areaSize="md"
+                          graphHeight="h-[16px] md:h-[18px]"
+                        />
                       )}
                       <span className="inline-block border-r-2 border-sub-green ml-2 mr-1"></span>
                       <span className="inline-block text-[14px] text-center h-[16px] w-6 leading-[16px] md:text-[16px] md:h-[18px] md:leading-[18px]">{review?.match_rate}</span>
@@ -147,11 +157,11 @@ const Review = () => {
                     <div className="flex justify-end mb-2">
                       <span className="text-[14px] h-[16px] leading-[16px] pr-1 md:text-[16px] md:h-[18px] md:leading-[18px]">切れにくさ</span>
                       {review && (
-                          <BarGraph
-                            evaluationVal={review.pysical_durability as EvaluationVal}
-                            areaSize="md"
-                            graphHeight="h-[16px] md:h-[18px]"
-                          />
+                        <BarGraph
+                          evaluationVal={review.pysical_durability as EvaluationVal}
+                          areaSize="md"
+                          graphHeight="h-[16px] md:h-[18px]"
+                        />
                       )}
                       <span className="inline-block border-r-2 border-sub-green ml-2 mr-1"></span>
                       <span className="inline-block text-[14px] text-center h-[16px] w-6 leading-[16px] md:text-[16px] md:h-[18px] md:leading-[18px]">{review?.pysical_durability}</span>
@@ -160,11 +170,11 @@ const Review = () => {
                     <div className="flex justify-end mb-2">
                       <span className="text-[14px] h-[16px] leading-[16px] pr-1 md:text-[16px] md:h-[18px] md:leading-[18px]">打球感の持続力</span>
                       {review && (
-                          <BarGraph
-                            evaluationVal={review.performance_durability as EvaluationVal}
-                            areaSize="md"
-                            graphHeight="h-[16px] md:h-[18px]"
-                          />
+                        <BarGraph
+                          evaluationVal={review.performance_durability as EvaluationVal}
+                          areaSize="md"
+                          graphHeight="h-[16px] md:h-[18px]"
+                        />
                       )}
                       <span className="inline-block border-r-2 border-sub-green ml-2 mr-1"></span>
                       <span className="inline-block text-[14px] text-center h-[16px] w-6 leading-[16px] md:text-[16px] md:h-[18px] md:leading-[18px]">{review?.performance_durability}</span>
