@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import axios from "@/lib/axios";
 import { AuthContext } from "@/context/AuthContext";
 import Link from "next/link";
+import Head from 'next/head';
 
 import AuthCheck from "@/components/AuthCheck";
 import TextUnderBar from "@/components/TextUnderBar";
@@ -112,102 +113,108 @@ const GutList = () => {
     <>
       <AuthCheck>
         {(isAuth || isAuthAdmin) && (
-          <div className="container mx-auto">
-            <div className="text-center my-6 md:my-[32px]">
-              <PrimaryHeading text="Strings" className="text-[18px] italic h-[20px] md:text-[20px] md:h-[22px]" />
-            </div>
+          <>
+            <Head>
+              <title>ストリング一覧</title>
+            </Head>
 
-            <div className="flex justify-center mb-[48px] md:justify-end w-[100%] max-w-[768px] mx-auto">
-              <button
-                onClick={openModal}
-                className="text-white text-[14px] w-[264px] h-8 rounded  bg-sub-green md:w-[80px] md:h-[32px] md:hidden"
-              >検索</button>
+            <div className="container mx-auto">
+              <div className="text-center my-6 md:my-[32px]">
+                <PrimaryHeading text="Strings" className="text-[18px] italic h-[20px] md:text-[20px] md:h-[22px]" />
+              </div>
 
-              <div className={'hidden md:block bg-gray-300 w-[100%] max-w-[768px] h-[100px] rounded-lg'}>
-                <div className="flex flex-col items-center justify-center w-[100%] mx-auto max-w-[768px] h-[100%]">
-                  <form action="" onSubmit={searchGuts} className=" flex">
-                    <div className="mb-6 md:mb-0 md:mr-[16px]">
-                      <label htmlFor="name_ja" className="block text-[16px] mb-2 pl-1 h-[18px]">ストリング検索ワード</label>
-                      <input
-                        type="text"
-                        name="name_ja"
-                        defaultValue={inputSearchWord}
-                        onChange={(e) => setInputSearchWord(e.target.value)}
-                        className="border border-gray-300 rounded w-80 md:w-[300px] h-10 p-2 focus:outline-sub-green"
-                      />
-                    </div>
+              <div className="flex justify-center mb-[48px] md:justify-end w-[100%] max-w-[768px] mx-auto">
+                <button
+                  onClick={openModal}
+                  className="text-white text-[14px] w-[264px] h-8 rounded  bg-sub-green md:w-[80px] md:h-[32px] md:hidden"
+                >検索</button>
 
-                    <div className="mb-8 md:mb-0 md:mr-[24px]">
-                      <label htmlFor="maker" className="block text-[16px] mb-2 pl-1  h-[18px]">メーカー</label>
+                <div className={'hidden md:block bg-gray-300 w-[100%] max-w-[768px] h-[100px] rounded-lg'}>
+                  <div className="flex flex-col items-center justify-center w-[100%] mx-auto max-w-[768px] h-[100%]">
+                    <form action="" onSubmit={searchGuts} className=" flex">
+                      <div className="mb-6 md:mb-0 md:mr-[16px]">
+                        <label htmlFor="name_ja" className="block text-[16px] mb-2 pl-1 h-[18px]">ストリング検索ワード</label>
+                        <input
+                          type="text"
+                          name="name_ja"
+                          defaultValue={inputSearchWord}
+                          onChange={(e) => setInputSearchWord(e.target.value)}
+                          className="border border-gray-300 rounded w-80 md:w-[300px] h-10 p-2 focus:outline-sub-green"
+                        />
+                      </div>
 
-                      <select
-                        name="maker"
-                        id="maker"
-                        value={inputSearchMaker ? inputSearchMaker : '未選択'}
-                        onChange={(e) => { onChangeInputSearchMaker(e) }}
-                        className="border border-gray-300 rounded w-80 md:w-[250px] h-10 p-2 focus:outline-sub-green"
-                      >
-                        <option value="未選択" selected>未選択</option>
-                        {makers?.map((maker) => (<option key={maker.id} value={maker.id}>{maker.name_ja}</option>))}
-                      </select>
-                    </div>
+                      <div className="mb-8 md:mb-0 md:mr-[24px]">
+                        <label htmlFor="maker" className="block text-[16px] mb-2 pl-1  h-[18px]">メーカー</label>
 
-                    <div className="flex justify-end md:justify-start">
-                      <button type="submit" className="text-white font-bold text-[14px] w-[160px] h-8 rounded  bg-sub-green md:text-[16px] md:self-end md:h-[40px] md:w-[100px]">検索する</button>
-                    </div>
-                  </form>
+                        <select
+                          name="maker"
+                          id="maker"
+                          value={inputSearchMaker ? inputSearchMaker : '未選択'}
+                          onChange={(e) => { onChangeInputSearchMaker(e) }}
+                          className="border border-gray-300 rounded w-80 md:w-[250px] h-10 p-2 focus:outline-sub-green"
+                        >
+                          <option value="未選択" selected>未選択</option>
+                          {makers?.map((maker) => (<option key={maker.id} value={maker.id}>{maker.name_ja}</option>))}
+                        </select>
+                      </div>
+
+                      <div className="flex justify-end md:justify-start">
+                        <button type="submit" className="text-white font-bold text-[14px] w-[160px] h-8 rounded  bg-sub-green md:text-[16px] md:self-end md:h-[40px] md:w-[100px]">検索する</button>
+                      </div>
+                    </form>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* ガットセクション */}
-            <div className="">
-              <div className="w-[100%] max-w-[320px] mx-auto md:max-w-[768px] md:flex md:flex-wrap md:justify-between ">
-                {/* ガット */}
-                {guts && guts.map(gut => (
-                  <Link href={`/guts/${gut.id}`} key={gut.id} className="hover:opacity-80 hover:cursor-pointer md:w-[100%] md:max-w-[360px]">
-                    <div className="flex justify-center mb-6 hover:opacity-80 hover:cursor-pointer md:w-[100%] md:max-w-[360px]">
-                      <div className="w-[120px] mr-6">
-                        {gut.gut_image.file_path
-                          ? <img src={`${gut.gut_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px]" />
-                          : <img src={`${baseImagePath}images/guts/defalt_gut_image.png`} alt="ストリング画像" className="w-[120px] h-[120px]" />
-                        }
-                      </div>
+              {/* ガットセクション */}
+              <div className="">
+                <div className="w-[100%] max-w-[320px] mx-auto md:max-w-[768px] md:flex md:flex-wrap md:justify-between ">
+                  {/* ガット */}
+                  {guts && guts.map(gut => (
+                    <Link href={`/guts/${gut.id}`} key={gut.id} className="hover:opacity-80 hover:cursor-pointer md:w-[100%] md:max-w-[360px]">
+                      <div className="flex justify-center mb-6 hover:opacity-80 hover:cursor-pointer md:w-[100%] md:max-w-[360px]">
+                        <div className="w-[120px] mr-6">
+                          {gut.gut_image.file_path
+                            ? <img src={`${gut.gut_image.file_path}`} alt="ストリング画像" className="w-[120px] h-[120px]" />
+                            : <img src={`${baseImagePath}images/guts/defalt_gut_image.png`} alt="ストリング画像" className="w-[120px] h-[120px]" />
+                          }
+                        </div>
 
-                      <div className="w-[100%] max-w-[160px] md:max-w-[216px]">
-                        <p className="text-[14px] mb-2 md:text-[16px]">{gut.maker.name_ja}</p>
-                        <p className="text-[16px] mb-2 md:text-[18px]">{gut.name_ja}</p>
-                        <TextUnderBar className="w-[100%] max-w-[160px] md:max-w-[216px]" />
+                        <div className="w-[100%] max-w-[160px] md:max-w-[216px]">
+                          <p className="text-[14px] mb-2 md:text-[16px]">{gut.maker.name_ja}</p>
+                          <p className="text-[16px] mb-2 md:text-[18px]">{gut.name_ja}</p>
+                          <TextUnderBar className="w-[100%] max-w-[160px] md:max-w-[216px]" />
+                        </div>
                       </div>
-                    </div>
-                  </Link>
-                ))}
+                    </Link>
+                  ))}
+                </div>
               </div>
+
+              {/* 検索モーダル */}
+              <GutSearchModal
+                modalVisibility={gutSearchModalVisibility}
+                setModalVisibility={setGutSearchModalVisibility}
+                makers={makers}
+                showingResult={false}
+                searchedGuts={guts}
+                setSearchedGuts={setGuts}
+                zIndexClassName={'z-50'}
+                setGutsPaginator={setGutsPaginator}
+                inputSearchWord={inputSearchWord}
+                setInputSearchWord={setInputSearchWord}
+                inputSearchMaker={inputSearchMaker}
+                setInputSearchMaker={setInputSearchMaker}
+              />
+
+              {/* ページネーション */}
+              <Pagination
+                paginator={gutsPaginator}
+                paginate={getGutsList}
+                className="mt-[32px] md:mt-[48px]"
+              />
             </div>
-
-            {/* 検索モーダル */}
-            <GutSearchModal
-              modalVisibility={gutSearchModalVisibility}
-              setModalVisibility={setGutSearchModalVisibility}
-              makers={makers}
-              showingResult={false}
-              searchedGuts={guts}
-              setSearchedGuts={setGuts}
-              zIndexClassName={'z-50'}
-              setGutsPaginator={setGutsPaginator}
-              inputSearchWord={inputSearchWord}
-              setInputSearchWord={setInputSearchWord}
-              inputSearchMaker={inputSearchMaker}
-              setInputSearchMaker={setInputSearchMaker}
-            />
-
-            {/* ページネーション */}
-            <Pagination
-              paginator={gutsPaginator}
-              paginate={getGutsList}
-              className="mt-[32px] md:mt-[48px]"
-            />
-          </div>
+          </>
         )}
       </AuthCheck>
     </>
