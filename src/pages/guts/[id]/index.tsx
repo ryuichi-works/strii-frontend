@@ -2,6 +2,7 @@ import type { Gut } from "@/pages/reviews";
 import axios from "@/lib/axios";
 import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import Head from 'next/head';
 import { AuthContext } from "@/context/AuthContext";
 
 import AuthCheck from "@/components/AuthCheck";
@@ -48,6 +49,10 @@ const Gut = () => {
       <AuthCheck>
         {(isAuth || isAuthAdmin) && (
           <>
+            <Head>
+              <title>ストリング - {gut ? (`${gut.name_ja} (${gut.maker.name_ja})`) : ''}</title>
+            </Head>
+
             <div className="container md:mx-auto">
               <div className="text-center my-6 md:my-[32px]">
                 <PrimaryHeading text="String" className="text-[18px] italic h-[20px] md:text-[20px] md:h-[22px]" />

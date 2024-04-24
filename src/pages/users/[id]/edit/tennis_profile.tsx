@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/context/AuthContext";
 import { useRouter } from "next/router";
+import Head from 'next/head'
 import AuthCheck from "@/components/AuthCheck";
 import { IoClose } from "react-icons/io5";
 import TextUnderBar from "@/components/TextUnderBar";
@@ -117,7 +118,7 @@ const TennisProfileEdit: NextPage = () => {
   }
 
   const afterRegistringRacketHandler = (racket?: Racket) => {
-    if(racket) {
+    if (racket) {
       setRacket(racket)
     }
     setRacketSearchModalVisibility(false);
@@ -314,6 +315,10 @@ const TennisProfileEdit: NextPage = () => {
       <AuthCheck>
         {isAuth && (
           <>
+            <Head>
+              <title>strii(ストリー) - テニスプロフィール編集</title>
+            </Head>
+
             <div className="container mx-auto">
               <div className="w-80 mt-[24px] md:w-[500px] mx-auto flex flex-col md:justify-center md:mt-[48px]">
                 <div className="w-[320px] md:w-[500px] mb-16">

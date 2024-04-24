@@ -6,6 +6,7 @@ import axios from "@/lib/axios";
 import Cookies from "js-cookie";
 import React, { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import Head from 'next/head';
 import { AuthContext } from "@/context/AuthContext";
 
 import AuthAdminCheck from "@/components/AuthAdminCheck";
@@ -192,6 +193,9 @@ const GutEdit: NextPage = () => {
       <AuthAdminCheck>
         {isAuthAdmin && (
           <>
+            <Head>
+              <title>ストリング情報編集 - {currentGut ? (`${currentGut.name_ja} (${currentGut.maker.name_ja})`) : ''}</title>
+            </Head>
 
             <div className="container mx-auto mb-8 w-screen overflow-y-auto">
 

@@ -8,6 +8,7 @@ import Cookies from "js-cookie";
 
 import React, { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import Head from 'next/head';
 import { AuthContext } from "@/context/AuthContext";
 
 import AuthCheck from "@/components/AuthCheck";
@@ -296,6 +297,18 @@ const MyEquipmentEdit: NextPage = () => {
       <AuthCheck>
         {(isAuth || isAuthAdmin) && (
           <>
+            <Head>
+              <title>
+                マイ装備編集 - {currentMyEquipment ? `${currentMyEquipment?.main_gut.name_ja}` : ''}
+                {
+                  currentMyEquipment?.stringing_way === 'hybrid'
+                    ? `/${currentMyEquipment.cross_gut.name_ja}`
+                    : ''
+                }
+                {currentMyEquipment ? `/${currentMyEquipment.racket.name_ja}` : ''}
+              </title>
+            </Head>
+
             <div className="container mx-auto">
               <div className="text-center my-6 md:my-[32px]">
                 <PrimaryHeading text="マイ装備追加" className="text-[18px] h-[20px] md:text-[20px] md:h-[22px]" />

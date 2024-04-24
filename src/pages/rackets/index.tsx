@@ -8,6 +8,7 @@ import { AuthContext } from "@/context/AuthContext";
 import { RacketContext } from "@/context/RacketContext";
 import { usePathHistory } from "@/context/HistoryContext";
 import { useRouter } from "next/router";
+import Head from 'next/head';
 
 import Link from "next/link";
 import AuthCheck from "@/components/AuthCheck";
@@ -110,6 +111,10 @@ const RacketList = () => {
       <AuthCheck>
         {(isAuth || isAuthAdmin) && (
           <>
+            <Head>
+              <title>ラケット一覧</title>
+            </Head>
+
             <div className="container mx-auto mt-[24px] md:mt-[32px]">
               <div className="text-center mb-6 md:mb-[32px]">
                 <PrimaryHeading text="Rackets" className="text-[18px] italic h-[20px] md:text-[20px] md:h-[22px]" />

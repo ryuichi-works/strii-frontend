@@ -8,6 +8,7 @@ import axios from "@/lib/axios";
 import Cookies from "js-cookie";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
+import Head from 'next/head';
 import React, { useContext, useEffect, useState } from "react";
 import { IoClose } from "react-icons/io5";
 
@@ -173,6 +174,9 @@ const GutRegister: NextPage = () => {
       <AuthAdminCheck>
         {isAuthAdmin && (
           <>
+            <Head>
+              <title>ストリング登録</title>
+            </Head>
 
             <div className="container mx-auto mb-8 w-screen overflow-y-auto">
 

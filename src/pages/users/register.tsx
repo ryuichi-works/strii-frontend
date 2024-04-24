@@ -5,6 +5,7 @@ import Cookies from "js-cookie";
 import { useContext, useState } from "react";
 import { useRouter } from "next/router";
 import { AuthContext } from "@/context/AuthContext";
+import Head from 'next/head'
 
 const UserRegister: NextPage = () => {
   const router = useRouter();
@@ -70,6 +71,10 @@ const UserRegister: NextPage = () => {
 
   return (
     <>
+      <Head>
+        <title>strii(ストリー) - ユーザー登録</title>
+      </Head>
+
       <div className="container text-gray-600 px-2 sm:px-5 py-5 mx-auto">
 
         <div className="flex flex-col text-center w-full mb-5">

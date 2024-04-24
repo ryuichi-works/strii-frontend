@@ -8,6 +8,7 @@ import Cookies from "js-cookie";
 
 import React, { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import Head from 'next/head';
 import { AuthContext } from "@/context/AuthContext";
 
 import AuthCheck from "@/components/AuthCheck";
@@ -137,7 +138,7 @@ const GutReviewRegister: NextPage = () => {
     const getUserTennisProfile = async () => {
       await axios.get(`api/tennis_profiles/user/${user.id}`).then(res => {
         setUserTennisProfile(res.data);
-        if(res.data.racket) {
+        if (res.data.racket) {
           setRacket(res.data.racket);
         }
       })
@@ -312,7 +313,7 @@ const GutReviewRegister: NextPage = () => {
   }
 
   const afterRegistringRacketHandler = (racket?: Racket) => {
-    if(racket) {
+    if (racket) {
       selectRacket(racket);
     }
   }
@@ -429,6 +430,10 @@ const GutReviewRegister: NextPage = () => {
       <AuthCheck>
         {(isAuth || isAuthAdmin) && (
           <>
+            <Head>
+              <title>ストリング・ガットレビュー投稿</title>
+            </Head>
+
             <div className="container mx-auto mb-6">
               <div className="text-center my-6 md:mb-[32px]">
                 <PrimaryHeading text="Post Review" className="text-[18px] italic h-[20px] md:text-[20px] md:h-[22px]" />
@@ -799,7 +804,7 @@ const GutReviewRegister: NextPage = () => {
                   makers={makers}
                   zIndexClassName="z-50"
                   racketSeries={racketSeries}
-                afterRegistringHandler={afterRegistringRacketHandler}
+                  afterRegistringHandler={afterRegistringRacketHandler}
                 />
 
                 {/* my_equipment検索モーダル */}
