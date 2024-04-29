@@ -31,7 +31,7 @@ const Header: React.FC = () => {
     if (hamburgerToggle === 'open') {
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
-    } else if(hamburgerToggle === 'close') {
+    } else if (hamburgerToggle === 'close') {
       document.body.style.overflow = 'auto';
       document.documentElement.style.overflow = 'auto';
     }
@@ -110,14 +110,26 @@ const Header: React.FC = () => {
 
               {(!user.id && !admin.id) && (
                 <>
+                  <HeaderNavLink
+                    linkText="ストリング"
+                    className="mr-4"
+                    href="/guts"
+                  />
+
+                  <HeaderNavLink
+                    linkText="レビュー"
+                    className="mr-4"
+                    href="/reviews"
+                  />
+
                   <li><Link href="/users/login" className="mr-4">ログイン</Link></li>
                   <li><Link href="/users/register">会員登録</Link></li>
                 </>
               )}
-              
+
               {/* userでログイン中の表示 */}
               {user.id && <UserHeaderNav logoutHandler={logout} />}
-              
+
               {/* adminでログイン中の表示 */}
               {admin.id && <AdminHeaderNav logoutHandler={logout} />}
             </ul>
@@ -144,6 +156,10 @@ const Header: React.FC = () => {
 
               {(!user.id && !admin.id) && (
                 <>
+                  <li><Link href={'/guts'} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">ストリング</Link></li>
+
+                  <li><Link href={'/reviews'} className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green  w-full">レビュー</Link></li>
+
                   <li><Link href="/users/login" className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green w-full">ログイン</Link></li>
 
                   <li><Link href="/users/register" className="inline-block text-center h-12 leading-[48px] border-b-2 border-b-afaint-green w-full">会員登録</Link></li>
