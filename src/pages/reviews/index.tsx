@@ -20,6 +20,7 @@ import GutSearchModal from "@/components/GutSearchModal";
 import RacketSearchModal from "@/components/RacketSearchModal";
 import { ReviewContext } from "@/context/ReviewContext";
 import { usePathHistory } from "@/context/HistoryContext";
+import LinkBtn from "@/components/LinkBtn";
 
 type GutImage = {
   id: number,
@@ -383,12 +384,55 @@ const ReviewList = () => {
           <h1 className="text-center text-[20px] md:text-[32px]">Reviews</h1>
         </div>
 
-        <div className="flex justify-center mb-6 md:w-[784px] md:mx-auto md:justify-end">
+        <div className="flex justify-center flex-col items-center gap-6 mb-6 md:w-[784px] md:mx-auto md:flex-row md:justify-end md:gap-4">
+          {(user.id && isAuth) && (
+            <>
+              <LinkBtn
+                href='/reviews/register'
+                linkText='レビュー投稿'
+                btnClassName='text-white text-[14px] w-[128px] h-8 md:h-8 rounded md:w-[104px] md:mr-4'
+                linkClassName='leading-8 md:leading-8'
+              />
+            </>
+          )}
+
           <button
             onClick={openReviewSearchModal}
             className="text-white text-[14px] w-[264px] h-8 rounded  bg-sub-green md:w-[104px]"
           >検索</button>
         </div>
+
+        {/* 会員登録・ログインへ誘導 */}
+        {(!user.id && !isAuth) && (
+          <>
+            <div className="w-[320px] mx-auto md:w-[784px] md:mx-auto bg-faint-green p-2 mb-8 rounded-lg shadow-md">
+              <div className="mb-2 w-[304px] mx-auto md:w-[768px] md:mx-auto">
+                <p className="text-center text-[14px] md:text-[16px]">あなたの体験が他の人のテニスライフに影響を与えるかもしれません。いつでもあなたのレビューをお待ちしています。</p>
+              </div>
+
+              <div className="flex justify-center md:w-[784px] md:mx-auto md:justify-start">
+                <p className="text-center text-[14px] md:text-[16px]">
+                  ※ レビュー投稿するために、まずは<br className="block md:hidden " />
+                  <LinkBtn
+                    href='/users/login'
+                    linkText='ログイン'
+                    btnClassName='text-white text-[14px] w-[128px] h-6 md:h-8 rounded md:w-[104px]'
+                    linkClassName='leading-6 md:leading-8'
+                  />
+
+                  または
+
+                  <LinkBtn
+                    href='/users/register'
+                    linkText='会員登録'
+                    btnClassName='text-white text-[14px] w-[128px] h-6 md:h-8 rounded md:w-[104px]'
+                    linkClassName='leading-6 md:leading-8'
+                  />
+                </p>
+              </div>
+            </div>
+          </>
+        )}
 
         <div className="flex flex-col items-center md:flex-row md:flex-wrap md:w-[784px] md:justify-between md:mx-auto">
           {reviews && (
